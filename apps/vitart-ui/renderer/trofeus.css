@@ -1,0 +1,151 @@
+body { display: grid; grid-template-rows: 38px auto auto 1fr; }
+
+/* ------------------------------------------------------------------ cabeçalho com a arte do jogo */
+.heroi { position: relative; height: 292px; overflow: hidden; background: #070504; }
+.heroi-arte { position: absolute; inset: 0; }
+.heroi-arte > div {
+  position: absolute; inset: 0;
+  background-repeat: no-repeat;
+  -webkit-mask-image: linear-gradient(90deg, transparent 18%, rgba(0, 0, 0, .55) 42%, #000 70%);
+}
+.heroi-arte .gow1 { background-image: var(--arte-chave); background-size: cover; background-position: 70% 30%; filter: saturate(.9) contrast(1.05) brightness(.82); }
+.heroi-arte .gow2 { background: var(--arte-rocha) center / 520px repeat; filter: brightness(.38) sepia(.35); }
+.heroi-arte .gow2::after { /* medalhão de Zeus contra os espartanos, à direita */
+  content: ''; position: absolute; right: 6%; top: 50%; width: 360px; height: 360px; margin-top: -180px;
+  background: var(--arte-medalhao) center / contain no-repeat;
+  filter: sepia(.55) saturate(1.3) brightness(.85) drop-shadow(0 10px 30px #000);
+}
+.heroi-veu { /* sangue no canto, para o título ter onde pousar */
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 140% at 0% 100%, rgba(122, 18, 9, .42), transparent 55%),
+    linear-gradient(90deg, #0b0807 22%, rgba(11, 8, 7, .65) 48%, rgba(11, 8, 7, 0) 72%),
+    linear-gradient(0deg, #0b0807 0%, rgba(11, 8, 7, 0) 38%);
+}
+.heroi-corpo { position: relative; height: 100%; padding: 22px 40px 34px; display: flex; flex-direction: column; }
+.heroi-friso { position: absolute; left: 0; right: 0; bottom: 0; opacity: .55; }
+
+.jogos { display: flex; gap: 6px; }
+.jogo {
+  position: relative; display: flex; align-items: baseline; gap: 10px;
+  padding: 8px 14px 9px; border: 1px solid transparent; border-radius: var(--raio);
+  background: transparent; color: var(--cinza); cursor: pointer;
+  font: 600 12px var(--f-caixa); letter-spacing: .2em; text-transform: uppercase;
+  transition: color .2s, border-color .2s, background .2s;
+}
+.jogo small { font: 500 11px var(--f-texto); letter-spacing: .04em; color: var(--cinza-2); }
+.jogo:hover { color: var(--marfim); border-color: var(--filete); }
+.jogo[aria-pressed="true"] { color: var(--ouro-claro); border-color: var(--filete-claro); background: rgba(20, 16, 13, .72); }
+.jogo[aria-pressed="true"]::before { content: ''; position: absolute; left: -1px; top: 6px; bottom: 6px; width: 2px; background: var(--sangue-vivo); }
+
+.sobre { margin: auto 0 4px; }
+.nome-jogo { margin: 0 0 16px; font-size: 54px; line-height: 1; text-shadow: 0 3px 24px rgba(0, 0, 0, .8); }
+.progresso { display: flex; align-items: center; gap: 22px; max-width: 640px; }
+.pct { font: 700 58px/0.9 var(--f-caixa); color: var(--ouro-claro); text-shadow: 0 0 22px rgba(214, 168, 78, .25); min-width: 150px; font-variant-numeric: tabular-nums; }
+.pct small { font-size: 26px; color: var(--ouro); margin-left: 2px; }
+.pct-lado { flex: 1; display: grid; gap: 10px; }
+.trilho { position: relative; height: 6px; background: #120d0a; border: 1px solid var(--filete); border-radius: 3px; overflow: hidden; }
+.enche {
+  position: absolute; inset: 0; transform-origin: left; transform: scaleX(0);
+  background: linear-gradient(90deg, #7a1209, #b8862f 55%, #f3d98e);
+  transition: transform 1.1s cubic-bezier(.2, .8, .2, 1);
+}
+.enche::after { /* brilho que passa de vez em quando */
+  content: ''; position: absolute; inset: 0; width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(255, 244, 210, .55), transparent);
+  animation: brilho 5.5s ease-in-out 1.4s infinite;
+}
+@keyframes brilho { 0% { transform: translateX(-120%); } 30%, 100% { transform: translateX(420%); } }
+.contas { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; font-size: 13.5px; }
+.tipos { display: flex; gap: 16px; }
+.tipos > span { display: inline-flex; align-items: center; gap: 7px; color: var(--cinza); }
+.tipos b { color: var(--marfim); font-weight: 600; }
+
+/* medalha por tipo */
+.med { width: 11px; height: 11px; border-radius: 50%; flex: none; box-shadow: inset 0 -2px 3px rgba(0, 0, 0, .45), 0 0 0 1px rgba(0, 0, 0, .6); }
+.med.P { background: radial-gradient(circle at 35% 30%, #fff, var(--platina) 55%, #6f7f96); }
+.med.G { background: radial-gradient(circle at 35% 30%, #fff4c4, #e2ba4e 55%, #8a6116); }
+.med.S { background: radial-gradient(circle at 35% 30%, #fff, var(--prata) 55%, #7b8088); }
+.med.B { background: radial-gradient(circle at 35% 30%, #ffd8b4, var(--bronze-t) 55%, #6a3a1a); }
+
+/* ------------------------------------------------------------------ filtros e busca */
+.ferramentas { display: flex; align-items: center; gap: 18px; padding: 16px 40px 12px; }
+.filtros { position: relative; display: flex; gap: 4px; }
+.filtros button {
+  border: 0; background: none; cursor: pointer; padding: 8px 14px 10px;
+  font: 600 12px var(--f-caixa); letter-spacing: .18em; text-transform: uppercase; color: var(--cinza);
+  transition: color .18s;
+}
+.filtros button:hover { color: var(--ouro); }
+.filtros button[aria-selected="true"] { color: var(--marfim); }
+.sublinha { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--sangue-vivo); transition: transform .35s var(--entra), width .35s var(--entra); }
+.na-lista { font-size: 13px; }
+.busca { margin-left: auto; position: relative; width: 340px; }
+.busca svg { position: absolute; left: 12px; top: 50%; width: 15px; height: 15px; margin-top: -7.5px; stroke: var(--cinza); fill: none; stroke-width: 1.5; }
+.busca .entrada { padding-left: 36px; }
+
+/* ------------------------------------------------------------------ lista + detalhe */
+.corpo { min-height: 0; display: grid; grid-template-columns: 1fr 440px; gap: 18px; padding: 0 40px 24px; }
+.lista { min-height: 0; overflow-y: auto; border: 1px solid var(--filete); border-radius: var(--raio); background: #0f0b09; outline: none; }
+.lista:focus-visible { border-color: var(--ouro-escuro); }
+.linha {
+  position: relative; display: grid; grid-template-columns: 58px 1fr 120px; align-items: center; gap: 16px;
+  min-height: 78px; padding: 10px 18px 10px 20px;
+  border-bottom: 1px solid #241a13; cursor: pointer;
+  transition: background .16s;
+}
+.linha:hover { background: #18120e; }
+.linha[aria-selected="true"] { background: linear-gradient(90deg, #2a1712, #1a130f 60%); }
+.linha[aria-selected="true"]::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--sangue-vivo); }
+.ico { width: 56px; height: 56px; border: 1px solid var(--filete-claro); background: #0c0806 center / cover; border-radius: 2px; }
+.linha.falta .ico, .det-ico.falta { filter: grayscale(1) brightness(.5); border-color: var(--filete); }
+.linha .txt { min-width: 0; }
+.linha .nome { font: 700 16.5px var(--f-titulo); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.linha .desc { font-size: 13px; color: var(--cinza); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.linha.falta .nome { color: var(--cinza); }
+.linha.falta .desc { color: var(--cinza-2); }
+.linha .tipo { display: grid; gap: 2px; justify-items: start; }
+.linha .tipo span:first-child { display: inline-flex; align-items: center; gap: 7px; font: 600 11px var(--f-caixa); letter-spacing: .16em; text-transform: uppercase; }
+.linha .estado { font-size: 11.5px; color: var(--cinza-2); padding-left: 18px; }
+.linha:not(.falta) .estado { color: var(--ouro); }
+.linha .novo { position: absolute; right: 14px; top: 8px; font: 600 9.5px var(--f-caixa); letter-spacing: .2em; color: var(--sangue-vivo); }
+
+.detalhe { /* ômega do HUD bem apagado no canto (o véu da cor da pedra por cima deixa ~7% dele) */
+  position: relative; min-height: 0; overflow-y: auto; padding: 30px 32px;
+  background:
+    linear-gradient(rgba(20, 16, 13, .93), rgba(20, 16, 13, .93)),
+    var(--arte-omega, none) right -40px bottom -40px / 280px no-repeat,
+    var(--pedra);
+  background-attachment: local, local, local;
+}
+.det-topo { display: flex; gap: 20px; align-items: flex-start; }
+.det-ico { width: 132px; height: 132px; flex: none; border: 1px solid var(--ouro-escuro); background: #0c0806 center / cover; border-radius: 2px; box-shadow: 0 0 0 4px #0f0b09, 0 0 0 5px var(--filete), var(--sombra); }
+.det-tipo { display: flex; align-items: center; gap: 8px; margin-top: 6px; font: 600 12px var(--f-caixa); letter-spacing: .18em; text-transform: uppercase; }
+.det-estado { margin-top: 8px; font-size: 13.5px; color: var(--cinza); }
+.det-estado.ok { color: var(--ouro); }
+.det-oculto { margin-top: 4px; font: italic 12.5px var(--f-titulo); color: var(--cinza-2); }
+.det-nome { margin: 24px 0 18px; font-size: 27px; line-height: 1.2; }
+.det-sec { margin-top: 22px; }
+.det-sec p { margin: 8px 0 0; font: 15.5px/1.6 var(--f-titulo); color: var(--marfim); user-select: text; }
+.det-sec p.en { font-style: italic; font-size: 14px; color: var(--cinza); }
+.det-sep { height: 1px; background: linear-gradient(90deg, var(--filete-claro), transparent); margin-top: 6px; }
+
+/* ------------------------------------------------------------------ troféu desbloqueado (enquanto o jogo roda) */
+.estalo {
+  position: fixed; top: 56px; right: 26px; z-index: 95; width: 380px;
+  display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center;
+  padding: 14px 18px 14px 14px; overflow: hidden;
+  background: linear-gradient(#21170f, #120d0a); border: 1px solid var(--ouro-escuro); border-radius: var(--raio);
+  box-shadow: 0 20px 50px -14px #000, 0 0 30px -10px rgba(214, 168, 78, .45);
+}
+.estalo[hidden] { display: none; }
+.estalo .ico { width: 64px; height: 64px; }
+.estalo b { display: flex; align-items: center; gap: 8px; font: 600 11px var(--f-caixa); letter-spacing: .2em; text-transform: uppercase; color: var(--ouro); }
+.estalo .titulo { display: block; margin-top: 3px; font-size: 17px; }
+.estalo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 236, 180, .28) 50%, transparent 70%); transform: translateX(-100%); animation: varre 1.4s .35s ease-out; }
+@keyframes varre { to { transform: translateX(100%); } }
+
+.det-vazio { height: 100%; display: grid; place-content: center; justify-items: center; gap: 10px; text-align: center; }
+.det-vazio .laminas { width: 300px; height: 150px; background: var(--arte-laminas_gow1, none) center / contain no-repeat; filter: drop-shadow(0 12px 18px #000); margin-bottom: 14px; }
+.det-vazio .laminas.gow2 { background-image: var(--arte-laminas_gow2, none); }
+.det-vazio p { margin: 0; font: 15px var(--f-titulo); color: var(--cinza); }

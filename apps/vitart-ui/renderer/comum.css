@@ -1,0 +1,187 @@
+/* Base das duas telas. A arte (friso, meandro, ômega...) vem do jogo de quem usa, por variáveis --arte-* que o
+   comum.js preenche; sem elas tudo continua legível, só mais liso. */
+:root {
+  --obsidiana: #0b0807;
+  --pedra: #14100d;
+  --pedra-2: #1c1511;
+  --pedra-3: #261c16;
+  --filete: #3a2a1c;
+  --filete-claro: #5a4128;
+  --ouro: #d6a84e;
+  --ouro-claro: #f3d98e;
+  --ouro-escuro: #8c6a2e;
+  --sangue: #a3170f;
+  --sangue-vivo: #d8321f;
+  --marfim: #ece3d2;
+  --cinza: #a39684;
+  --cinza-2: #786c5e;
+  --platina: #b9c7da;
+  --prata: #c8ccd2;
+  --bronze-t: #c07a46;
+
+  --f-titulo: 'Constantia', 'Palatino Linotype', Georgia, serif;
+  --f-caixa: 'Palatino Linotype', 'Book Antiqua', Constantia, serif;
+  --f-texto: 'Segoe UI', system-ui, sans-serif;
+
+  --raio: 3px;
+  --sombra: 0 18px 40px -18px rgba(0, 0, 0, .9);
+  --entra: cubic-bezier(.2, .8, .2, 1);
+  --sai: cubic-bezier(.5, 0, .75, 0);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--obsidiana);
+  color: var(--marfim);
+  font: 15px/1.5 var(--f-texto);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+img { -webkit-user-drag: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--ouro); outline-offset: 2px; }
+::selection { background: var(--sangue); color: var(--marfim); }
+
+/* rolagem fina, cor de bronze */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--filete); border: 3px solid var(--obsidiana); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ouro-escuro); }
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* ------------------------------------------------------------------ barra de título */
+.barra {
+  position: relative;
+  z-index: 50;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  background: #080605;
+  -webkit-app-region: drag;
+}
+.barra::after { /* meandro grego do HUD do GoW2 como filete */
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -9px;
+  height: 9px;
+  background: var(--arte-meandro, linear-gradient(var(--filete), var(--filete))) repeat-x left center / auto 9px;
+  opacity: .7;
+  pointer-events: none;
+}
+.barra .marca { display: flex; align-items: center; gap: 10px; padding-left: 14px; }
+.barra .marca img { width: 20px; height: 20px; border-radius: 2px; }
+.barra .marca span { font: 600 12px var(--f-caixa); letter-spacing: .22em; text-transform: uppercase; color: var(--cinza); }
+.barra .marca b { color: var(--ouro); font-weight: 600; }
+.barra .ctl { margin-left: auto; display: flex; height: 100%; -webkit-app-region: no-drag; }
+.barra .ctl button {
+  width: 46px; height: 100%; border: 0; background: transparent; color: var(--cinza);
+  display: grid; place-items: center; cursor: pointer; transition: background .15s, color .15s;
+}
+.barra .ctl button:hover { background: var(--pedra-3); color: var(--marfim); }
+.barra .ctl button.fechar:hover { background: var(--sangue); color: #fff; }
+.barra .ctl svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 1.2; }
+
+/* ------------------------------------------------------------------ rótulos e textos */
+.caixa { font: 600 11px var(--f-caixa); letter-spacing: .2em; text-transform: uppercase; color: var(--ouro-escuro); }
+.titulo { font-family: var(--f-titulo); font-weight: 700; color: var(--marfim); letter-spacing: .01em; }
+.mudo { color: var(--cinza); }
+
+/* ------------------------------------------------------------------ botões */
+.btn {
+  --c: var(--marfim);
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 38px; padding: 0 18px;
+  border: 1px solid var(--filete-claro);
+  background: linear-gradient(#211913, #17110d);
+  color: var(--c);
+  font: 600 12px var(--f-caixa); letter-spacing: .14em; text-transform: uppercase;
+  border-radius: var(--raio);
+  cursor: pointer;
+  transition: border-color .18s, color .18s, transform .12s, box-shadow .18s;
+}
+.btn:hover { border-color: var(--ouro); color: var(--ouro-claro); box-shadow: 0 0 0 1px rgba(214, 168, 78, .15), 0 6px 18px -8px rgba(214, 168, 78, .35); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .45; cursor: default; box-shadow: none; border-color: var(--filete); color: var(--cinza); }
+.btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+.btn.forte { border-color: #7a1a10; background: linear-gradient(#a3170f, #6e0e08); color: #fff3e6; }
+.btn.forte:hover { border-color: var(--sangue-vivo); color: #fff; box-shadow: 0 8px 22px -8px rgba(216, 50, 31, .6); }
+.btn.fino { min-height: 32px; padding: 0 12px; font-size: 11px; }
+.btn.perigo:hover { border-color: var(--sangue-vivo); color: #ffb4a6; }
+
+/* ------------------------------------------------------------------ campos */
+.campo { display: grid; gap: 6px; }
+.campo > label { font: 600 11px var(--f-caixa); letter-spacing: .18em; text-transform: uppercase; color: var(--cinza); }
+.campo .ajuda { font-size: 12.5px; color: var(--cinza-2); }
+.entrada {
+  width: 100%; height: 40px; padding: 0 12px;
+  background: #0f0b09; border: 1px solid var(--filete); border-radius: var(--raio);
+  color: var(--marfim); outline: none; user-select: text;
+  transition: border-color .15s, box-shadow .15s;
+}
+.entrada:focus { border-color: var(--ouro-escuro); box-shadow: 0 0 0 3px rgba(214, 168, 78, .12); }
+.entrada::placeholder { color: var(--cinza-2); }
+select.entrada { appearance: none; padding-right: 32px; cursor: pointer;
+  background: #0f0b09 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a39684' fill='none' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 12px center; }
+.arquivo { display: flex; gap: 8px; }
+.arquivo .entrada { flex: 1; font-size: 13px; }
+
+/* interruptor de bronze */
+.chave-liga { position: relative; width: 46px; height: 24px; flex: none; cursor: pointer; }
+.chave-liga input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.chave-liga span {
+  position: absolute; inset: 0; border-radius: 12px; background: #0f0b09; border: 1px solid var(--filete-claro);
+  transition: background .25s var(--entra), border-color .25s;
+}
+.chave-liga span::after {
+  content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #c9b9a0, #6d5e4c); transition: transform .3s var(--entra), background .25s;
+}
+.chave-liga input:checked + span { background: linear-gradient(#7a1209, #4a0b07); border-color: var(--sangue-vivo); }
+.chave-liga input:checked + span::after { transform: translateX(22px); background: radial-gradient(circle at 35% 30%, #fff1c4, #c48f2e); }
+.chave-liga input:focus-visible + span { outline: 2px solid var(--ouro); outline-offset: 2px; }
+
+/* ------------------------------------------------------------------ painéis */
+.painel { background: var(--pedra); border: 1px solid var(--filete); border-radius: var(--raio); }
+.friso { height: 22px; background: var(--arte-friso, none) repeat-x left center / auto 22px; opacity: .85; }
+.vazio { padding: 48px 24px; text-align: center; color: var(--cinza); }
+.vazio .titulo { display: block; font-size: 20px; margin-bottom: 6px; color: var(--cinza); }
+
+/* registro (saída das ferramentas) */
+.registro {
+  font: 12.5px/1.55 Consolas, 'Cascadia Mono', monospace;
+  color: #cbbfab; background: #090706; border: 1px solid var(--filete); border-radius: var(--raio);
+  padding: 10px 12px; overflow: auto; white-space: pre-wrap; user-select: text;
+}
+.registro:empty::before { content: 'A saída das ferramentas aparece aqui.'; color: var(--cinza-2); font-style: italic; }
+.registro .erro { color: #ff8f7d; }
+.registro .ok { color: var(--ouro-claro); }
+
+/* ------------------------------------------------------------------ avisos (toasts) e diálogo */
+.avisos { position: fixed; right: 22px; bottom: 22px; z-index: 90; display: grid; gap: 10px; pointer-events: none; }
+.aviso {
+  min-width: 300px; max-width: 420px; padding: 12px 16px 12px 14px; pointer-events: auto;
+  background: linear-gradient(#1f1712, #140f0c); border: 1px solid var(--filete-claro); border-left: 3px solid var(--ouro);
+  border-radius: var(--raio); box-shadow: var(--sombra); font-size: 13.5px;
+}
+.aviso.erro { border-left-color: var(--sangue-vivo); }
+.aviso b { display: block; font: 600 11px var(--f-caixa); letter-spacing: .18em; text-transform: uppercase; color: var(--ouro); margin-bottom: 2px; }
+.aviso.erro b { color: #ff8f7d; }
+
+.veu { position: fixed; inset: 0; z-index: 80; background: rgba(5, 3, 2, .72); display: grid; place-items: center; }
+.dialogo { width: min(480px, 90vw); padding: 26px 28px 22px; background: var(--pedra); border: 1px solid var(--filete-claro); border-radius: var(--raio); box-shadow: var(--sombra); }
+.dialogo h3 { margin: 0 0 8px; font: 700 22px var(--f-titulo); }
+.dialogo p { margin: 0 0 20px; color: var(--cinza); }
+.dialogo .acoes { display: flex; justify-content: flex-end; gap: 10px; }
+
+/* carregando */
+.carregando { position: fixed; inset: 38px 0 0; z-index: 70; display: grid; place-items: center; background: var(--obsidiana); }
+.carregando .omega { width: 92px; height: 92px; background: var(--arte-icone, none) center / cover; border-radius: 4px; animation: pulso 1.6s ease-in-out infinite; }
+.carregando p { margin: 18px 0 0; text-align: center; font: 600 11px var(--f-caixa); letter-spacing: .24em; text-transform: uppercase; color: var(--cinza); }
+@keyframes pulso { 50% { opacity: .55; transform: scale(.97); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

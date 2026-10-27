@@ -143,4 +143,4 @@ renderizador se escolhe com `renderer=auto|vulkan|d3d11` no `vitart_options.ini`
 | Materiais PBR | `tools/pbr_generate.py` | o pack de texturas |
 | Áudio do PS2 | `tools/ps2_audio_extract.py` | ISO do GoW1 (ou GoW2) de PS2 |
 | Mods de PS2 | Mod Studio, aba "Converter mod do PS2" | patch XDelta do mod + ISO ([conversor](modding/conversor-ps2.md)) |
-| Troféus e Mod Studio em exe | `tools/build_exes.py` | — |
+| Troféus e Mod Studio em exe | `tools/build_vitart_ui.py` (Electron, [apps/vitart-ui](../apps/vitart-ui/README.md)) | o jogo instalado (a arte sai dele) |

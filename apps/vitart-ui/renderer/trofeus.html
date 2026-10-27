@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+<title>vitart Troféus</title>
+<link rel="stylesheet" href="comum.css">
+<link rel="stylesheet" href="trofeus.css">
+</head>
+<body>
+<div class="carregando" id="carregando"><div><div class="omega"></div><p id="carregando-txt">Lendo os troféus</p></div></div>
+
+<section class="heroi" id="heroi">
+  <div class="heroi-arte" id="heroi-arte"></div>
+  <div class="heroi-veu"></div>
+  <div class="heroi-corpo">
+    <nav class="jogos" id="jogos" aria-label="Jogo"></nav>
+    <p class="caixa sobre">God of War Collection &middot; Troféus</p>
+    <h1 class="titulo nome-jogo" id="nome-jogo">&nbsp;</h1>
+    <div class="progresso">
+      <div class="pct"><span id="pct">0</span><small>%</small></div>
+      <div class="pct-lado">
+        <div class="trilho"><div class="enche" id="enche"></div></div>
+        <div class="contas"><span id="conta-total" class="mudo"></span><span class="tipos" id="tipos"></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="heroi-friso friso"></div>
+</section>
+
+<div class="ferramentas">
+  <div class="filtros" role="tablist" id="filtros">
+    <button role="tab" data-f="todos" aria-selected="true">Todos</button>
+    <button role="tab" data-f="obtidos">Obtidos</button>
+    <button role="tab" data-f="faltando">Faltando</button>
+    <span class="sublinha" id="sublinha"></span>
+  </div>
+  <span class="na-lista mudo" id="na-lista"></span>
+  <label class="busca">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>
+    <input id="busca" class="entrada" placeholder="Procurar troféu, golpe, chefe..." aria-label="Procurar troféu">
+  </label>
+</div>
+
+<main class="corpo">
+  <div class="lista" id="lista" role="listbox" tabindex="0" aria-label="Troféus"></div>
+  <aside class="detalhe painel" id="detalhe" aria-live="polite"></aside>
+</main>
+
+<div class="estalo" id="estalo" hidden></div>
+
+<script src="comum.js"></script>
+<script src="trofeus.js"></script>
+</body>
+</html>

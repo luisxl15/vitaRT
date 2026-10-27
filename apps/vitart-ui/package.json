@@ -1,0 +1,15 @@
+{
+  "name": "vitart-ui",
+  "version": "2.0.0",
+  "description": "vitart Troféus e vitart Mod Studio (God of War Collection no PC)",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "trofeus": "electron . --app=trofeus",
+    "modstudio": "electron . --app=modstudio",
+    "empacotar": "node scripts/empacotar.js"
+  },
+  "devDependencies": {
+    "electron": "31.7.7"
+  }
+}
