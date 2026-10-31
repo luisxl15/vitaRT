@@ -320,6 +320,32 @@ void restart_process() {
     logf("vitart: não deu para reiniciar (CreateProcess %lu)", GetLastError());
 }
 
+// Algum ícone de botão na tela (QTE, círculo de agarrar, minigame) ou um sumiu há menos de 2,5 s: o agarrão
+// começa antes do ícone e a animação sincronizada termina depois dele. GoW1: índice do ícone no HUD
+// (0xffffffff sem ícone, 0xfffffffe nos menus, medido nos registros do QTE); GoW2: slots de ícone em
+// 0x812ec588 (zero = vazio).
+bool prompt_sincronizado() {
+    using clk = std::chrono::steady_clock;
+    static clk::time_point ate{};
+    bool agora = false;
+    if (game_id() == 1) {
+        const uint32_t hud = rd32(0x812a681c);
+        if (hud && rd32(hud) == kOptGow1.vtbl) {
+            const uint32_t idx = rd32(hud + 0x1570);
+            agora = idx < 0xfffffffeu;
+        }
+    } else if (game_id() == 2) {
+        for (uint32_t s = 0; s < 8 && !agora; s++) agora = rd32(0x812ec588 + 4 * s) != 0;
+    }
+    const auto t = clk::now();
+    if (agora) ate = t + std::chrono::milliseconds(2500);
+    static bool antes = false;
+    const bool r = t < ate;
+    if (r != antes && getenv("VITART_QTELOG")) logf("vitart: ritmo de 60 FPS %s (ícone de botão)", r ? "travado" : "solto");
+    antes = r;
+    return r;
+}
+
 } // namespace
 
 bool enemy_bars_enabled() { return g_opt.hp_bars; }
@@ -465,9 +491,12 @@ void game_options_tick() {
         display_set_fixed_step_addr(tp->menu);
         // estado do jogo (o mesmo do QTE automático): GoW1 0x812c2e04 = 0xb jogando; GoW2 0x812ec498 = 0xc jogando.
         // Qualquer outro (pausa, Power Up, carregamento, cenas) anima por quadro: 60 FPS no máximo.
-        display_set_in_menu(rd32(game_id() == 1 ? 0x812c2e04u : 0x812ec498u) != (game_id() == 1 ? 0xbu : 0xcu));
+        // QTE e agarrões também: as animações sincronizadas (o Kratos preso a uma junta do inimigo, "Use Sync
+        // Joint" nos golpes) contam com passos de pelo menos 1 quadro, e acima de 60 FPS o Kratos saía do lugar
+        const bool sincronizado = prompt_sincronizado();
+        display_set_in_menu(sincronizado || rd32(game_id() == 1 ? 0x812c2e04u : 0x812ec498u) != (game_id() == 1 ? 0xbu : 0xcu));
         display_set_fps_target(target);
-        const float floor = fifo ? 25.f : target == UINT32_MAX ? 2.f : target > 60 ? 25.f : 0.f; // centésimos de quadro de 60 Hz
+        const float floor = sincronizado ? 0.f : fifo ? 25.f : target == UINT32_MAX ? 2.f : target > 60 ? 25.f : 0.f; // centésimos de quadro de 60 Hz
         uint32_t fb;
         std::memcpy(&fb, &floor, 4);
         if (rd32(tp->floor) != fb) wr32(tp->floor, fb);
