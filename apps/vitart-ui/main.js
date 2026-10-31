@@ -17,7 +17,9 @@ function acharRepo() {
   if (process.env.VITART_REPO) return process.env.VITART_REPO;
   try {
     const j = JSON.parse(fs.readFileSync(path.join(__dirname, 'repo.json'), 'utf8'));
-    if (j.repo && fs.existsSync(path.join(j.repo, 'tools', 'vitart_ponte.py'))) return j.repo;
+    // no jogo instalado o caminho é relativo ao exe (Ferramentasitart-ui -> Ferramentas)
+    const r = j.relativo ? path.resolve(path.dirname(app.getPath('exe')), j.relativo) : j.repo;
+    if (r && fs.existsSync(path.join(r, 'tools', 'vitart_ponte.py'))) return r;
   } catch (_) { /* sem repo.json: modo de desenvolvimento */ }
   return path.resolve(__dirname, '..', '..');
 }

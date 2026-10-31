@@ -1,0 +1,101 @@
+/* Instalador com a cara dos menus do God of War: arte de fundo, texto na fonte do jogo, opção escolhida acesa em
+   fogo, caixas de pedra com o friso dourado do HUD, e as barras de vida e de magia como progresso. */
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #050302; user-select: none; }
+body { font: 14px/1.5 'Palatino Linotype', Georgia, serif; color: #cbbd9f; }
+
+.fundo { position: fixed; inset: 0; background: url("../arte/fundo2.png") 80% 30% / cover no-repeat; animation: aproxima 40s ease-in-out infinite alternate; }
+.fundo::after { content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(5, 3, 2, .94) 0%, rgba(5, 3, 2, .86) 38%, rgba(5, 3, 2, .35) 66%, rgba(5, 3, 2, .1) 100%); }
+@keyframes aproxima { from { transform: scale(1.02); } to { transform: scale(1.09) translate(-1%, -1%); } }
+
+.arrasta { position: fixed; left: 0; right: 90px; top: 0; height: 34px; -webkit-app-region: drag; z-index: 5; }
+.xis, .traco { position: fixed; top: 8px; z-index: 6; width: 26px; height: 26px; border: 0; background: none; cursor: pointer; opacity: .55; transition: opacity .15s; }
+.xis { right: 10px; } .traco { right: 42px; }
+.xis:hover, .traco:hover { opacity: 1; }
+.xis::before, .xis::after, .traco::before { content: ''; position: absolute; left: 5px; right: 5px; top: 12px; height: 2px; background: #e8dcc4; }
+.xis::before { transform: rotate(45deg); } .xis::after { transform: rotate(-45deg); }
+
+.tela { position: relative; z-index: 2; height: 100%; width: 640px; padding: 38px 0 0 64px; display: flex; flex-direction: column; }
+.logo { width: 400px; margin-left: -10px; filter: drop-shadow(0 4px 14px #000); }
+
+.pag { display: none; flex: 1; flex-direction: column; padding-top: 18px; min-height: 0; }
+.pag.ativa { display: flex; }
+.gw { display: block; }
+
+/* ------------------------------------------------------------------ menu: texto puro, o escolhido pega fogo */
+.menu { display: flex; flex-direction: column; gap: 4px; margin-top: 26px; }
+.menu.baixo { margin-top: auto; margin-bottom: 64px; flex-direction: row; gap: 34px; }
+.menu.linha-menu { flex-direction: row; gap: 40px; justify-content: center; margin-top: 18px; }
+.item { position: relative; cursor: pointer; padding: 4px 0; width: max-content; }
+.item .gw { filter: sepia(.45) brightness(.72); transition: filter .12s; }
+.item::before { /* o fogo atrás da opção escolhida, como no menu principal do jogo */
+  content: ''; position: absolute; left: -26px; right: -34px; top: -6px; bottom: -6px; pointer-events: none; opacity: 0;
+  background:
+    radial-gradient(60% 55% at 38% 58%, rgba(255, 160, 50, .8), transparent 70%),
+    radial-gradient(80% 75% at 45% 60%, rgba(210, 45, 10, .75), transparent 72%);
+  filter: blur(6px); transition: opacity .15s;
+}
+.item.sel::before { opacity: 1; animation: chama 1.6s ease-in-out infinite; }
+.item.sel .gw { filter: brightness(1.08) drop-shadow(0 0 3px rgba(255, 200, 120, .9)) drop-shadow(0 0 10px rgba(255, 90, 20, .8)); }
+.item.off { cursor: default; }
+.item.off .gw { filter: grayscale(1) brightness(.32); }
+.item.off.sel::before { opacity: .25; animation: none; }
+@keyframes chama { 0%, 100% { opacity: .9; transform: scaleX(1); } 35% { opacity: 1; transform: scaleX(1.04); } 60% { opacity: .78; transform: scaleX(.98); } }
+
+.tit .gw { filter: drop-shadow(0 2px 0 #000) drop-shadow(0 0 12px rgba(150, 20, 5, .65)); }
+.tit { margin: 0 0 16px; }
+.leve { margin: 22px 0 0; }
+.leve .gw { filter: sepia(.5) brightness(.6); }
+.corpo { margin: 6px 0 0; max-width: 520px; font-size: 15px; color: #d6c8ab; user-select: text; }
+
+/* ------------------------------------------------------------------ caixa de pedra com o friso do HUD */
+.tabua { position: relative; padding: 26px 26px 18px; background:
+    linear-gradient(rgba(12, 8, 6, .82), rgba(12, 8, 6, .9)), url("../arte/rocha.jpg") center / 360px;
+  box-shadow: inset 0 0 0 1px #000, inset 0 0 0 2px #4b3620, inset 0 0 40px rgba(0, 0, 0, .8), 0 14px 34px rgba(0, 0, 0, .7); }
+.tabua::before, .tabua::after { content: ''; position: absolute; left: 2px; right: 2px; height: 13px; background: url("../arte/friso.png") left center / auto 13px repeat-x; }
+.tabua::before { top: 2px; } .tabua::after { bottom: 2px; }
+.linha { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 20px; width: 100%; padding: 9px 4px; }
+.linha .arq { grid-column: 1 / -1; }
+.linha .val .gw { filter: sepia(.2) brightness(.9); }
+.linha.sel .val .gw { filter: brightness(1.1) drop-shadow(0 0 6px rgba(255, 110, 30, .8)); }
+.val.ok .gw { filter: sepia(1) saturate(2.4) brightness(1.05) !important; }                    /* dourado */
+.val.ruim .gw { filter: sepia(1) saturate(5) hue-rotate(-30deg) brightness(.85) !important; }  /* vermelho */
+.op .val { display: flex; align-items: center; gap: 10px; }
+.seta { width: 0; height: 0; border: 6px solid transparent; opacity: .35; }
+.seta.e { border-right-color: #e8dcc4; border-left-width: 0; }
+.seta.d { border-left-color: #e8dcc4; border-right-width: 0; }
+.op.sel .seta { opacity: 1; }
+.arq { display: block; margin-top: 2px; font: 12px Consolas, monospace; color: #8d806a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; user-select: text; }
+.arq.largo { max-width: 540px; margin-top: 12px; }
+.aviso { margin: 10px 4px 0; min-height: 1.4em; font-size: 13.5px; color: #e07a5f; }
+.aviso.bom { color: #d9b45a; }
+
+/* ------------------------------------------------------------------ barras do HUD: magia (conferência) e vida (instalação) */
+.magia, .vida { position: relative; height: 12px; margin-top: 8px; grid-column: 1 / -1; background: #070504;
+  border: 2px solid; border-image: linear-gradient(#e4bb67, #7a5526 50%, #3a2610) 1; box-shadow: 0 0 0 1px #000; }
+.magia[hidden] { display: none; }
+.magia div, .vida div { position: absolute; inset: 0; transform-origin: left; transform: scaleX(0); transition: transform .2s linear; }
+.magia div { background: linear-gradient(#a8e4ff, #3b8be0 45%, #1a4a9a 80%, #10306a); }
+.vida { height: 22px; max-width: 540px; margin-top: 18px; }
+.vida div { background: linear-gradient(#c9ff8a, #5fcf3a 30%, #2b8d1c 65%, #165210); }
+.vida div::after { content: ''; position: absolute; left: 0; right: 0; top: 2px; height: 4px; background: rgba(255, 255, 255, .28); }
+.num { margin-top: 6px; }
+.num .gw { filter: drop-shadow(0 2px 0 #000); }
+.dados-linha { margin-top: 12px; }
+.dados-linha .gw { filter: sepia(.4) brightness(.78); }
+
+/* ------------------------------------------------------------------ dicas de botão, no rodapé como no jogo */
+.dicas { position: fixed; left: 64px; bottom: 22px; z-index: 3; display: flex; gap: 26px; align-items: center; }
+.dica { display: flex; align-items: center; gap: 8px; }
+.tecla { min-width: 26px; height: 22px; padding: 0 6px; display: grid; place-items: center; border: 1px solid #6d5434; border-radius: 3px; background: #120c08;
+  font: 11px Consolas, monospace; color: #e8dcc4; box-shadow: inset 0 -2px 0 #000; }
+.dica .gw { filter: sepia(.45) brightness(.66); }
+
+/* ------------------------------------------------------------------ pergunta */
+.pergunta { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: rgba(0, 0, 0, .6); }
+.pergunta[hidden] { display: none; }
+.pergunta .tabua { width: 520px; text-align: center; padding: 34px 30px 26px; }
+.perg-txt { margin: 0; display: flex; justify-content: center; }
+
+@media (prefers-reduced-motion: reduce) { .fundo, .item.sel::before { animation: none; } }

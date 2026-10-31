@@ -74,6 +74,7 @@ std::string vita_host_path(const std::string &p);
 // sceAppMgrLoadExec: relança o vitart com outra DLL no lugar do módulo principal (o Vita troca o
 // processo inteiro do mesmo jeito). Não volta.
 [[noreturn]] void exec_main_module(const std::string &dll);
+const std::string &main_dll_path(); // DLL do módulo principal, como veio na linha de comando
 void audio_silence(); // para a saída de som do processo (troca de módulo)
 Thread *create_thread(const char *name, uint32_t entry, int priority, uint32_t stack_size);
 Thread *find_thread(int id);

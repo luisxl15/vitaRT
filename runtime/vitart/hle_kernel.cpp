@@ -526,7 +526,10 @@ VT_HLE(sceAppMgrLoadExec) {
     const size_t s = path.find_last_of(":/\\");
     std::string base = s == std::string::npos ? path : path.substr(s + 1);
     base = base.substr(0, base.find('.'));
-    const std::string dll = base + ".dll";
+    // ao lado da DLL principal (bin\ no jogo instalado; a pasta atual nos testes)
+    const std::string &main = main_dll_path();
+    const size_t cut = main.find_last_of("/\\");
+    const std::string dll = (cut == std::string::npos ? std::string() : main.substr(0, cut + 1)) + base + ".dll";
     if (FILE *f = fopen(dll.c_str(), "rb")) {
         fclose(f);
         exec_main_module(dll);

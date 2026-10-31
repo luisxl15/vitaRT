@@ -772,6 +772,7 @@ static void usage() {
 
 static std::vector<std::string> g_argv;  // linha de comando original
 static std::string g_main_dll;            // DLL do módulo principal (a primeira da lista)
+const std::string &vt::main_dll_path() { return g_main_dll; }
 
 [[noreturn]] void vt::exec_main_module(const std::string &dll) {
     std::string cmd;
@@ -808,7 +809,31 @@ static std::string g_main_dll;            // DLL do módulo principal (a primeir
     ExitProcess(0);
 }
 
+// Aberto sem argumentos (clique duplo no exe do jogo instalado): tudo relativo à pasta do exe.
+//   bin\  as DLLs do jogo e o link.hlevars.txt    game\PCSA00126  o app do Vita
+//   data\ o vitart-data                           shaders\        o cache de shaders    logs\ o registro
+static std::vector<std::string> installed_args(const char *argv0) {
+    wchar_t exe[MAX_PATH];
+    GetModuleFileNameW(nullptr, exe, MAX_PATH);
+    const std::filesystem::path dir = std::filesystem::path(exe).parent_path();
+    std::error_code ec;
+    if (!std::filesystem::exists(dir / L"bin" / L"eboot.dll", ec) || !std::filesystem::exists(dir / L"game", ec)) return {};
+    SetCurrentDirectoryW(dir.c_str());
+    std::filesystem::create_directories(dir / L"logs", ec);
+    if (!getenv("VITART_VULKAN")) _putenv_s("VITART_VULKAN", "1"); // _putenv: o getenv do CRT enxerga
+    if (!getenv("VITART_SPV_DIR")) _putenv_s("VITART_SPV_DIR", "shaders");
+    return {argv0, "--app", "game/PCSA00126", "--data", "data", "--hle-vars", "bin/link.hlevars.txt",
+            "--log", "logs/vitart.log", "bin/eboot.dll", "bin/libc.dll", "bin/libfios2.dll"};
+}
+
 int main(int argc, char **argv) {
+    std::vector<std::string> inst;
+    std::vector<char *> inst_argv;
+    if (argc == 1 && !(inst = installed_args(argv[0])).empty()) {
+        for (auto &s : inst) inst_argv.push_back(s.data());
+        argc = (int)inst_argv.size();
+        argv = inst_argv.data();
+    }
     g_argv.assign(argv, argv + argc);
     std::vector<std::string> dlls;
     std::string hle_vars;
@@ -845,6 +870,11 @@ int main(int argc, char **argv) {
     if (!hle_vars.empty())
         load_hle_vars(hle_vars);
     link_imports();
+    if (getenv("VITART_CONFERIR")) { // só confere a montagem (DLLs, variáveis, caminhos) e sai, sem janela
+        logf("vitart: conferido: %zu módulos, app %s, dados %s", g_modules.size(), g_app.c_str(), g_data.c_str());
+        if (g_logfile) fflush(g_logfile);
+        return std::filesystem::exists(g_app + "/exec") && std::filesystem::exists(g_data) ? 0 : 3;
+    }
     if (const char *w = getenv("VITART_WATCH")) {
         g_watch_addr = (uint32_t)std::strtoul(w, nullptr, 0);
         const char *c = std::strchr(w, ',');

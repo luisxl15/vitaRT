@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' file: data:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+<title>Instalar God of War Collection</title>
+<link rel="stylesheet" href="instalador.css">
+</head>
+<body>
+<div class="fundo" aria-hidden="true"></div>
+<div class="arrasta" aria-hidden="true"></div>
+<button class="xis" data-j="fechar" aria-label="Fechar"></button>
+<button class="traco" data-j="min" aria-label="Minimizar"></button>
+
+<main class="tela">
+  <img class="logo" src="../arte/logo.png" alt="God of War Collection">
+
+  <!-- menu inicial -->
+  <section class="pag" data-p="0">
+    <nav class="menu">
+      <div class="item" data-acao="comecar" data-t="Instalar"></div>
+      <div class="item" data-acao="fechar" data-t="Sair"></div>
+    </nav>
+    <p class="leve" data-t="É preciso o PKG americano e o work.bin da sua licença" data-tam="13"></p>
+  </section>
+
+  <!-- licença -->
+  <section class="pag" data-p="1">
+    <h1 class="tit" data-t="Licença do jogo" data-tam="30"></h1>
+    <div class="tabua">
+      <div class="item linha" data-acao="pkg">
+        <span class="rot" data-t="PKG do jogo" data-tam="18"></span><span class="val" id="v-pkg" data-tam="16"></span>
+        <small class="arq" id="a-pkg">gowHD_PSV.pkg, versão americana</small>
+        <div class="magia" id="b-pkg" hidden><div></div></div>
+      </div>
+      <div class="item linha" data-acao="rif">
+        <span class="rot" data-t="Work.bin" data-tam="18"></span><span class="val" id="v-rif" data-tam="16"></span>
+        <small class="arq" id="a-rif">a licença de 512 bytes</small>
+      </div>
+      <p class="aviso" id="aviso-lic"></p>
+    </div>
+    <nav class="menu baixo">
+      <div class="item" data-acao="lic-ok" id="i-continuar" data-t="Continuar"></div>
+      <div class="item" data-acao="voltar" data-t="Voltar"></div>
+    </nav>
+  </section>
+
+  <!-- destino -->
+  <section class="pag" data-p="2">
+    <h1 class="tit" data-t="Onde instalar" data-tam="30"></h1>
+    <div class="tabua">
+      <div class="item linha" data-acao="pasta">
+        <span class="rot" data-t="Pasta" data-tam="18"></span><span class="val" data-t="Mudar" data-tam="16"></span>
+        <small class="arq" id="a-pasta"></small>
+      </div>
+      <div class="item linha op" data-op="desktop"><span class="rot" data-t="Atalho na Área de Trabalho" data-tam="18"></span><span class="val"></span></div>
+      <div class="item linha op" data-op="menu"><span class="rot" data-t="Atalho no Menu Iniciar" data-tam="18"></span><span class="val"></span></div>
+      <div class="item linha op" data-op="registro"><span class="rot" data-t="Programas e Recursos" data-tam="18"></span><span class="val"></span></div>
+      <p class="aviso" id="aviso-esp"></p>
+    </div>
+    <nav class="menu baixo">
+      <div class="item" data-acao="instalar" id="i-instalar" data-t="Instalar"></div>
+      <div class="item" data-acao="voltar" data-t="Voltar"></div>
+    </nav>
+  </section>
+
+  <!-- instalando -->
+  <section class="pag" data-p="3">
+    <h1 class="tit" data-t="Instalando" data-tam="30"></h1>
+    <div class="num" id="i-num" data-tam="60"></div>
+    <div class="vida"><div id="i-vida"></div></div>
+    <div class="dados-linha" id="i-stats" data-tam="14"></div>
+    <small class="arq largo" id="i-arq">&nbsp;</small>
+    <nav class="menu baixo">
+      <div class="item" data-acao="cancelar" data-t="Cancelar"></div>
+    </nav>
+  </section>
+
+  <!-- pronto -->
+  <section class="pag" data-p="4">
+    <h1 class="tit" data-t="Instalação concluída" data-tam="30"></h1>
+    <p class="corpo" id="pronto-txt"></p>
+    <nav class="menu">
+      <div class="item" data-acao="jogar" data-t="Jogar"></div>
+      <div class="item" data-acao="pasta-abrir" data-t="Abrir a pasta"></div>
+      <div class="item" data-acao="fechar" data-t="Sair"></div>
+    </nav>
+  </section>
+
+  <!-- erro -->
+  <section class="pag" data-p="erro">
+    <h1 class="tit" data-t="Não dá para continuar" data-tam="30"></h1>
+    <p class="corpo" id="erro-txt"></p>
+    <nav class="menu"><div class="item" data-acao="fechar" data-t="Sair"></div></nav>
+  </section>
+</main>
+
+<footer class="dicas" id="dicas" aria-hidden="true"></footer>
+
+<!-- pergunta (cancelar) -->
+<div class="pergunta" id="pergunta" hidden>
+  <div class="tabua">
+    <p class="perg-txt" id="perg-txt" data-tam="18"></p>
+    <nav class="menu linha-menu">
+      <div class="item" data-resp="1" data-t="Sim"></div>
+      <div class="item" data-resp="0" data-t="Não"></div>
+    </nav>
+  </div>
+</div>
+
+<script src="../arte/fonte_meta.js"></script>
+<script src="fonte.js"></script>
+<script src="instalador.js"></script>
+</body>
+</html>

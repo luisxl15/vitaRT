@@ -1,0 +1,7 @@
+{
+  "name": "vitart-instalador",
+  "version": "1.0.0",
+  "description": "Instalador do God of War Collection (vitart)",
+  "main": "main.js",
+  "private": true
+}

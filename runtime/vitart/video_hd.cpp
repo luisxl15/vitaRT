@@ -71,6 +71,8 @@ std::string ffmpeg_path() {
     const auto here = std::filesystem::path(exe).parent_path() / "ffmpeg.exe";
     std::error_code ec;
     if (std::filesystem::exists(here, ec)) return here.string();
+    const auto bin = std::filesystem::path(exe).parent_path() / "bin" / "ffmpeg.exe"; // jogo instalado
+    if (std::filesystem::exists(bin, ec)) return bin.string();
     return "ffmpeg.exe";
 }
 

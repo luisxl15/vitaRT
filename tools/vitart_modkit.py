@@ -55,6 +55,16 @@ CONFIG = os.path.join(TOOLS, 'modkit_config.json')
 # ------------------------------------------------------------------ configuração
 def default_config():
     proj = os.path.dirname(REPO)
+    inst = os.path.dirname(REPO)  # jogo instalado: <jogo>/Ferramentas/tools, com <jogo>/game e <jogo>/data
+    if os.path.isdir(os.path.join(inst, 'game', 'PCSA00126')) and os.path.isdir(os.path.join(inst, 'data')):
+        return {
+            'app': os.path.join(inst, 'game', 'PCSA00126'),
+            'data': os.path.join(inst, 'data'),
+            'work': os.path.join(inst, 'data', 'modkit_work'),
+            'xdelta3': os.path.join(TOOLS, 'bin', 'xdelta3.exe'),
+            'sevenzip': r'C:\Program Files\7-Zip\7z.exe',
+            'python': shutil.which('python') or 'python',
+        }
     return {
         'app': os.path.join(proj, '_deps', 'vita3k-win', 'bin', 'portable', 'fs', 'ux0', 'app', 'PCSA00126'),
         'data': os.path.join(proj, 'gow-dump', 'vitart-data'),

@@ -91,6 +91,7 @@ bool create(const wchar_t *title) {
     wc.hInstance = GetModuleHandleW(nullptr);
     wc.lpszClassName = L"vitart";
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wc.hIcon = LoadIconW(wc.hInstance, MAKEINTRESOURCEW(1)); // o do exe, se tiver
     RegisterClassW(&wc);
     RECT r{0, 0, 1440, 816}; // 2x o framebuffer de 720x408
     AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, FALSE);
