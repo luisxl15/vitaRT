@@ -229,7 +229,7 @@ async function vigiar() {
   });
   await carregarArte();
   try {
-    st.jogos = await vt.rpc('trofeus');
+    st.jogos = await vt.rpc('trofeus', { idioma: IDIOMA });
   } catch (e) {
     $('#carregando').remove();
     $('#lista').replaceChildren(el('div', { class: 'vazio' }, el('span', { class: 'titulo' }, 'Não deu para ler os troféus'), e.message));

@@ -65,8 +65,11 @@ def m_trofeus(a):
     guide = json.load(open(guide_p, encoding='utf-8')) if os.path.exists(guide_p) else {}
     out = []
     for comm, game, title in GAMES:
+        # nomes e descrições oficiais traduzidos que vêm no TRP; o guia (descrição e dica) só existe em português
+        idioma = a.get('idioma', 'pt')
+        sfm = {'fr': 'TROP_02.SFM', 'es': 'TROP_03.SFM', 'de': 'TROP_04.SFM', 'it': 'TROP_05.SFM'}.get(idioma, 'TROP.SFM')
         try:
-            tr = TR.load_set(cfg, comm, guide)
+            tr = TR.load_set(cfg, comm, guide if idioma == 'pt' else {}, sfm)
         except Exception as e:  # noqa: BLE001 - um jogo sem TRP não derruba o outro
             out.append({'comm': comm, 'game': game, 'title': title, 'erro': str(e), 'lista': []})
             continue

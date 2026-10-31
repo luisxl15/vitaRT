@@ -49,9 +49,10 @@ def read_trp(path):
     return out
 
 
-def load_set(cfg, comm, guide):
+def load_set(cfg, comm, guide, sfm='TROP.SFM'):
+    """sfm: TROP.SFM (inglês) ou a tradução que vem no TRP (TROP_02 francês, 03 espanhol, 04 alemão, 05 italiano)."""
     files = read_trp(os.path.join(cfg['app'], 'sce_sys', 'trophy', comm, 'TROPHY.TRP'))
-    xml = files['TROP.SFM'].decode('utf-8', 'replace')
+    xml = files.get(sfm, files['TROP.SFM']).decode('utf-8', 'replace')
     trophies = []
     for m in re.finditer(r'<trophy id="(\d+)" hidden="(\w+)" ttype="(\w)".*?<name>(.*?)</name>\s*<detail>(.*?)</detail>',
                          xml, re.S):

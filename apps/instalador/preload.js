@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('inst', {
   espaco: dir => ipcRenderer.invoke('espaco', dir),
   instalar: (dir, op) => ipcRenderer.invoke('instalar', dir, op),
   cancelar: () => ipcRenderer.invoke('cancelar'),
+  frasesSair: f => ipcRenderer.invoke('frases-sair', f),
   jogar: () => ipcRenderer.invoke('jogar'),
   abrirPasta: () => ipcRenderer.invoke('abrir-pasta'),
   aoPkg: fn => ipcRenderer.on('pkg-andar', (_e, v) => fn(v)),

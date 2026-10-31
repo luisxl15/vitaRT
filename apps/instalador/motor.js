@@ -7,13 +7,18 @@ const crypto = require('crypto');
 const zlib = require('zlib');
 
 const CONTENT_ID = 'UP9000-PCSA00126_00-GOWCUS030100SHIP';
+
+// erros com código: a tela traduz pelo código (renderer/textos.js); a mensagem em português fica para o log
+class ErroInst extends Error {
+  constructor(codigo, dados = {}, msg = codigo) { super(msg); this.codigo = codigo; this.dados = dados; }
+}
 const PKG_TAMANHO = 3336914560;
 
 // ------------------------------------------------------------------ chaves
 function lerLicenca(rif) {
-  if (rif.length !== 512) throw new Error('O work.bin precisa ter 512 bytes (este tem ' + rif.length + ').');
+  if (rif.length !== 512) throw new ErroInst('rif_tamanho', { n: rif.length }, 'work.bin com ' + rif.length + ' bytes');
   const cid = rif.subarray(0x10, 0x40).toString('latin1').replace(/\0.*$/s, '');
-  if (cid !== CONTENT_ID) throw new Error(cid ? `Este work.bin é de outro jogo (${cid}).` : 'Isto não parece um work.bin.');
+  if (cid !== CONTENT_ID) throw new ErroInst(cid ? 'rif_outro' : 'rif_nao', { cid }, 'work.bin de outro jogo: ' + cid);
   return rif.subarray(0x50, 0x60); // chave do conteúdo (licença NoNpDrm)
 }
 const verificaLicenca = klic =>
@@ -31,10 +36,10 @@ function conferirCabecalhoPkg(p) {
   const cab = Buffer.alloc(0x60);
   fs.readSync(fd, cab, 0, cab.length, 0);
   fs.closeSync(fd);
-  if (cab.readUInt32BE(0) !== 0x7f504b47) throw new Error('Isto não é um PKG de PlayStation.');
+  if (cab.readUInt32BE(0) !== 0x7f504b47) throw new ErroInst('pkg_nao', {}, 'não é PKG');
   const cid = cab.subarray(0x30, 0x30 + 36).toString('latin1');
-  if (cid !== CONTENT_ID) throw new Error(`Este PKG é de outro jogo ou região (${cid}). É preciso o PKG americano (PCSA00126).`);
-  if (st.size !== PKG_TAMANHO) throw new Error(`O PKG tem ${st.size.toLocaleString('pt-BR')} bytes; o certo tem ${PKG_TAMANHO.toLocaleString('pt-BR')}. O arquivo está incompleto ou é outra versão.`);
+  if (cid !== CONTENT_ID) throw new ErroInst('pkg_outro', { cid }, 'PKG de outro jogo: ' + cid);
+  if (st.size !== PKG_TAMANHO) throw new ErroInst('pkg_tamanho', { tem: st.size, certo: PKG_TAMANHO }, 'PKG com ' + st.size + ' bytes');
   return st.size;
 }
 function hashPkg(p, aoAndar, cancelado = () => false) {
@@ -44,7 +49,7 @@ function hashPkg(p, aoAndar, cancelado = () => false) {
     let feito = 0;
     const s = fs.createReadStream(p, { highWaterMark: 8 << 20 });
     s.on('data', c => {
-      if (cancelado()) { s.destroy(); erro(new Error('cancelado')); return; }
+      if (cancelado()) { s.destroy(); erro(new ErroInst('cancelado')); return; }
       h.update(c); feito += c.length; aoAndar?.(feito, total);
     });
     s.on('end', () => ok(h.digest('hex')));
@@ -55,7 +60,7 @@ function hashPkg(p, aoAndar, cancelado = () => false) {
 // ------------------------------------------------------------------ pacote
 function lerCabecalho(dados) {
   const b = fs.readFileSync(path.join(dados, 'manifesto.bin'));
-  if (b.subarray(0, 6).toString() !== 'VTPK1\n') throw new Error('Os dados do instalador estão faltando ou corrompidos (manifesto.bin).');
+  if (b.subarray(0, 6).toString() !== 'VTPK1\n') throw new ErroInst('manifesto', {}, 'manifesto.bin ruim');
   const n = b.readUInt32LE(6);
   return { cab: JSON.parse(b.subarray(10, 10 + n).toString()), cifrado: b.subarray(10 + n) };
 }
@@ -70,7 +75,7 @@ class Leitor {
   fd(i) {
     if (!this.fds.has(i)) {
       const p = path.join(this.dados, `gow-${String(i + 1).padStart(2, '0')}.bin`);
-      if (!fs.existsSync(p)) throw new Error(`Falta o arquivo de dados ${path.basename(p)}.`);
+      if (!fs.existsSync(p)) throw new ErroInst('falta_bloco', { f: path.basename(p) }, 'falta ' + path.basename(p));
       this.fds.set(i, fs.openSync(p, 'r'));
     }
     return this.fds.get(i);
@@ -82,7 +87,7 @@ class Leitor {
       const i = Math.floor((o + feito) / this.man.bloco), off = (o + feito) % this.man.bloco;
       const k = Math.min(n - feito, this.man.bloco - off);
       const r = fs.readSync(this.fd(i), buf, feito, k, off);
-      if (r <= 0) throw new Error('Arquivo de dados menor do que devia (cópia incompleta?).');
+      if (r <= 0) throw new ErroInst('bloco_curto', {}, 'bloco de dados curto');
       feito += r;
     }
     return buf;
@@ -93,11 +98,12 @@ class Leitor {
 // Extrai tudo em destino (ou só confere, com destino nulo). aoAndar(bytes, total, arquivo); cancelado() interrompe.
 async function instalar(dados, man, K, destino, aoAndar, cancelado = () => false) {
   const L = new Leitor(dados, man);
-  let feito = 0;
+  let feito = 0, n = 0;
   const PEDACO = 4 << 20;
   try {
     for (const a of man.arquivos) {
-      if (cancelado()) throw new Error('cancelado');
+      n++;
+      if (cancelado()) throw new ErroInst('cancelado');
       const dec = crypto.createDecipheriv('aes-256-ctr', K, ivDe(K, a.p));
       const h = crypto.createHash('sha256');
       let fd = null;
@@ -112,19 +118,19 @@ async function instalar(dados, man, K, destino, aoAndar, cancelado = () => false
       for (let o = 0; o < a.z; o += PEDACO) {
         const claro = dec.update(L.ler(a.o + o, Math.min(PEDACO, a.z - o)));
         if (inf) { if (!inf.write(claro)) await new Promise(r => inf.once('drain', r)); } else gravar(claro);
-        if (!a.c) { feito += claro.length; aoAndar?.(feito, man.original, a.p); }
+        if (!a.c) { feito += claro.length; aoAndar?.(feito, man.original, a.p, n); }
         if (o % (64 << 20) === 0) await new Promise(r => setImmediate(r)); // deixa a tela respirar
       }
-      if (inf) { inf.end(); await fim; feito += a.t; aoAndar?.(feito, man.original, a.p); }
+      if (inf) { inf.end(); await fim; feito += a.t; aoAndar?.(feito, man.original, a.p, n); }
       if (fd !== null) {
         fs.closeSync(fd);
         const alvo = path.join(destino, ...a.p.split('/'));
         fs.utimesSync(alvo, new Date(a.m), new Date(a.m));
       }
-      if (h.digest('hex') !== a.h) throw new Error(`Arquivo corrompido nos dados: ${a.p}`);
+      if (h.digest('hex') !== a.h) throw new ErroInst('corrompido', { p: a.p }, 'corrompido: ' + a.p);
     }
     if (destino) for (const v of man.vazias || []) fs.mkdirSync(path.join(destino, ...v.split('/')), { recursive: true });
   } finally { L.fechar(); }
 }
 
-module.exports = { CONTENT_ID, PKG_TAMANHO, lerLicenca, verificaLicenca, derivar, verificaChave, ivDe, conferirCabecalhoPkg, hashPkg, lerCabecalho, lerManifesto, instalar };
+module.exports = { ErroInst, CONTENT_ID, PKG_TAMANHO, lerLicenca, verificaLicenca, derivar, verificaChave, ivDe, conferirCabecalhoPkg, hashPkg, lerCabecalho, lerManifesto, instalar };

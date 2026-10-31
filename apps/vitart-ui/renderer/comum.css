@@ -155,7 +155,13 @@ select.entrada { appearance: none; padding-right: 32px; cursor: pointer;
   color: #cbbfab; background: #090706; border: 1px solid var(--filete); border-radius: var(--raio);
   padding: 10px 12px; overflow: auto; white-space: pre-wrap; user-select: text;
 }
-.registro:empty::before { content: 'A saída das ferramentas aparece aqui.'; color: var(--cinza-2); font-style: italic; }
+.registro:empty::before { content: attr(data-vazio); color: var(--cinza-2); font-style: italic; }
+/* seletor de idioma na barra de título */
+.barra .idioma { -webkit-app-region: no-drag; margin-left: auto; margin-right: 6px; height: 24px; padding: 0 22px 0 8px; border: 1px solid var(--filete); border-radius: 2px;
+  background: #0f0b09 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%23a39684' fill='none' stroke-width='1.2'/%3E%3C/svg%3E") no-repeat right 7px center;
+  appearance: none; color: var(--cinza); font: 600 10.5px var(--f-caixa); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+.barra .idioma:hover { border-color: var(--ouro-escuro); color: var(--marfim); }
+.barra .idioma + .ctl { margin-left: 0; }
 .registro .erro { color: #ff8f7d; }
 .registro .ok { color: var(--ouro-claro); }
 

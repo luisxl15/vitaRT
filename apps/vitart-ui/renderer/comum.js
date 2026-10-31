@@ -42,6 +42,7 @@ function icone(nome, cls = '') {
 function montarBarra(nome) {
   const barra = el('header', { class: 'barra' },
     el('div', { class: 'marca' }, el('img', { id: 'marca-icone', alt: '' }), el('span', { html: `vitart <b>${nome}</b>` })),
+    seletorIdioma(),
     el('div', { class: 'ctl' },
       el('button', { 'aria-label': 'Minimizar', html: icone('min'), onclick: () => vt.janela('min') }),
       el('button', { 'aria-label': 'Maximizar', id: 'btn-max', html: icone('max'), onclick: () => vt.janela('max') }),

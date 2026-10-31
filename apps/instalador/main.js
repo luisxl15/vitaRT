@@ -19,13 +19,15 @@ const DADOS = process.env.VITART_INST_DADOS || path.resolve(path.dirname(app.get
 let janela = null;
 const est = { cab: null, cifrado: null, klic: null, K: null, man: null, cancelar: false, instalando: false, destino: null };
 const enviar = (canal, v) => janela && !janela.isDestroyed() && janela.webContents.send(canal, v);
+// erro para a tela: o código (traduzido lá) e os dados que entram na frase
+const falha = e => ({ ok: false, codigo: e.codigo || 'generico', dados: e.dados || {}, erro: e.message });
 
 ipcMain.handle('info', () => {
   try {
     const { cab, cifrado } = M.lerCabecalho(DADOS);
     est.cab = cab; est.cifrado = cifrado;
     return { ok: true, cab, teste: TESTE, padrao: path.join(process.env.SystemDrive || 'C:', path.sep, 'Jogos', NOME) };
-  } catch (e) { return { ok: false, erro: e.message, dados: DADOS }; }
+  } catch (e) { return { ...falha(e), pasta: DADOS }; }
 });
 
 ipcMain.handle('escolher', async (_e, tipo) => {
@@ -42,10 +44,10 @@ ipcMain.handle('escolher', async (_e, tipo) => {
 ipcMain.handle('licenca', (_e, p) => {
   try {
     const klic = M.lerLicenca(fs.readFileSync(p));
-    if (M.verificaLicenca(klic) !== est.cab.verifica_licenca) throw new Error('Este work.bin não é a licença deste jogo.');
+    if (M.verificaLicenca(klic) !== est.cab.verifica_licenca) throw new M.ErroInst('rif_licenca');
     est.klic = klic;
     return { ok: true };
-  } catch (e) { est.klic = null; return { ok: false, erro: e.message }; }
+  } catch (e) { est.klic = null; return falha(e); }
 });
 
 // o PKG: cabeçalho na hora, depois o SHA-256 inteiro; com a licença em mãos, sai a chave e o manifesto
@@ -59,13 +61,13 @@ ipcMain.handle('pkg', async (_e, p) => {
     hashando = false;
     est.sha = sha;
     return { ok: true };
-  } catch (e) { hashando = false; est.sha = null; return { ok: false, erro: e.message }; }
+  } catch (e) { hashando = false; est.sha = null; return falha(e); }
 });
 
 ipcMain.handle('chave', () => {
-  if (!est.klic || !est.sha) return { ok: false, erro: 'Falta o PKG ou o work.bin.' };
+  if (!est.klic || !est.sha) return { ok: false, codigo: 'falta_arquivos', dados: {} };
   const K = M.derivar(est.klic, est.sha);
-  if (M.verificaChave(K) !== est.cab.verifica_chave) return { ok: false, erro: 'O PKG não é a versão que este instalador espera (o arquivo foi modificado ou está corrompido).' };
+  if (M.verificaChave(K) !== est.cab.verifica_chave) return { ok: false, codigo: 'chave_pkg', dados: {} };
   est.K = K;
   est.man = M.lerManifesto(est.cifrado, K);
   return { ok: true, arquivos: est.man.arquivos.length, total: est.man.original };
@@ -79,6 +81,7 @@ ipcMain.handle('espaco', (_e, dir) => {
   } catch (e) { return { erro: e.message }; }
 });
 
+
 // depois de extrair: desinstalador, atalhos e a entrada em "Programas e Recursos"
 function posInstalacao(destino, opcoes) {
   const exe = path.join(destino, EXE);
@@ -89,15 +92,18 @@ function posInstalacao(destino, opcoes) {
     shell.writeShortcutLink(a, 'create', { target: exe, cwd: destino, icon: exe, iconIndex: 0, description: NOME });
   const reg = !TESTE && opcoes.registro;
   // o .cmd se copia para o %TEMP% antes de apagar a pasta onde está
+  // as frases vêm da tela, no idioma escolhido; a primeira letra de sim/não é a tecla do choice
+  const d = opcoes.textos || {};
+  const sim = (d.sim || 'S')[0].toUpperCase(), nao = (d.nao || 'N')[0].toUpperCase();
   const linhas = [
     '@echo off', 'chcp 65001 >nul',
     'if /i not "%~1"=="--temp" (', '  copy /y "%~f0" "%TEMP%\\gow_desinstalar.cmd" >nul', '  start "" cmd /c ""%TEMP%\\gow_desinstalar.cmd" --temp"', '  exit /b', ')',
-    `title Desinstalar ${NOME}`,
-    `echo Isto remove o ${NOME} de:`, `echo   ${destino}`, 'echo Os saves e troféus ficam em data\\ e também serão removidos.', 'echo.',
-    'choice /c SN /m "Continuar"', 'if errorlevel 2 exit /b',
+    `title ${d.titulo || 'Desinstalar ' + NOME}`,
+    `echo ${d.remove || 'Remove ' + NOME + ':'}`, `echo   ${destino}`, `echo ${d.saves || ''}`, 'echo.',
+    `choice /c ${sim}${nao === sim ? 'X' : nao} /m "${d.continuar || '?'}"`, 'if errorlevel 2 exit /b',
     ...atalhos.map(a => `del /q "${a}" 2>nul`),
     ...(reg ? [`reg delete "${CHAVE_REG}" /f >nul 2>nul`] : []),
-    `rd /s /q "${destino}"`, `echo ${NOME} removido.`, 'pause',
+    `rd /s /q "${destino}"`, `echo ${d.removido || NOME}`, 'pause',
   ];
   fs.writeFileSync(path.join(destino, 'Desinstalar.cmd'), linhas.join('\r\n') + '\r\n', 'utf8');
   if (reg) {
@@ -121,18 +127,20 @@ ipcMain.handle('instalar', async (_e, destino, opcoes) => {
   let ultimo = 0;
   try {
     fs.mkdirSync(destino, { recursive: true });
-    await M.instalar(DADOS, est.man, est.K, destino, (feito, total, arq) => {
+    const nArq = est.man.arquivos.length;
+    await M.instalar(DADOS, est.man, est.K, destino, (feito, total, arq, n) => {
       if (Date.now() - ultimo < 100 && feito < total) return;
       ultimo = Date.now();
-      enviar('instalar-andar', { feito, total, arq, seg: (Date.now() - t0) / 1000 });
+      enviar('instalar-andar', { feito, total, arq, n, nArq, seg: (Date.now() - t0) / 1000 });
     }, () => est.cancelar);
     posInstalacao(destino, opcoes);
     est.instalando = false;
     return { ok: true, seg: (Date.now() - t0) / 1000 };
-  } catch (e) { est.instalando = false; return { ok: false, erro: e.message, cancelado: e.message === 'cancelado' }; }
+  } catch (e) { est.instalando = false; return { ...falha(e), cancelado: e.codigo === 'cancelado' }; }
 });
 
 ipcMain.handle('cancelar', () => { est.cancelar = true; return true; });
+ipcMain.handle('frases-sair', (_e, f) => { est.frasesSair = f; return true; });
 ipcMain.handle('jogar', () => {
   const exe = path.join(est.destino, EXE);
   spawn(exe, [], { cwd: est.destino, detached: true, stdio: 'ignore' }).unref();
@@ -144,8 +152,9 @@ ipcMain.on('janela', async (_e, acao) => {
   if (acao === 'min') janela.minimize();
   else if (acao === 'fechar') {
     if (est.instalando || hashando) {
-      const r = await dialog.showMessageBox(janela, { type: 'warning', buttons: ['Continuar instalando', 'Sair mesmo assim'], defaultId: 0, cancelId: 0,
-        title: NOME, message: 'A instalação ainda está em andamento.', detail: 'Se sair agora, a pasta fica incompleta e o jogo não abre.' });
+      const f = est.frasesSair || {};
+      const r = await dialog.showMessageBox(janela, { type: 'warning', buttons: [f.ficar || 'Continue', f.sair || 'Quit'], defaultId: 0, cancelId: 0,
+        title: NOME, message: f.msg || 'Installation in progress.', detail: f.det || '' });
       if (r.response !== 1) return;
       est.cancelar = true;
     }

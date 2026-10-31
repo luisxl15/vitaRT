@@ -63,7 +63,7 @@ function ocupado(on) {
 
 // registro de um canal: as linhas da ferramenta chegam por evento
 function registro(canal, alto = false) {
-  const r = el('div', { class: 'registro' + (alto ? ' alto' : ''), 'aria-live': 'polite' });
+  const r = el('div', { class: 'registro' + (alto ? ' alto' : ''), 'aria-live': 'polite', 'data-no-i18n': '', 'data-vazio': tr('A saída das ferramentas aparece aqui.') });
   canais[canal] = { ...(canais[canal] || {}), registro: r };
   return r;
 }
@@ -130,7 +130,7 @@ function cartaoMod(m) {
     el('div', { class: 'alca', draggable: 'true', title: 'Arraste para mudar a ordem', html: icone('arrastar') }),
     liga,
     el('div', {},
-      el('div', { class: 'nome' }, m.nome),
+      el('div', { class: 'nome', 'data-no-i18n': '' }, m.nome),
       el('div', { class: 'linha2' }, el('span', {}, m.autor || 'autor desconhecido'), el('span', {}, `${m.arquivos} arquivos`), el('span', {}, tamanho(m.tamanho)))),
     el('span', { class: 'selo ' + m.jogo }, m.jogo === 'gow1' ? 'God of War' : 'God of War II'));
   arrastavel(c);
@@ -184,7 +184,7 @@ function pintarDetalheMod(anima) {
   if (!m) { box.replaceChildren(); return; }
   box.replaceChildren(
     el('span', { class: 'selo ' + m.jogo }, m.jogo === 'gow1' ? 'God of War' : 'God of War II'),
-    el('h3', {}, m.nome),
+    el('h3', { 'data-no-i18n': '' }, m.nome),
     el('p', { class: 'desc' }, m.desc || 'Sem descrição.'),
     el('dl', {},
       el('dt', {}, 'Estado'), el('dd', {}, m.ligado ? 'Ligado' : 'Desligado'),
@@ -357,7 +357,7 @@ async function pintarPrevia() {
   const doJogo = trocas.filter(x => x.jogo === st.tex.jogo);
   box.replaceChildren(
     el('div', { class: 'quadro' }),
-    el('div', { class: 'info' }, t ? `${t.nome}\n${t.w}×${t.h} · ${t.fmt}${t.troca ? ' · trocada por ' + t.troca : ''}` : 'Nenhuma textura selecionada.'),
+    el('div', { class: 'info', 'data-no-i18n': '' }, t ? `${t.nome}\n${t.w}×${t.h} · ${t.fmt}${t.troca ? ' · ' + tr('trocada por {a}', { a: t.troca }) : ''}` : 'Nenhuma textura selecionada.'),
     el('div', { class: 'acoes' },
       el('button', { class: 'btn fino', disabled: !t, html: icone('exportar') + 'Exportar', onclick: exportarPng }),
       el('button', { class: 'btn fino', disabled: !t, html: icone('importar') + 'Trocar', onclick: trocarPng }),
@@ -467,7 +467,8 @@ async function montarCfg(sec) {
 // ------------------------------------------------------------------ Guia
 async function montarGuia(sec) {
   const md = await vt.rpc('ajuda').catch(e => 'Guia não encontrado: ' + e.message);
-  sec.append(el('article', { class: 'guia', html: markdown(md) }));
+  if (IDIOMA !== 'pt') sec.append(el('div', { class: 'nota', style: { marginBottom: '18px', maxWidth: '860px' } }, 'O guia está disponível só em português.'));
+  sec.append(el('article', { class: 'guia', html: markdown(md), 'data-no-i18n': '' }));
 }
 
 const MONTAR = { mods: montarMods, conv: montarConv, tex: montarTex, txt: montarTxt, cfg: montarCfg, guia: montarGuia };

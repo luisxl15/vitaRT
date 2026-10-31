@@ -68,7 +68,7 @@ def main():
     import vitart_arte as VA
     import vitart_modkit as K
     ua = VA.ensure(K.load_config(), print)
-    for nome, f in (('fonte', 'fonte.png'), ('rocha', 'rocha.jpg'), ('friso', 'friso.png')):
+    for nome, f in (('fonte', 'fonte.png'), ('rocha', 'rocha.jpg'), ('friso', 'friso.png'), ('haste', 'haste.png')):
         shutil.copy2(ua[nome], os.path.join(arte, f))
     meta = open(ua['fonte_json'], encoding='utf-8').read()
     open(os.path.join(arte, 'fonte_meta.js'), 'w', encoding='utf-8').write('window.FONTE_META = %s;\n' % meta)

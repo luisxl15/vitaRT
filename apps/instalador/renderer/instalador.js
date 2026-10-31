@@ -1,36 +1,49 @@
 // Instalador em forma de menu do jogo: setas (ou o direcional do controle) escolhem, Enter/✕ confirma, Esc/○ volta,
-// ◄ ► mudam as opções. O mouse também serve: passar por cima escolhe, clicar confirma.
+// ◄ ► mudam as opções. O mouse também serve: passar por cima escolhe, clicar confirma. Textos em textos.js.
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const QUIETO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const animar = (el, q, d, extra = {}) => (QUIETO || !el ? null : el.animate(q, { duration: d, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards', ...extra }));
 // nos testes (VITART_UI_JS) os arquivos vêm de window.__testeArquivos, sem diálogo
 const escolher = tipo => (window.__testeArquivos && window.__testeArquivos[tipo]) || inst.escolher(tipo);
-const gb = b => (b / 1e9).toLocaleString('pt-BR', { maximumFractionDigits: 1, minimumFractionDigits: 1 }) + ' GB';
+const gb = b => (b / 1e9).toLocaleString(IDIOMA === 'pt' ? 'pt-BR' : IDIOMA, { maximumFractionDigits: 1, minimumFractionDigits: 1 }) + ' GB';
+const erroTxt = r => t('e.' + (r.codigo || 'generico'), { ...r.dados, erro: r.erro, tem: numero(r.dados?.tem || 0), certo: numero(r.dados?.certo || 0) });
 
-const st = { pag: null, sel: {}, pkgOk: false, rifOk: false, chaveOk: false, destino: '', espacoOk: false, ocupado: false,
-  op: { desktop: true, menu: true, registro: true }, pergunta: null };
+const st = { pag: null, sel: {}, pkgOk: false, rifOk: false, chaveOk: false, destino: '', espacoOk: false,
+  op: { desktop: true, menu: true, registro: true }, pergunta: null, val: {}, arq: {} };
 
-const escrever = (el, t) => Fonte.escrever(el, t);
+const escrever = (el, txt) => Fonte.escrever(el, txt);
+
+// ------------------------------------------------------------------ textos na tela (de novo a cada troca de idioma)
+function pintarTextos() {
+  document.documentElement.lang = IDIOMA === 'pt' ? 'pt-BR' : IDIOMA;
+  $$('[data-k]').forEach(el => escrever(el, t(el.dataset.k)));
+  $$('[data-kp]').forEach(el => { if (!st.arq[el.id]) el.textContent = t(el.dataset.kp); });
+  for (const [id, v] of Object.entries(st.val)) valor(id, v.k, v.cls, v.extra);
+  pintarOps();
+  dicas();
+  inst.frasesSair({ msg: t('sair.msg'), det: t('sair.det'), ficar: t('sair.ficar'), sair: t('sair.sair') });
+}
 
 // ------------------------------------------------------------------ menu
+const chaveSel = () => (st.pergunta ? 'perg' : st.pag);
 const itens = () => (st.pergunta ? $$('#pergunta .item') : $$(`.pag[data-p="${st.pag}"] .item`));
-function selecionar(i, som = true) {
+function selecionar(i, mexe = true) {
   const lista = itens();
   if (!lista.length) return;
   i = (i + lista.length) % lista.length;
-  const chave = st.pergunta ? 'perg' : st.pag;
-  st.sel[chave] = i;
+  st.sel[chaveSel()] = i;
   lista.forEach((e, k) => e.classList.toggle('sel', k === i));
-  if (som) animar(lista[i], [{ transform: 'translateX(-4px)' }, { transform: 'none' }], 160);
+  if (mexe) animar(lista[i], [{ transform: 'translateX(-4px)' }, { transform: 'none' }], 160);
   dicas();
 }
-const atual = () => itens()[st.sel[st.pergunta ? 'perg' : st.pag] || 0];
+const atual = () => itens()[st.sel[chaveSel()] || 0];
+const andar = d => selecionar((st.sel[chaveSel()] || 0) + d);
 
 function ativar(el = atual()) {
-  if (!el || el.classList.contains('off') || st.ocupado) return;
+  if (!el || el.classList.contains('off')) return;
   if (st.pergunta && el.dataset.resp !== undefined) return responder(el.dataset.resp === '1');
-  if (el.dataset.op) return mudarOp(el.dataset.op);
+  if (el.dataset.op) return mudarOp(el.dataset.op, 1);
   animar(el, [{ transform: 'scale(1.06)', filter: 'brightness(1.6)' }, { transform: 'none', filter: 'none' }], 260);
   ACOES[el.dataset.acao]?.();
 }
@@ -54,29 +67,28 @@ function irPara(p) {
 
 // rodapé com as teclas, como as dicas de botão do jogo
 function dicas() {
-  const d = [['Enter', 'Selecionar']];
-  if (atual()?.dataset.op) d.unshift(['◄ ►', 'Mudar']);
-  if (st.pergunta || st.pag === 1 || st.pag === 2) d.push(['Esc', 'Voltar']);
-  $('#dicas').replaceChildren(...d.map(([t, r]) => {
+  const d = [['Enter', t('dica.sel')]];
+  if (atual()?.dataset.op) d.unshift(['◄ ►', t('dica.mudar')]);
+  if (st.pergunta || st.pag === 1 || st.pag === 2) d.push(['Esc', t('dica.voltar')]);
+  $('#dicas').replaceChildren(...d.map(([k, r]) => {
     const e = document.createElement('div');
     e.className = 'dica';
-    const k = document.createElement('span');
-    k.className = 'tecla';
-    k.textContent = t;
-    e.append(k, Fonte.texto(r, 13));
+    const c = document.createElement('span');
+    c.className = 'tecla';
+    c.textContent = k;
+    e.append(c, Fonte.texto(r, 13));
     return e;
   }));
 }
 
 // ------------------------------------------------------------------ pergunta (sim/não)
-function perguntar(txt) {
+function perguntar(k) {
   return new Promise(ok => {
     st.pergunta = ok;
-    escrever($('#perg-txt'), txt);
+    escrever($('#perg-txt'), t(k));
     $('#pergunta').hidden = false;
     animar($('#pergunta .tabua'), [{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], 260);
-    st.sel.perg = 1; // começa no "Não"
-    selecionar(1, false);
+    selecionar(1, false); // começa no "Não"
   });
 }
 function responder(sim) {
@@ -88,48 +100,50 @@ function responder(sim) {
 }
 
 // ------------------------------------------------------------------ licença
-function valor(id, txt, cls = '') {
+function valor(id, k, cls = '', extra = '') {
+  st.val[id] = { k, cls, extra };
   const el = $('#' + id);
   el.className = 'val ' + cls;
-  escrever(el, txt);
+  escrever(el, t(k) + extra);
 }
-function avisoLic(txt, bom = false) {
-  const a = $('#aviso-lic');
+function aviso(id, txt, bom = false) {
+  const a = $('#' + id);
   a.textContent = txt || '';
   a.classList.toggle('bom', bom);
 }
 function liberarContinuar() { $('#i-continuar').classList.toggle('off', !st.chaveOk); }
+function mostrarArquivo(id, p) { st.arq[id] = p; $('#' + id).textContent = p; }
 
 async function escolherPkg() {
   const p = await escolher('pkg');
   if (!p) return;
   st.pkgOk = st.chaveOk = false; liberarContinuar();
-  $('#a-pkg').textContent = p;
+  mostrarArquivo('a-pkg', p);
   $('#b-pkg').hidden = false;
   $('#b-pkg div').style.transform = 'scaleX(0)';
-  valor('v-pkg', 'Conferindo');
-  avisoLic('');
+  valor('v-pkg', 'val.conferindo');
+  aviso('aviso-lic', '');
   const r = await inst.pkg(p);
   $('#b-pkg').hidden = true;
-  if (r.ok) { st.pkgOk = true; valor('v-pkg', 'Conferido', 'ok'); }
-  else { valor('v-pkg', 'Recusado', 'ruim'); avisoLic(r.erro); }
+  if (r.ok) { st.pkgOk = true; valor('v-pkg', 'val.conferido', 'ok'); }
+  else { valor('v-pkg', 'val.recusado', 'ruim'); aviso('aviso-lic', erroTxt(r)); }
   await tentarChave();
 }
 let ultimoPct = -1;
 inst.aoPkg(f => {
   $('#b-pkg div').style.transform = `scaleX(${f})`;
   const pct = Math.floor(100 * f);
-  if (pct !== ultimoPct) { ultimoPct = pct; valor('v-pkg', 'Conferindo ' + pct); }
+  if (pct !== ultimoPct) { ultimoPct = pct; valor('v-pkg', 'val.conferindo', '', ' ' + pct + '%'); }
 });
 
 async function escolherRif() {
   const p = await escolher('rif');
   if (!p) return;
   st.rifOk = st.chaveOk = false; liberarContinuar();
-  $('#a-rif').textContent = p;
+  mostrarArquivo('a-rif', p);
   const r = await inst.licenca(p);
-  if (r.ok) { st.rifOk = true; valor('v-rif', 'Aceito', 'ok'); avisoLic(''); }
-  else { valor('v-rif', 'Recusado', 'ruim'); avisoLic(r.erro); }
+  if (r.ok) { st.rifOk = true; valor('v-rif', 'val.aceito', 'ok'); aviso('aviso-lic', ''); }
+  else { valor('v-rif', 'val.recusado', 'ruim'); aviso('aviso-lic', erroTxt(r)); }
   await tentarChave();
 }
 
@@ -137,55 +151,64 @@ async function tentarChave() {
   if (!(st.pkgOk && st.rifOk)) return liberarContinuar();
   const r = await inst.chave();
   st.chaveOk = r.ok;
-  avisoLic(r.ok ? `Tudo certo: ${r.arquivos.toLocaleString('pt-BR')} arquivos, ${gb(r.total)}.` : r.erro, r.ok);
+  aviso('aviso-lic', r.ok ? t('lic.ok', { n: numero(r.arquivos), gb: gb(r.total) }) : erroTxt(r), r.ok);
   liberarContinuar();
   if (r.ok) selecionar(itens().indexOf($('#i-continuar')));
 }
 
-// ------------------------------------------------------------------ destino
+// ------------------------------------------------------------------ opções (◄ valor ►)
 function pintarOps() {
-  $$('.op').forEach(el => {
+  $$('[data-op]').forEach(el => {
     const v = el.querySelector('.val');
+    const txt = el.dataset.op === 'idioma' ? TEXTOS[IDIOMA].nome : t(st.op[el.dataset.op] ? 'op.sim' : 'op.nao');
     const e = document.createElement('i'); e.className = 'seta e';
     const d = document.createElement('i'); d.className = 'seta d';
-    v.replaceChildren(e, Fonte.texto(st.op[el.dataset.op] ? 'Sim' : 'Não', 15), d);
+    v.replaceChildren(e, Fonte.texto(txt, el.dataset.op === 'idioma' ? 20 : 15), d);
   });
 }
-function mudarOp(k) {
-  st.op[k] = !st.op[k];
-  pintarOps();
-  animar($(`.op[data-op="${k}"] .val .gw`), [{ transform: 'translateY(-4px)', opacity: 0 }, { transform: 'none', opacity: 1 }], 200);
+function mudarOp(k, dir) {
+  if (k === 'idioma') {
+    IDIOMA = IDIOMAS[(IDIOMAS.indexOf(IDIOMA) + dir + IDIOMAS.length) % IDIOMAS.length];
+    try { localStorage.setItem('idioma', IDIOMA); } catch (_) { /* sem armazenamento */ }
+    pintarTextos();
+    selecionar(st.sel[chaveSel()] || 0, false);
+  } else {
+    st.op[k] = !st.op[k];
+    pintarOps();
+  }
+  animar($(`[data-op="${k}"] .val .gw`), [{ transform: `translateX(${dir > 0 ? -8 : 8}px)`, opacity: 0 }, { transform: 'none', opacity: 1 }], 200);
 }
+
+// ------------------------------------------------------------------ destino
 async function atualizarEspaco() {
   $('#a-pasta').textContent = st.destino;
   const r = await inst.espaco(st.destino);
-  const a = $('#aviso-esp');
-  if (r.erro) { st.espacoOk = false; a.textContent = 'Pasta inválida: ' + r.erro; a.classList.remove('bom'); }
+  if (r.erro) { st.espacoOk = false; aviso('aviso-esp', t('dest.invalida', { e: r.erro })); }
   else {
     st.espacoOk = r.livre >= r.precisa * 1.02;
-    a.textContent = st.espacoOk ? `O jogo ocupa ${gb(r.precisa)}. Livre em ${r.raiz}: ${gb(r.livre)}.`
-      : `Falta espaço em ${r.raiz}: o jogo precisa de ${gb(r.precisa)} e há ${gb(r.livre)} livres.`;
-    a.classList.toggle('bom', st.espacoOk);
+    aviso('aviso-esp', t(st.espacoOk ? 'dest.ocupa' : 'dest.falta', { p: gb(r.precisa), r: r.raiz, l: gb(r.livre) }), st.espacoOk);
   }
   $('#i-instalar').classList.toggle('off', !st.espacoOk);
 }
 
 // ------------------------------------------------------------------ instalação
-let medida = { t: 0, f: 0, vel: 0 }, ultimoNum = -1;
-inst.aoInstalar(({ feito, total, arq, seg }) => {
-  const k = feito / total, n = Math.floor(100 * k);
-  $('#i-vida').style.transform = `scaleX(${k})`;
-  if (n !== ultimoNum) { ultimoNum = n; escrever($('#i-num'), String(n)); }
-  $('#i-arq').textContent = arq;
+let medida = { t: 0, f: 0, vel: 0 }, ultimo = {};
+function trocar(id, txt) { if (ultimo[id] !== txt) { ultimo[id] = txt; escrever($('#' + id), txt); } }
+function progresso({ feito, total, arq, n, nArq, seg }) {
+  const k = total ? feito / total : 0;
+  $('#haste').style.setProperty('--p', k.toFixed(4));
+  trocar('i-pct', Math.floor(100 * k) + '%');
+  trocar('i-gb', t('inst.de', { a: gb(feito), b: gb(total) }));
+  trocar('i-arqs', `${numero(n || 0)} / ${numero(nArq || 0)}`);
+  $('#i-arq').textContent = arq || ' ';
   if (seg - medida.t > 1) { const v = (feito - medida.f) / (seg - medida.t); medida = { t: seg, f: feito, vel: medida.vel ? medida.vel * .7 + v * .3 : v }; }
-  const partes = [`${gb(feito)} de ${gb(total)}`];
   if (medida.vel) {
-    partes.push(`${Math.round(medida.vel / 1e6)} MB/s`);
+    trocar('i-vel', `${Math.round(medida.vel / 1e6)} MB/s`);
     const r = (total - feito) / medida.vel;
-    partes.push(r > 90 ? `faltam ${Math.ceil(r / 60)} min` : `faltam ${Math.ceil(r)} s`);
-  }
-  escrever($('#i-stats'), partes.join('   -   '));
-});
+    trocar('i-resta', r > 90 ? t('inst.min', { n: Math.ceil(r / 60) }) : t('inst.seg', { n: Math.max(0, Math.ceil(r)) }));
+  } else { trocar('i-vel', '-'); trocar('i-resta', t('inst.calc')); }
+}
+inst.aoInstalar(progresso);
 
 const ACOES = {
   comecar: () => irPara(1),
@@ -202,43 +225,52 @@ const ACOES = {
   },
   instalar: async () => {
     if (!st.espacoOk) return;
-    escrever($('#i-num'), '0');
+    medida = { t: 0, f: 0, vel: 0 }; ultimo = {};
+    progresso({ feito: 0, total: 1, arq: '', n: 0, nArq: 0, seg: 0 });
     irPara(3);
-    const r = await inst.instalar(st.destino, st.op);
+    const textos = { titulo: t('des.titulo'), remove: t('des.remove'), saves: t('des.saves'), continuar: t('des.continuar'),
+      removido: t('des.removido'), sim: t('op.sim'), nao: t('op.nao') };
+    const r = await inst.instalar(st.destino, { ...st.op, textos });
     if (r.ok) {
-      $('#pronto-txt').textContent = `O jogo está em ${st.destino}.` + (st.op.desktop ? ' Há um atalho na Área de Trabalho.' : '') +
-        ' Para remover, use Programas e Recursos ou o Desinstalar.cmd da pasta.';
+      $('#pronto-txt').textContent = t('pronto.txt', { d: st.destino }) + (st.op.desktop ? t('pronto.atalho') : '') + t('pronto.remover');
       irPara(4);
     } else {
       irPara(2);
-      const a = $('#aviso-esp');
-      a.classList.remove('bom');
-      a.textContent = r.cancelado ? 'Instalação cancelada. A pasta ficou incompleta: instale de novo para terminar.' : 'A instalação falhou: ' + r.erro;
+      aviso('aviso-esp', r.cancelado ? t('inst.cancelada') : t('inst.falhou', { e: erroTxt(r) }));
     }
   },
-  cancelar: async () => { if (await perguntar('Cancelar a instalação?')) inst.cancelar(); },
+  cancelar: async () => { if (await perguntar('inst.perg')) inst.cancelar(); },
   jogar: () => inst.jogar(),
   'pasta-abrir': () => inst.abrirPasta(),
 };
 
 // ------------------------------------------------------------------ entrada: teclado, mouse e controle
+// nos menus deitados (botões de baixo, sim/não) esquerda/direita também andam
+const deitado = () => { const el = atual(); return !!el && (el.parentElement.classList.contains('baixo') || el.parentElement.classList.contains('linha-menu')); };
+function lado(dir) {
+  const el = atual();
+  if (el?.dataset.op) mudarOp(el.dataset.op, dir);
+  else if (deitado()) andar(dir);
+}
 document.addEventListener('keydown', e => {
   const k = e.key;
-  if (k === 'ArrowDown' || (k === 'ArrowRight' && !atual()?.dataset.op && isLinha())) { e.preventDefault(); selecionar((st.sel[st.pergunta ? 'perg' : st.pag] || 0) + 1); }
-  else if (k === 'ArrowUp' || (k === 'ArrowLeft' && !atual()?.dataset.op && isLinha())) { e.preventDefault(); selecionar((st.sel[st.pergunta ? 'perg' : st.pag] || 0) - 1); }
-  else if ((k === 'ArrowLeft' || k === 'ArrowRight') && atual()?.dataset.op) { e.preventDefault(); mudarOp(atual().dataset.op); }
+  if (k === 'ArrowDown') { e.preventDefault(); andar(1); }
+  else if (k === 'ArrowUp') { e.preventDefault(); andar(-1); }
+  else if (k === 'ArrowLeft') { e.preventDefault(); lado(-1); }
+  else if (k === 'ArrowRight') { e.preventDefault(); lado(1); }
   else if (k === 'Enter' || k === ' ') { e.preventDefault(); ativar(); }
   else if (k === 'Escape') { e.preventDefault(); voltar(); }
 });
-// nos menus deitados (botões de baixo, sim/não) esquerda/direita também andam
-const isLinha = () => { const el = atual(); return !!el && (el.parentElement.classList.contains('baixo') || el.parentElement.classList.contains('linha-menu')); };
 document.addEventListener('mouseover', e => {
   const el = e.target.closest('.item');
-  if (el) { const i = itens().indexOf(el); if (i >= 0 && i !== (st.sel[st.pergunta ? 'perg' : st.pag] || 0)) selecionar(i); }
+  if (el) { const i = itens().indexOf(el); if (i >= 0 && i !== (st.sel[chaveSel()] || 0)) selecionar(i); }
 });
 document.addEventListener('click', e => {
   const el = e.target.closest('.item');
-  if (el && itens().includes(el)) ativar(el);
+  if (el && itens().includes(el)) {
+    if (el.dataset.op) mudarOp(el.dataset.op, e.target.closest('.seta.e') ? -1 : 1);
+    else ativar(el);
+  }
   const j = e.target.closest('[data-j]');
   if (j) inst.janela(j.dataset.j);
 });
@@ -246,16 +278,17 @@ document.addEventListener('click', e => {
 (function controle() {
   const antes = {};
   let repete = 0;
-  function laco(t) {
+  function laco(tm) {
     const g = [...(navigator.getGamepads?.() || [])].find(Boolean);
     if (g) {
       const b = i => g.buttons[i]?.pressed;
       const cima = b(12) || g.axes[1] < -.6, baixo = b(13) || g.axes[1] > .6, esq = b(14) || g.axes[0] < -.6, dir = b(15) || g.axes[0] > .6;
       const borda = (nome, v) => { const r = v && !antes[nome]; antes[nome] = v; return r; };
-      const seg = (cima || baixo) && t > repete;
-      if (borda('c', cima) || (cima && seg)) { selecionar((st.sel[st.pergunta ? 'perg' : st.pag] || 0) - 1); repete = t + 220; }
-      if (borda('b', baixo) || (baixo && seg)) { selecionar((st.sel[st.pergunta ? 'perg' : st.pag] || 0) + 1); repete = t + 220; }
-      if (borda('e', esq) || borda('d', dir)) { if (atual()?.dataset.op) mudarOp(atual().dataset.op); else if (isLinha()) selecionar((st.sel[st.pergunta ? 'perg' : st.pag] || 0) + (dir ? 1 : -1)); }
+      const seg = (cima || baixo) && tm > repete;
+      if (borda('c', cima) || (cima && seg)) { andar(-1); repete = tm + 220; }
+      if (borda('b', baixo) || (baixo && seg)) { andar(1); repete = tm + 220; }
+      if (borda('e', esq)) lado(-1);
+      if (borda('d', dir)) lado(1);
       if (borda('a', b(0))) ativar();
       if (borda('x', b(1))) voltar();
     }
@@ -267,13 +300,11 @@ document.addEventListener('click', e => {
 // ------------------------------------------------------------------ início
 (async () => {
   await Fonte.pronta;
-  $$('[data-t]').forEach(el => escrever(el, el.dataset.t));
-  valor('v-pkg', 'Falta');
-  valor('v-rif', 'Falta');
-  pintarOps();
+  st.val = { 'v-pkg': { k: 'val.falta', cls: '', extra: '' }, 'v-rif': { k: 'val.falta', cls: '', extra: '' } };
+  pintarTextos();
   liberarContinuar();
   const r = await inst.info();
-  if (!r.ok) { $('#erro-txt').textContent = `${r.erro} Procurei em: ${r.dados}`; irPara('erro'); return; }
+  if (!r.ok) { $('#erro-txt').textContent = t('erro.dados', { e: erroTxt(r), d: r.pasta }); irPara('erro'); return; }
   st.destino = r.padrao;
   irPara(0);
   animar($('.logo'), [{ opacity: 0, transform: 'scale(.94)' }, { opacity: 1, transform: 'none' }], 1100);

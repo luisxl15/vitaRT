@@ -16,7 +16,7 @@ import tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import vitart_modkit as K  # noqa: E402
 
-VERSAO = 4
+VERSAO = 5
 ESRGAN = os.path.join(os.path.dirname(K.REPO), '_deps', 'realesrgan', 'realesrgan-ncnn-vulkan.exe')
 
 # nome -> (jogo, wad, pedaço do nome do registro, ampliar?, recorte (x0, y0, x1, y1) ou None)
@@ -28,6 +28,7 @@ TEXTURAS = {
     'omega': ('gow2', 'wad/r_perma.wad_psp2', 'huda029', True, None),
     'velo': ('gow2', 'wad/r_perma.wad_psp2', 'gfleece', True, None),
     'bronze': ('gow2', 'wad/r_perma.wad_psp2', 'huda043', True, None),
+    'haste': ('gow2', 'wad/r_perma.wad_psp2', '01ehuda028', True, None),  # a haste dourada sob as barras do HUD
     'friso': ('gow2', 'wad/r_shella.wad_psp2', '019goldrail02', True, (0, 0, 256, 34)),
     'meandro': ('gow2', 'wad/r_shella.wad_psp2', 'topborder01', True, None),
     'medalhao': ('gow2', None, 'islerelief01', False, None),
@@ -167,6 +168,13 @@ def fonte(cfg, out, tmp, log):
         img.alpha_composite(t, ((img.width - t.width) // 2, 0))
         img.alpha_composite(g, ((img.width - g.width) // 2, t.height))
         glifos[novo] = img
+    # nem %: a barra com dois anéis do ° nas pontas
+    bar, anel = glifos['/'], glifos['°']
+    img = Image.new('RGBA', (bar.width + anel.width, bar.height), (0, 0, 0, 0))
+    img.alpha_composite(bar, (anel.width // 2, 0))
+    img.alpha_composite(anel, (0, 1))
+    img.alpha_composite(anel, (img.width - anel.width, bar.height - anel.height - 1))
+    glifos['%'] = img
     # linha de base medida do topo do glifo (capital 19 px, versalete 15)
     def base(c, g):
         alt = 15 if c.islower() else 19
