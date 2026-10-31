@@ -19,6 +19,7 @@ HWND g_hwnd = nullptr;
 std::wstring g_title;
 bool g_closed = false;
 std::atomic<bool> g_resized{false};
+std::atomic<bool> g_capture{false};
 bool g_fullscreen = false;
 WINDOWPLACEMENT g_place{sizeof(WINDOWPLACEMENT)};
 // pedido de tela cheia que chegou de outra thread, fica guardado até a hora certa
@@ -52,6 +53,7 @@ LRESULT CALLBACK wndproc(HWND h, UINT m, WPARAM w, LPARAM l) {
         break;
     case WM_KEYDOWN:
         if (w == VK_F11) return toggle_fullscreen(h), 0;
+        if (w == VK_F9) return g_capture = true, 0; // captura do quadro (hle_gxm.cpp)
         break;
     case WM_SYSKEYDOWN:
         if (w == VK_RETURN && (l & (1 << 29))) return toggle_fullscreen(h), 0; // Alt+Enter
@@ -119,6 +121,7 @@ void pump() {
 }
 
 bool take_resized() { return g_resized.exchange(false); }
+bool take_capture() { return g_capture.exchange(false); }
 void mark_resized() { g_resized = true; }
 
 void presented() {

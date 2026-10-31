@@ -13,6 +13,8 @@ void *hwnd(); // HWND
 void pump();
 // O tamanho da área cliente mudou (WM_SIZE, tela cheia) desde a última chamada.
 bool take_resized();
+// F9 foi apertado desde a última chamada (captura do quadro para diagnóstico).
+bool take_capture();
 void mark_resized();
 // Depois de cada apresentação: na troca de módulo a janela aparece no 2º quadro e avisa o processo anterior.
 void presented();

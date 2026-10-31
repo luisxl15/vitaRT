@@ -133,6 +133,7 @@ struct Target {
     ComPtr<ID3D11Texture2D> depth;
     ComPtr<ID3D11DepthStencilView> dsv;
     uint64_t cver = 1, dver = 1; // sobem a cada escrita na cor / na profundidade
+    uint64_t cena = 0;           // sobe a cada sceGxmBeginScene neste alvo (leitura do próprio alvo, ver Snap)
 };
 std::map<uint32_t, Target> g_targets;
 std::map<uint32_t, uint32_t> g_depth_owner; // superfície de profundidade -> alvo de cor que a usa
@@ -168,11 +169,14 @@ struct Snap {
     Tex im;
     uint64_t ver = 0;
 };
-std::map<std::pair<uint32_t, bool>, Snap> g_snaps;
+std::map<std::pair<uint32_t, int>, Snap> g_snaps; // alvo e o que se lê: 0 cor, 1 profundidade, 2 o próprio alvo
 
-ID3D11ShaderResourceView *snapshot(Target &t, uint32_t owner, bool depth) {
-    Snap &sn = g_snaps[{owner, depth}];
-    const uint64_t ver = depth ? t.dver : t.cver;
+uint64_t g_frame_no = 0;
+// proprio: o desenho lê o alvo em que desenha (a água distorce a cena). No Vita a textura lê a memória, o que a
+// cena anterior gravou: a cópia vale até a próxima cena, em vez de uma por desenho.
+ID3D11ShaderResourceView *snapshot(Target &t, uint32_t owner, bool depth, bool proprio = false) {
+    Snap &sn = g_snaps[{owner, proprio ? 2 : depth ? 1 : 0}];
+    const uint64_t ver = proprio ? (g_frame_no << 24 | t.cena) : depth ? t.dver : t.cver;
     if (sn.im.tex && sn.ver == ver) return sn.im.srv.Get();
     if (!sn.im.tex) {
         D3D11_TEXTURE2D_DESC td{};
@@ -193,7 +197,6 @@ ID3D11ShaderResourceView *snapshot(Target &t, uint32_t owner, bool depth) {
 
 std::unordered_map<uint64_t, Tex> g_textures;
 std::unordered_map<uint64_t, uint64_t> g_tex_used; // textura -> último quadro que a usou
-uint64_t g_frame_no = 0;
 Tex g_white, g_pbr_flat, g_pbr_none;
 
 // ------------------------------------------------------------------ amostragem e estado fixo
@@ -674,6 +677,7 @@ void begin_scene(uint32_t color_addr, uint8_t stencil) {
     if (!g_dev || it == g_targets.end()) return;
     g_ctx->ClearDepthStencilView(it->second.dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, stencil);
     it->second.dver++;
+    it->second.cena++;
 }
 
 void draw_enemy_bars(uint32_t color_addr, const EnemyBar *bars, uint32_t n) {
@@ -726,8 +730,9 @@ bool draw(const Draw &d) {
                 owner = o->second;
             }
             auto it = g_targets.find(owner);
-            if (it == g_targets.end() || (!t.depth && it->first == d.target_addr)) continue;
-            if (ID3D11ShaderResourceView *s = snapshot(it->second, owner, t.depth)) srv[t.binding] = s;
+            if (it == g_targets.end()) continue;
+            const bool proprio = !t.depth && it->first == d.target_addr;
+            if (ID3D11ShaderResourceView *s = snapshot(it->second, owner, t.depth, proprio)) srv[t.binding] = s;
             continue;
         }
         static const bool white_tex = getenv("VITART_D3D11_WHITETEX") != nullptr; // depuração

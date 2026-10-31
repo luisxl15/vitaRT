@@ -286,6 +286,7 @@ struct Target {
     Image color, depth;
     VkFramebuffer fb = VK_NULL_HANDLE;
     uint64_t cver = 1, dver = 1; // sobem a cada escrita na cor / na profundidade
+    uint64_t cena = 0;           // sobe a cada sceGxmBeginScene neste alvo (leitura do próprio alvo, ver Snap)
 };
 std::map<uint32_t, Target> g_targets;
 
@@ -494,12 +495,14 @@ uint64_t fnv(const void *p, size_t n, uint64_t h = 1469598103934665603ull) {
 
 std::map<uint32_t, uint32_t> g_depth_owner; // superfície de profundidade -> alvo de cor que a usa
 // Cópia amostrável de um alvo (cor ou profundidade), refeita só quando o alvo mudou desde a última cópia:
-// o passe de névoa é lido por quase todos os desenhos da cena sem mudar entre eles.
+// o passe de névoa é lido por quase todos os desenhos da cena sem mudar entre eles. Chave: alvo e o que se lê
+// (0 cor, 1 profundidade, 2 a cor do próprio alvo em que se desenha: efeitos como o da água distorcem a cena;
+// no Vita a textura lê a memória, o que a cena anterior gravou, então a cópia vale até a próxima cena).
 struct Snap {
     Image im;
     uint64_t ver = 0;
 };
-std::map<std::pair<uint32_t, bool>, Snap> g_snaps;
+std::map<std::pair<uint32_t, int>, Snap> g_snaps;
 Image g_white;
 // Mapas neutros do PBR (mapa ausente no desenho): normal reta e ORM com peso 0 (fica a cor original).
 Image g_pbr_flat, g_pbr_none;
@@ -970,6 +973,7 @@ void begin_scene(uint32_t color_addr, uint8_t stencil) {
     vkCmdClearDepthStencilImage(g_cmd, dep.img, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &dc, 1, &dr);
     barrier(dep, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     it->second.dver++;
+    it->second.cena++;
 }
 
 // Barras de vida dos inimigos (enemy_hp.cpp), no estilo do GoW3: moldura escura, fundo vermelho-escuro e o
@@ -1862,13 +1866,15 @@ bool draw(const Draw &d) {
                 owner = o->second;
             }
             auto it = g_targets.find(owner);
-            if (it == g_targets.end() || (!t.depth && it->first == d.target_addr)) continue;
+            if (it == g_targets.end()) continue;
+            // lendo o alvo em que desenha: cópia de quando a cena (ou o quadro) começou a ler, não a cada desenho
+            const bool proprio = !t.depth && it->first == d.target_addr;
             Image &src = t.depth ? it->second.depth : it->second.color;
             const VkImageLayout back = t.depth ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
                                                : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
             const VkImageAspectFlags aspect = t.depth ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
-            const uint64_t ver = t.depth ? it->second.dver : it->second.cver;
-            Snap &sn = g_snaps[{owner, t.depth}];
+            const uint64_t ver = proprio ? (g_frame_no << 24 | it->second.cena) : t.depth ? it->second.dver : it->second.cver;
+            Snap &sn = g_snaps[{owner, proprio ? 2 : t.depth ? 1 : 0}];
             Image &snap = sn.im;
             if (snap.img && sn.ver == ver) {
                 img_info[t.binding].imageView = snap.view;

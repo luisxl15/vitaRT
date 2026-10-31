@@ -5,6 +5,7 @@
 #include "vitart.h"
 #include "gxm_tex.h"
 #include "gxm_vk.h"
+#include "gxm_window.h"
 #include "pbr.h"
 #include "video_hd.h"
 
@@ -1669,6 +1670,19 @@ VT_HLE(sceGxmDisplayQueueAddEntry) {
     // (oldBuffer, newBuffer, const void *callbackData)
     if (dumping()) dump_write(arg(ctx, 1));
     g_submitted++;
+    // F9: captura o próximo quadro em capturas/quadro_N (desenhos, texturas, memória e os alvos que o renderizador
+    // conhece), para achar defeito de imagem fora do jogo
+    if (gvk::win::take_capture() && !dumping()) {
+        g_dump_frame = g_submitted.load() + 1;
+        g_dump_dir = "capturas/quadro_" + std::to_string(g_dump_frame);
+        g_dump_textures.clear();
+        std::filesystem::create_directories(g_dump_dir);
+        if (FILE *f = fopen((g_dump_dir + "/alvos.txt").c_str(), "w")) {
+            for (uint32_t t : gvk::targets()) fprintf(f, "%08x\n", t);
+            fclose(f);
+        }
+        logf("vitart: F9: capturando o quadro %u em %s", g_dump_frame, g_dump_dir.c_str());
+    }
     DisplayEntry e;
     if (arg(ctx, 2) && g_display_data_size)
         e.data.assign(ptr<uint8_t>(arg(ctx, 2)), ptr<uint8_t>(arg(ctx, 2)) + g_display_data_size);
