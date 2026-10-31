@@ -19,7 +19,7 @@
 #define NOMINMAX
 #include <windows.h>
 #include <d3d11_1.h>
-#include <dxgi1_2.h>
+#include <dxgi1_5.h>
 #include <wrl/client.h>
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -51,6 +51,8 @@ ComPtr<IDXGISwapChain> g_swap;
 ComPtr<ID3D11RenderTargetView> g_bb_rtv;
 uint32_t g_bb_w = 0, g_bb_h = 0;
 bool g_flip_model = false;
+bool g_tearing = false;    // o Windows deixa apresentar sem esperar o DWM (VSync desligado de verdade)
+UINT g_swap_flags = 0;     // os mesmos flags têm de ir no ResizeBuffers
 std::recursive_mutex g_lock; // desenhos vêm da thread de render do jogo, a apresentação da de vídeo
 Stats g_stats;
 constexpr uint32_t kTexSlots = 16;
@@ -518,19 +520,46 @@ bool create_swapchain() {
     DXC(g_dev.As(&xdev));
     DXC(xdev->GetAdapter(&adapter));
     DXC(adapter->GetParent(IID_PPV_ARGS(&factory)));
-    DXGI_SWAP_CHAIN_DESC sd{};
-    sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    sd.SampleDesc.Count = 1;
-    sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    sd.OutputWindow = static_cast<HWND>(win::hwnd());
-    sd.Windowed = TRUE;
-    sd.BufferCount = 2, sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-    g_flip_model = SUCCEEDED(factory->CreateSwapChain(g_dev.Get(), &sd, &g_swap));
-    if (!g_flip_model) {
+    const HWND hwnd = static_cast<HWND>(win::hwnd());
+    // Flip com 3 buffers: com 2 (um na tela, um na fila) o Present esperava o vblank seguinte sempre que um quadro
+    // passava de 16,7 ms, e o jogo caía para 30-45 FPS. Com 3, o quadro novo toma o lugar do que está na fila,
+    // como o mailbox do Vulkan. Tearing, se o Windows deixar, para o VSync desligado não passar pelo DWM.
+    ComPtr<IDXGIFactory2> f2;
+    if (SUCCEEDED(factory.As(&f2))) {
+        ComPtr<IDXGIFactory5> f5;
+        BOOL tear = FALSE;
+        if (SUCCEEDED(factory.As(&f5)) && FAILED(f5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &tear, sizeof tear)))
+            tear = FALSE;
+        g_tearing = tear != FALSE;
+        g_swap_flags = g_tearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+        DXGI_SWAP_CHAIN_DESC1 d1{};
+        d1.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        d1.SampleDesc.Count = 1;
+        d1.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+        d1.BufferCount = 3;
+        d1.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+        d1.Scaling = DXGI_SCALING_STRETCH;
+        d1.Flags = g_swap_flags;
+        ComPtr<IDXGISwapChain1> s1;
+        if (SUCCEEDED(f2->CreateSwapChainForHwnd(g_dev.Get(), hwnd, &d1, nullptr, nullptr, &s1)) && SUCCEEDED(s1.As(&g_swap)))
+            g_flip_model = true;
+    }
+    if (!g_swap) { // Windows 7/8: a troca antiga
+        g_tearing = false, g_swap_flags = 0;
+        DXGI_SWAP_CHAIN_DESC sd{};
+        sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        sd.SampleDesc.Count = 1;
+        sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+        sd.OutputWindow = hwnd;
+        sd.Windowed = TRUE;
         sd.BufferCount = 1, sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
         DXC(factory->CreateSwapChain(g_dev.Get(), &sd, &g_swap));
     }
-    factory->MakeWindowAssociation(sd.OutputWindow, DXGI_MWA_NO_ALT_ENTER); // Alt+Enter é da janela (sem bordas)
+    // no máximo 2 quadros na fila da GPU: mais que isso só aumenta o atraso do controle
+    ComPtr<IDXGIDevice1> dev1;
+    if (SUCCEEDED(g_dev.As(&dev1))) dev1->SetMaximumFrameLatency(2);
+    vt::logf("vitart: Direct3D 11: %s, %s", g_flip_model ? "flip com 3 buffers" : "troca antiga", g_tearing ? "tearing disponível" : "sem tearing");
+    factory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_ALT_ENTER); // Alt+Enter é da janela (sem bordas)
     return make_backbuffer();
 }
 
@@ -949,7 +978,7 @@ bool present(uint32_t addr) {
             g_bb_rtv.Reset();
             g_ctx->OMSetRenderTargets(0, nullptr, nullptr);
             g_open = nullptr;
-            DXC(g_swap->ResizeBuffers(0, (UINT)r.right, (UINT)r.bottom, DXGI_FORMAT_UNKNOWN, 0));
+            DXC(g_swap->ResizeBuffers(0, (UINT)r.right, (UINT)r.bottom, DXGI_FORMAT_UNKNOWN, g_swap_flags));
             if (!make_backbuffer()) return false;
         }
     }
@@ -995,8 +1024,12 @@ bool present(uint32_t addr) {
         }
     }
     // VSync desligado ou o padrão (mailbox no Vulkan): não espera o vblank; com "FPS máximo" (fifo), espera.
-    const UINT interval = g_vsync && g_fifo && !getenv("VITART_NOVSYNC") ? 1 : 0;
-    const HRESULT hr = g_swap->Present(interval, 0);
+    static const bool sem_vsync = getenv("VITART_NOVSYNC") != nullptr;
+    const UINT interval = g_vsync && g_fifo && !sem_vsync ? 1 : 0;
+    // VSync desligado: tearing (não espera nem o DWM). Ligado no padrão: intervalo 0 sem tearing, o DWM mostra o
+    // quadro mais novo dos 3 buffers sem segurar o jogo.
+    const UINT pflags = interval == 0 && (!g_vsync || sem_vsync) && g_tearing ? DXGI_PRESENT_ALLOW_TEARING : 0;
+    const HRESULT hr = g_swap->Present(interval, pflags);
     if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET) return fail("Present (GPU perdida)", hr);
     win::presented();
     g_open = nullptr; // o blit trocou o alvo
