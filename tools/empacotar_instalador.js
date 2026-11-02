@@ -1,6 +1,10 @@
 // Empacota a pasta do jogo montada (tools/montar_jogo.py) nos dados cifrados do instalador.
 //
 //   node tools/empacotar_instalador.js <pasta do jogo> <saída\dados> <work.bin ou .rif> <SHA-256 do PKG USA>
+//                                      [--sem=<caminho>]... [--troca=<pasta>]
+//
+// --sem pula o que começa com o caminho (relativo à pasta do jogo, com /); --troca põe os arquivos da pasta no lugar dos
+// de mesmo caminho (é assim que o build_instalador.py tira um mod: sem a pasta dele e com a lista e o menu refeitos).
 //
 // A chave sai da chave do conteúdo que está no work.bin (NoNpDrm, +0x50) junto com o SHA-256 do PKG:
 //   K = SHA-256("vitart-gow-instalador|" + chave16 + sha256_pkg)
@@ -68,7 +72,10 @@ class Saida {
 }
 
 async function main() {
-  const [jogo, dados, rifPath, shaPkg] = process.argv.slice(2);
+  const args = process.argv.slice(2);
+  const [jogo, dados, rifPath, shaPkg] = args.filter(a => !a.startsWith('--'));
+  const sem = args.filter(a => a.startsWith('--sem=')).map(a => a.slice(6));
+  const troca = args.find(a => a.startsWith('--troca='))?.slice(8);
   if (!shaPkg || !/^[0-9a-f]{64}$/i.test(shaPkg)) {
     console.error('uso: node tools/empacotar_instalador.js <pasta do jogo> <saída\\dados> <work.bin> <sha256 do PKG>');
     process.exit(2);
@@ -77,14 +84,18 @@ async function main() {
   fs.mkdirSync(dados, { recursive: true });
   for (const f of fs.readdirSync(dados)) if (/^gow-\d+\.bin$|^manifesto\.bin$/.test(f)) fs.unlinkSync(path.join(dados, f)); // pacote anterior, gerado aqui
 
-  const arquivos = listar(jogo).filter(p => !/[\\/]logs[\\/]/.test(path.relative(jogo, p)));
-  const totalOrig = arquivos.reduce((s, p) => s + fs.statSync(p).size, 0);
+  const relDe = p => path.relative(jogo, p).split(path.sep).join('/');
+  const arquivos = listar(jogo).map(p => ({ p, rel: relDe(p) }))
+    .filter(a => !a.rel.startsWith('logs/') && !sem.some(c => a.rel.startsWith(c)))
+    .map(a => troca && fs.existsSync(path.join(troca, a.rel)) ? { p: path.join(troca, a.rel), rel: a.rel, trocado: true } : a);
+  for (let i = vazias.length - 1; i >= 0; i--) if (sem.some(c => (vazias[i] + '/').startsWith(c))) vazias.splice(i, 1);
+  if (sem.length || troca) console.log(`sem: ${sem.join(', ') || '-'}; trocados: ${arquivos.filter(a => a.trocado).map(a => a.rel).join(', ') || '-'}`);
+  const totalOrig = arquivos.reduce((s, a) => s + fs.statSync(a.p).size, 0);
   console.log(`${arquivos.length} arquivos, ${(totalOrig / 1e9).toFixed(2)} GB`);
   const out = new Saida(dados);
   const lista = [];
   let feito = 0, t0 = Date.now(), ultimo = 0;
-  for (const p of arquivos) {
-    const rel = path.relative(jogo, p).split(path.sep).join('/');
+  for (const { p, rel } of arquivos) {
     const st = fs.statSync(p);
     const comprime = COMPRIME.has(path.extname(p).toLowerCase()) && st.size > 256;
     const h = crypto.createHash('sha256');

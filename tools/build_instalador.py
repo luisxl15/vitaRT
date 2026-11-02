@@ -35,6 +35,43 @@ Mantenha juntas as pastas "instalador" e "dados".
 '''
 
 
+# Mods que não vão no instalador (o do Kratos do GoW3 é de terceiros: fica só na máquina de quem o converteu).
+SEM_MODS = ('gow3_kratos',)
+
+
+def sem_mods(jogo, tmp):
+    """Argumentos do empacotador para deixar SEM_MODS de fora: sem a pasta deles e, numa pasta de troca, a lista de
+    mods renumerada, o patch do menu (página Mods) refeito com ela e as opções sem as linhas mod_<id>."""
+    import vitart_modkit as K
+    mods = os.path.join(jogo, 'data', 'mods')
+    troca = os.path.join(tmp, 'troca')
+    tmods = os.path.join(troca, 'data', 'mods')
+    os.makedirs(tmods)
+    linhas, idx, jogos = [], {}, set()
+    for l in open(os.path.join(mods, 'modlist.tsv'), encoding='utf-8').read().splitlines():
+        c = l.split('\t')
+        if len(c) < 4:
+            continue
+        if c[2] in SEM_MODS:
+            jogos.add(c[0])
+            continue
+        i = idx.get(c[0], 0)
+        idx[c[0]] = i + 1
+        linhas.append('\t'.join([c[0], str(i), c[2]] + c[3:]))
+    lista = os.path.join(tmods, 'modlist.tsv')
+    open(lista, 'w', encoding='utf-8', newline='\n').write('\n'.join(linhas) + '\n')
+    for g in sorted(jogos):  # o menu do jogo lista os mods pelo índice: refeito com a lista nova
+        ps = os.path.join(jogo, 'game', 'PCSA00126', 'exec', K.PSARC[g])
+        subprocess.run([sys.executable, '-P', os.path.join(TOOLS, 'gow_menu_mod.py'), ps,
+                        os.path.join(tmods, K.PSARC[g] + '.vtpatch'), '--modlist', lista], check=True)
+    ini = os.path.join(jogo, 'data', 'vitart_options.ini')
+    if os.path.exists(ini):
+        fora = tuple('mod_%s=' % m for m in SEM_MODS)
+        txt = [l for l in open(ini, encoding='utf-8', errors='replace').read().splitlines() if not l.startswith(fora)]
+        open(os.path.join(troca, 'data', 'vitart_options.ini'), 'w', encoding='utf-8', newline='\n').write('\n'.join(txt) + '\n')
+    return ['--sem=data/mods/%s/' % m for m in SEM_MODS] + ['--troca=' + troca]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('jogo')
@@ -99,8 +136,13 @@ def main():
     open(os.path.join(out, 'Leia-me.txt'), 'w', encoding='utf-8-sig', newline='\r\n').write(LEIA_ME)
 
     if not a.sem_dados:
+        extra = []
+        if SEM_MODS:
+            print('== sem os mods', ', '.join(SEM_MODS))
+            extra = sem_mods(jogo, tmp)
         print('== dados (cifrados)')
-        subprocess.run(['node', os.path.join(TOOLS, 'empacotar_instalador.js'), jogo, os.path.join(out, 'dados'), a.rif, a.sha], check=True)
+        subprocess.run(['node', os.path.join(TOOLS, 'empacotar_instalador.js'), jogo, os.path.join(out, 'dados'), a.rif, a.sha] + extra,
+                       check=True)
     print('pronto:', lanc)
 
 

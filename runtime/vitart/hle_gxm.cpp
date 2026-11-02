@@ -33,6 +33,7 @@
 #include <unordered_map>
 
 namespace vt {
+std::string mods_dir_for(const std::string &psarc_name); // hle_io.cpp: pasta dos mods
 
 constexpr uint32_t SCE_OK = 0;
 constexpr uint32_t GXM_ERROR_INVALID_POINTER = 0x805B0009u;
@@ -350,6 +351,25 @@ static void texpack_load() {
             n++;
         }
         if (n) logf("vitart: pack de texturas %s: %zu texturas", dir.path().filename().string().c_str(), n);
+    }
+    // texturas dos mods do jogo em HD (<mods>/<id>/texpack, tools/mod_texpack.py): a chave é do conteúdo, então só
+    // pegam com o mod ligado; o pack principal tem a vez se a chave for a mesma
+    for (auto &dir : std::filesystem::directory_iterator(std::filesystem::path(mods_dir_for("")), ec)) {
+        if (getenv("VITART_NO_TEXPACK")) break;
+        std::ifstream ini(dir.path() / "mod.ini"), f(dir.path() / "texpack" / "index.tsv");
+        std::string line;
+        bool deste_jogo = false;
+        while (std::getline(ini, line))
+            if (line.rfind("game=", 0) == 0) deste_jogo = line.substr(5, want.size()) == want;
+        if (!deste_jogo || !f) continue;
+        size_t n = 0;
+        while (std::getline(f, line)) {
+            const size_t tab = line.find('\t');
+            if (tab == std::string::npos || line[0] == '#') continue;
+            if (!line.empty() && line.back() == '\r') line.pop_back();
+            if (g_texpack.emplace(std::strtoull(line.substr(0, tab).c_str(), nullptr, 16), (dir.path() / "texpack" / line.substr(tab + 1)).string()).second) n++;
+        }
+        if (n) logf("vitart: pack de texturas do mod %s: %zu texturas", dir.path().filename().string().c_str(), n);
     }
     // VITART_TEXKBM_DIR / VITART_TEXXBOX_DIR (testes): outra pasta de ícones, sem mexer na instalada
     for (const auto &[env, sub, salt, what, mode] : {std::tuple{"VITART_TEXKBM_DIR", "texpack_kbm", kKbmSalt, "teclado e mouse", 1},
