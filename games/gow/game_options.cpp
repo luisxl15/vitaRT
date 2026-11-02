@@ -320,23 +320,15 @@ void restart_process() {
     logf("vitart: não deu para reiniciar (CreateProcess %lu)", GetLastError());
 }
 
-// Algum ícone de botão na tela (QTE, círculo de agarrar, minigame) ou um sumiu há menos de 2,5 s: o agarrão
-// começa antes do ícone e a animação sincronizada termina depois dele. GoW1: índice do ícone no HUD
-// (0xffffffff sem ícone, 0xfffffffe nos menus, medido nos registros do QTE); GoW2: slots de ícone em
-// 0x812ec588 (zero = vazio).
+bool qte_na_tela(); // lá embaixo, junto das tabelas do QTE automático
+
+// Um QTE na tela (botão, girar, sacudir) ou um sumiu há menos de 2,5 s: o agarrão começa antes do ícone e a
+// animação sincronizada termina depois dele. Ícone fixo não conta: no GoW2 os "Static" (baú, inimigo que dá
+// para agarrar) ficam no HUD quase o tempo todo e prendiam o jogo em 60 FPS.
 bool prompt_sincronizado() {
     using clk = std::chrono::steady_clock;
     static clk::time_point ate{};
-    bool agora = false;
-    if (game_id() == 1) {
-        const uint32_t hud = rd32(0x812a681c);
-        if (hud && rd32(hud) == kOptGow1.vtbl) {
-            const uint32_t idx = rd32(hud + 0x1570);
-            agora = idx < 0xfffffffeu;
-        }
-    } else if (game_id() == 2) {
-        for (uint32_t s = 0; s < 8 && !agora; s++) agora = rd32(0x812ec588 + 4 * s) != 0;
-    }
+    const bool agora = qte_na_tela();
     const auto t = clk::now();
     if (agora) ate = t + std::chrono::milliseconds(2500);
     static bool antes = false;
@@ -672,6 +664,19 @@ Qte qte_gow2(uint32_t hash, bool &known) {
     for (auto &[h, q] : table)
         if (h == hash) return known = true, q;
     return {QNone, 0};
+}
+
+bool qte_na_tela() {
+    if (game_id() == 1) {
+        const uint32_t hud = rd32(0x812a681c);
+        return hud && rd32(hud) == kOptGow1.vtbl && qte_gow1(rd32(hud + 0x1570)).kind != QNone;
+    }
+    if (game_id() != 2) return false;
+    for (uint32_t s = 0; s < 8; s++) {
+        bool known;
+        if (const uint32_t v = rd32(0x812ec588 + 4 * s); v && qte_gow2(v, known).kind != QNone) return true;
+    }
+    return false;
 }
 } // namespace
 
