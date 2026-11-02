@@ -4,6 +4,7 @@
 // conclui as notificações na hora, para o jogo seguir o laço. O renderizador Vulkan entra aqui.
 #include "vitart.h"
 #include "gxm_tex.h"
+#include "gxm_texto.h"
 #include "gxm_vk.h"
 #include "gxm_window.h"
 #include "pbr.h"
@@ -14,6 +15,7 @@
 #define STBI_NO_STDIO_WARNINGS
 #include "stb_image.h"
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstring>
@@ -286,7 +288,11 @@ struct TexEntry {
     int icon_mode = -1;       // modo de ícones com que foi montada (refeita quando o modo muda)
     bool kbm_used = false;    // o PNG em uso é o de teclado/mouse ou o de Xbox (outra textura na GPU)
     uint64_t qhash = 0;       // hash rápido (amostras) da última verificação completa
+    bool font = false;        // é o atlas da fonte da interface (ver squeeze_text)
 };
+// Chave (a do pack, com a paleta) do atlas da fonte da interface: "godofwareurope", 256x256, a única fonte dos
+// dois jogos (o mesmo atlas em todos os WADs, conferido com tools/texpack_match.py).
+constexpr uint64_t kFontKey = 0xdd387c3eceaf6c63ull;
 
 // Pack de texturas (vitart-data/texpack/*/index.tsv, montado por tools/texpack_build.py a partir de um
 // pack do PCSX2): chave = FNV-1a 64 de (largura, altura) + os primeiros min(4096, nível base) bytes da
@@ -586,7 +592,7 @@ static uint64_t quick_hash(const uint32_t *desc, const uint8_t *p, size_t n, con
     for (size_t i = 0; i < 64; i++) h = content_hash(p + 2048 + i * step, 64, h);
     return h;
 }
-static uint64_t g_vk_draws = 0, g_vk_skipped = 0, g_pbr_draws = 0;
+static uint64_t g_vk_draws = 0, g_vk_skipped = 0, g_pbr_draws = 0, g_text_draws = 0; // g_text_draws: texto estreitado (squeeze_text)
 // Censo do que fica de fora (VITART_VK_CENSUS=1): primitivas por tipo e formatos de textura sem decodificador.
 static std::map<std::string, uint64_t> g_census;
 static bool census() {
@@ -757,6 +763,39 @@ static float attr_value(const uint8_t *p, uint32_t fmt, uint32_t i) {
 }
 static uint32_t attr_size(uint32_t fmt) { return fmt <= 1 || fmt == 4 || fmt == 5 ? 1 : fmt == 9 ? 4 : 2; }
 
+// Texto na proporção certa. A interface (FLP) é feita para 4:3 e o jogo estica tudo na largura do alvo 16:9; as
+// letras saíam 1,33x mais largas. O shader da interface repassa a posição (a CPU do jogo já manda em coordenada
+// de tela), então dá para estreitar aqui, numa cópia dos vértices: os glifos de cada desenho com o atlas da fonte
+// viram linhas (triângulos ligados = um glifo; glifos lado a lado na mesma altura = uma linha) e cada linha
+// encolhe na largura em volta da âncora: o centro se ela está centralizada na tela, senão a borda do lado em que
+// está. Espaçamento e alinhamento continuam os do jogo; molduras, barras e ícones de malha ficam como estão.
+// VITART_TEXTO_ESTICADO=1 desliga.
+static void squeeze_text(gvk::Draw &d, uint32_t prog, std::vector<uint8_t> &copy) {
+    static const bool off = getenv("VITART_TEXTO_ESTICADO") != nullptr;
+    if (off || !d.target_w || !d.target_h || !d.vertex_count || !d.index_data) return;
+    const float s = (4.f / 3.f) / ((float)d.target_w / (float)d.target_h);
+    if (s > 0.99f) return; // alvo 4:3 (ou mais estreito): nada esticado
+    // só o shader que repassa a posição: atributo "position" e nenhuma matriz nos uniforms
+    int pos = -1, k = 0;
+    const uint32_t np = rd32(prog + 0x24);
+    for (uint32_t i = 0; i < np; i++) {
+        const uint32_t p = gxp_param(prog, i);
+        const uint32_t cat = *ptr<uint8_t>(p + 4) & 15;
+        std::string name = gstr(p + rd32(p));
+        for (char &ch : name) ch = (char)std::tolower((unsigned char)ch);
+        if (cat == 0) {
+            if (pos < 0 && name.find("position") != std::string::npos) pos = k;
+            k++;
+        } else if (cat == 1 && (name.find("proj") != std::string::npos || name.find("transform") != std::string::npos ||
+                                name.find("world") != std::string::npos || name.find("view") != std::string::npos ||
+                                name.find("mat") != std::string::npos)) {
+            return;
+        }
+    }
+    if (pos < 0) return;
+    if (squeeze_text_lines(d, pos, s, copy)) g_text_draws++;
+}
+
 static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t idata, uint32_t icount);
 static void vk_draw(Context &c, uint32_t prim, uint32_t itype, uint32_t idata, uint32_t icount) {
     const uint64_t t0 = now_ns();
@@ -922,6 +961,7 @@ static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t ida
     d.fs = fs->data(), d.fs_size = (uint32_t)fs->size() * 4;
     std::vector<std::shared_ptr<std::vector<uint8_t>>> keep;
     const PbrProgInfo &pinfo_f = pbr_prog(fp->program);
+    bool font_draw = false;    // amostra o atlas da fonte: é texto da interface
     int diffuse_idx = -1;      // posição da textura difusa em d.textures (só textura comum, não alvo)
     uint64_t diffuse_key = 0;  // material PBR dela
     for (uint32_t i = 0; i < 16; i++) {
@@ -979,6 +1019,12 @@ static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t ida
                                    kk2 = ok ? texkbm_key(info, n, kXboxSalt) : 0;
                     const uint64_t kk = mode == 1 ? kk1 : mode == 2 ? kk2 : kk0;
                     e.kbm_alt = kk0 || kk1 || kk2;
+                    if (ok) {
+                        const uint32_t wh[2] = {info.width, info.height};
+                        uint64_t fk = fnv64(ptr<uint8_t>(info.data), std::min<size_t>(4096, n), fnv64(reinterpret_cast<const uint8_t *>(wh), 8));
+                        if (info.base == 0x95000000u && info.palette) fk = fnv64(ptr<uint8_t>(info.palette), 1024, fk);
+                        e.font = fk == kFontKey;
+                    }
                     if (kk) texpack_start(kk), e.tp_key = kk; // ícones de teclado/mouse ou de Xbox
                     else if (ok)
                         if (const uint64_t k = texpack_key(info, n)) texpack_start(k), e.tp_key = k; // HD em segundo plano
@@ -1006,6 +1052,7 @@ static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t ida
             }
             if (!e.px) continue;
             if ((int)i == pinfo_f.diffuse) diffuse_idx = (int)d.textures.size(), diffuse_key = e.mat_key;
+            font_draw |= e.font;
             keep.push_back(e.px);
             t.rgba = e.px->data();
             t.key = (e.kbm_used ? e.hash ^ (e.icon_mode == 2 ? kXboxSalt : e.icon_mode == 1 ? kKbmSalt : kPs5Salt) : e.rw ? e.hash ^ 0x9E3779B97F4A7C15ull : e.hash) | 1; // HD do pack é outra textura na GPU
@@ -1079,6 +1126,8 @@ static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t ida
             g_pbr_draws++;
         }
     }
+    std::vector<uint8_t> text_copy; // stream da posição com o texto já estreitado (vale até o gvk::draw)
+    if (font_draw) squeeze_text(d, vp->program, text_copy);
     const uint64_t tg = now_ns();
     g_t_tex += tg - t_tex0;
     const bool drew = gvk::draw(d);
@@ -1220,8 +1269,8 @@ void gxm_present(uint32_t fb) {
              s.desc_ns / 120e6, s.submits / 120.0, s.draws / 120.0, s.snapshots / 120.0, s.uploads / 120.0, s.pipes);
     }
     if (gvk::window_closed()) {
-        logf("vitart: janela fechada (%llu desenhos Vulkan, %llu sem shader)", (unsigned long long)g_vk_draws,
-             (unsigned long long)g_vk_skipped);
+        logf("vitart: janela fechada (%llu desenhos Vulkan, %llu sem shader, %llu de texto em 4:3)", (unsigned long long)g_vk_draws,
+             (unsigned long long)g_vk_skipped, (unsigned long long)g_text_draws);
         gvk::shutdown();
         std::exit(0);
     }
