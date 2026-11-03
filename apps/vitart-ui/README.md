@@ -1,7 +1,10 @@
-# vitart Troféus e vitart Mod Studio
+# vitart Troféus, vitart Mod Studio e vitart Settings
 
-As duas telas em Electron. São o mesmo código: o nome do exe (ou `--app=trofeus` / `--app=modstudio`) decide qual
-abre. O trabalho de verdade continua nas ferramentas em Python do repositório. `main.js` roda a
+As três telas em Electron. São o mesmo código: o nome do exe (ou `--app=trofeus` / `--app=modstudio` /
+`--app=settings`) decide qual abre. O Settings troca a API de vídeo (`renderer=` no `vitart_options.ini`) e mostra o
+mapa de teclado e mouse, copiado de `games/gow/gow_profile.cpp`: mudou lá, muda em `renderer/settings.js`. Na pasta
+do jogo, o `Settings.exe` da raiz é um lançador nativo (`settings_lancador.cpp`) que abre o
+`Ferramentasitart-uiitart Settings.exe`. O trabalho de verdade continua nas ferramentas em Python do repositório. `main.js` roda a
 `tools/vitart_ponte.py` como processo filho, e os dois conversam em JSON, uma mensagem por linha.
 
 ```

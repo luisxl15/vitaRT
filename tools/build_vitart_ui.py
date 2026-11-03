@@ -1,10 +1,10 @@
-"""Monta os executáveis do vitart Troféus e do vitart Mod Studio (Electron, apps/vitart-ui).
+"""Monta os executáveis do vitart Troféus, do vitart Mod Studio e do vitart Settings (Electron, apps/vitart-ui).
 
     python tools/build_vitart_ui.py [pasta de saída]     (padrão: ../gow-dump/rt/vitart-ui)
 
 Copia o Electron de apps/vitart-ui/node_modules (não baixa nada), põe o app em resources/app, grava o ícone do
-ômega no exe pela API do Windows (sem rcedit) e cria o "vitart Mod Studio.exe" como hard link do mesmo exe: o
-nome do arquivo decide a tela, então não são 180 MB duas vezes. O Python e as ferramentas continuam no
+ômega no exe pela API do Windows (sem rcedit) e cria o "vitart Mod Studio.exe" e o "vitart Settings.exe" como hard
+links do mesmo exe: o nome do arquivo decide a tela, então não são 180 MB três vezes. O Python e as ferramentas continuam no
 repositório (repo.json diz onde).
 """
 import ctypes
@@ -23,6 +23,7 @@ sys.path.insert(0, TOOLS)
 
 EXE_T = 'vitart Troféus.exe'
 EXE_M = 'vitart Mod Studio.exe'
+EXE_S = 'vitart Settings.exe'
 
 
 def set_icon(exe, ico_bytes):
@@ -102,16 +103,17 @@ def main():
     T.app_icon(256).save(ico, 'ICO', sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
     open(os.path.join(app, 'vitart.ico'), 'wb').write(ico.getvalue())
 
-    exe_t, exe_m = os.path.join(out, EXE_T), os.path.join(out, EXE_M)
-    for p in (exe_m, exe_t):  # o hard link e o exe da rodada anterior (gerados aqui)
+    exe_t, exe_m, exe_s = os.path.join(out, EXE_T), os.path.join(out, EXE_M), os.path.join(out, EXE_S)
+    for p in (exe_m, exe_s, exe_t):  # os hard links e o exe da rodada anterior (gerados aqui)
         if os.path.exists(p):
             os.remove(p)
     shutil.copy2(os.path.join(dist, 'electron.exe'), exe_t)
     print('== ícone')
     set_icon(exe_t, ico.getvalue())
     os.link(exe_t, exe_m)
+    os.link(exe_t, exe_s)
     print('ok:', exe_t)
-    print('ok:', exe_m, '(hard link)')
+    print('ok:', exe_m, 'e', exe_s, '(hard links)')
 
 
 if __name__ == '__main__':

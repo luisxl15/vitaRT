@@ -1,5 +1,5 @@
-// vitart Troféus e vitart Mod Studio: o mesmo código, dois programas. Qual abre sai do --app= ou do nome do exe
-// ("vitart Mod Studio.exe" abre o Mod Studio). O trabalho de verdade fica no Python do repositório
+// vitart Troféus, vitart Mod Studio e vitart Settings: o mesmo código, três programas. Qual abre sai do --app= ou do
+// nome do exe ("vitart Mod Studio.exe" abre o Mod Studio, "vitart Settings.exe" o Settings). O trabalho de verdade fica no Python do repositório
 // (tools/vitart_ponte.py), que roda como processo filho e fala JSON por linha.
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const { spawn } = require('child_process');
@@ -9,8 +9,9 @@ const { pathToFileURL } = require('url');
 
 const argApp = (process.argv.find(a => a.startsWith('--app=')) || '').slice(6);
 const exeName = path.basename(app.getPath('exe')).toLowerCase();
-const QUAL = argApp || (exeName.includes('mod') ? 'modstudio' : 'trofeus');
-const TITULO = QUAL === 'modstudio' ? 'vitart Mod Studio' : 'vitart Troféus';
+const QUAL = argApp || (exeName.includes('mod') ? 'modstudio' : exeName.includes('setting') ? 'settings' : 'trofeus');
+const TITULO = { modstudio: 'vitart Mod Studio', settings: 'vitart Settings' }[QUAL] || 'vitart Troféus';
+const TELA = { modstudio: [1320, 860, 'modstudio.html'], settings: [1180, 800, 'settings.html'] }[QUAL] || [1360, 880, 'trofeus.html'];
 
 // onde está o repositório: VITART_REPO, o repo.json gravado no empacotamento, ou duas pastas acima (desenvolvimento)
 function acharRepo() {
@@ -108,10 +109,9 @@ ipcMain.on('janela', (_e, acao) => {
 });
 
 function criarJanela() {
-  const mod = QUAL === 'modstudio';
   janela = new BrowserWindow({
-    width: mod ? 1320 : 1360,
-    height: mod ? 860 : 880,
+    width: TELA[0],
+    height: TELA[1],
     minWidth: 1060,
     minHeight: 680,
     frame: false,
@@ -122,7 +122,7 @@ function criarJanela() {
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: false, backgroundThrottling: !process.env.VITART_UI_CAPTURA },
   });
   janela.setMenu(null);
-  janela.loadFile(path.join(__dirname, 'renderer', mod ? 'modstudio.html' : 'trofeus.html'));
+  janela.loadFile(path.join(__dirname, 'renderer', TELA[2]));
   janela.once('ready-to-show', () => janela.show());
   // VITART_UI_CAPTURA=<arquivo.png>: fotografa a própria janela depois de uns segundos e fecha (conferir o visual
   // sem tirar print da área de trabalho). VITART_UI_JS roda um trecho antes, para abrir uma aba, por exemplo.

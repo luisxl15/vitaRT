@@ -48,13 +48,18 @@ def link_ou_copia(src, dst, copiar=False):
 
 
 def espelhar(src, dst, pular=lambda rel: False, copiar=lambda rel: False):
-    n = {'link': 0, 'copia': 0}
+    """copiar(rel): arquivo que quem joga muda (opções, saves, troféus, mods). Só entra se ainda não existe no destino:
+    rodar de novo não pode apagar o progresso de quem já joga na pasta."""
+    n = {'link': 0, 'copia': 0, 'mantido': 0}
     for d, _dirs, fs in os.walk(src):
         for f in fs:
             s = os.path.join(d, f)
             rel = os.path.relpath(s, src)
             r = rel.replace('\\', '/')
             if pular(r):
+                continue
+            if copiar(r) and os.path.exists(os.path.join(dst, rel)):
+                n['mantido'] += 1
                 continue
             n[link_ou_copia(s, os.path.join(dst, rel), copiar(r))] += 1
     return n
@@ -148,6 +153,23 @@ def icone_ico(png, destino):
     im.save(destino, 'ICO', sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
 
 
+def settings_exe(ico, destino):
+    """Settings.exe na raiz: um lançador nativo do vitart Settings (apps/vitart-ui/settings_lancador.cpp)."""
+    tmp = tempfile.mkdtemp(prefix='vitart_set_')
+    obj = os.path.join(tmp, 'Settings.exe')
+    subprocess.run([os.path.join(LLVM, 'clang++.exe'), '-std=c++20', '-O2', '-municode',
+                    os.path.join(REPO, 'apps', 'vitart-ui', 'settings_lancador.cpp'), '-o', obj,
+                    '-Xlinker', '/SUBSYSTEM:WINDOWS', '-luser32'], check=True)
+    rc = os.path.join(tmp, 's.rc')
+    open(rc, 'w', encoding='utf-8').write(RC.format(ico=ico.replace('\\', '\\\\'), nome='Settings'))
+    res = os.path.join(tmp, 's.res')
+    subprocess.run([os.path.join(LLVM, 'llvm-rc.exe'), '/C', '65001', '/FO', res, rc], check=True)
+    aplicar_res(obj, res)
+    if os.path.exists(destino):
+        os.remove(destino)  # o da rodada anterior, gerado aqui
+    shutil.copy2(obj, destino)
+
+
 def exe_do_jogo(vitart, ico, destino):
     tmp = tempfile.mkdtemp(prefix='vitart_rc_')
     rc = os.path.join(tmp, 'jogo.rc')
@@ -173,10 +195,11 @@ Pastas
   game\\         os arquivos do jogo, vindos do PKG do Vita
   data\\         texturas HD, PBR, áudio do PS2, vídeos remasterizados, mods, saves e troféus
   shaders\\      cache de shaders
-  Ferramentas\\  vitart Troféus e vitart Mod Studio (precisam do Python 3 com numpy e Pillow)
+  Ferramentas\\  vitart Troféus, vitart Mod Studio e vitart Settings (precisam do Python 3 com numpy e Pillow)
   logs\\         registro da última sessão (logs\\vitart.log), útil se algo der errado
 
-Opções do PC (resolução, FPS, renderizador, mods, barras de vida...): no jogo, menu de pausa > Options.
+Settings.exe: a API de vídeo (Automático, Vulkan ou Direct3D 11) e o mapa completo de teclado e mouse.
+Opções do PC (resolução, FPS, mods, barras de vida...): no jogo, menu de pausa > Options.
 Seus saves e troféus ficam em data\\.
 '''
 
@@ -252,6 +275,8 @@ def main():
     if os.path.isdir(ddst):
         shutil.rmtree(ddst)
     shutil.copytree(os.path.join(REPO, 'docs', 'modding'), ddst)
+    print('== Settings.exe')
+    settings_exe(ico, os.path.join(dst, 'Settings.exe'))
 
     open(os.path.join(dst, 'Leia-me.txt'), 'w', encoding='utf-8-sig', newline='\r\n').write(LEIA_ME)
     print('pronto:', os.path.join(dst, NOME + '.exe'))

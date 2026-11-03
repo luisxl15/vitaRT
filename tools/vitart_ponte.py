@@ -308,6 +308,80 @@ def m_salvar_config(a):
     return K.CONFIG
 
 
+# ------------------------------------------------------------------ Settings (API do jogo)
+APIS = ('auto', 'vulkan', 'd3d11')  # renderer= do vitart_options.ini (game_options.cpp, renderer_choice)
+
+
+def _ini():
+    return os.path.join(cfg['data'], 'vitart_options.ini')
+
+
+def _placas():
+    """Nomes das placas de vídeo ligadas a um monitor (EnumDisplayDevicesW), sem repetir."""
+    import ctypes
+    from ctypes import wintypes
+
+    class DD(ctypes.Structure):
+        _fields_ = [('cb', wintypes.DWORD), ('DeviceName', wintypes.WCHAR * 32), ('DeviceString', wintypes.WCHAR * 128),
+                    ('StateFlags', wintypes.DWORD), ('DeviceID', wintypes.WCHAR * 128), ('DeviceKey', wintypes.WCHAR * 128)]
+    out, i = [], 0
+    while True:
+        d = DD()
+        d.cb = ctypes.sizeof(d)
+        if not ctypes.windll.user32.EnumDisplayDevicesW(None, i, ctypes.byref(d), 0):
+            break
+        if d.StateFlags & 1 and d.DeviceString not in out:  # DISPLAY_DEVICE_ATTACHED_TO_DESKTOP
+            out.append(d.DeviceString)
+        i += 1
+    return out
+
+
+def _api_da_ultima_sessao():
+    """O que o log da última sessão diz que rodou ("renderizador Vulkan ligado" / "Direct3D 11")."""
+    raiz = os.path.dirname(cfg['data'])
+    for p in (os.path.join(raiz, 'logs', 'vitart.log'), os.path.join(K.REPO, '..', 'gow-dump', 'rt', 'vitart.log')):
+        if not os.path.exists(p):
+            continue
+        api = None
+        for l in open(p, encoding='utf-8', errors='replace'):
+            if 'renderizador' in l and 'ligado' in l:
+                api = 'd3d11' if 'Direct3D' in l else 'vulkan' if 'Vulkan' in l else api
+        if api:
+            return {'api': api, 'quando': os.path.getmtime(p)}
+    return None
+
+
+def m_opcoes(a):
+    api = 'auto'
+    if os.path.exists(_ini()):
+        for l in open(_ini(), encoding='utf-8', errors='replace'):
+            if l.startswith('renderer='):
+                api = l[9:].strip().lower() or 'auto'
+    sysdir = os.path.join(os.environ.get('SystemRoot', r'C:\Windows'), 'System32')
+    # jogo aberto: ele regrava o ini com a API que leu ao abrir quando se muda uma opção no menu de pausa
+    import subprocess
+    try:
+        tl = subprocess.run(['tasklist', '/fo', 'csv', '/nh'], capture_output=True, text=True, errors='replace',
+                            creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0)).stdout.lower()
+    except OSError:
+        tl = ''
+    return {'api': api if api in APIS else 'auto', 'ini': _ini(), 'placas': _placas(),
+            'vulkan': os.path.exists(os.path.join(sysdir, 'vulkan-1.dll')), 'ultima': _api_da_ultima_sessao(),
+            'jogo_aberto': '"vitart.exe"' in tl or '"god of war collection.exe"' in tl}
+
+
+def m_salvar_api(a):
+    """Grava renderer=<api> sem mexer nas outras linhas (o jogo lê ao abrir)."""
+    api = a.get('api')
+    if api not in APIS:
+        raise ValueError('API desconhecida: %s' % api)
+    linhas = open(_ini(), encoding='utf-8', errors='replace').read().splitlines() if os.path.exists(_ini()) else []
+    tem = any(l.startswith('renderer=') for l in linhas)
+    linhas = ['renderer=' + api if l.startswith('renderer=') else l for l in linhas] + ([] if tem else ['renderer=' + api])
+    open(_ini(), 'w', encoding='utf-8', newline='\n').write('\n'.join(linhas) + '\n')
+    return api
+
+
 def m_ajuda(a):
     p = os.path.join(K.REPO, 'docs', 'modding', 'README.md')
     return open(p, encoding='utf-8').read() if os.path.exists(p) else 'Guia não encontrado: %s' % p
