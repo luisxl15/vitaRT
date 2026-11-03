@@ -69,10 +69,13 @@ def sem_mods(jogo, tmp):
                         os.path.join(tmods, K.PSARC[g] + '.vtpatch'), '--modlist', lista], check=True)
     ini = os.path.join(jogo, 'data', 'vitart_options.ini')
     if os.path.exists(ini):
-        fora = tuple('mod_%s=' % m for m in sem) or ('mod_',)
-        txt = [l for l in open(ini, encoding='utf-8', errors='replace').read().splitlines() if not l.startswith(fora)]
+        # sem os mods, sem a ISO de quem montou (caminho da máquina dele) e com os cheats desligados
+        fora = tuple('mod_%s=' % m for m in sem) + ('mod_', 'ps2_iso=')
+        txt = [l.split('=')[0] + '=0' if l.startswith('cheat_') else l
+               for l in open(ini, encoding='utf-8', errors='replace').read().splitlines() if not l.startswith(fora)]
         open(os.path.join(troca, 'data', 'vitart_options.ini'), 'w', encoding='utf-8', newline='\n').write('\n'.join(txt) + '\n')
-    return ['--sem=data/mods/%s/' % m for m in sem] + ['--troca=' + troca]
+    # troféus zerados: o runtime cria data/trophy/<NPWR>/unlocked.txt no primeiro troféu
+    return ['--sem=data/mods/%s/' % m for m in sem] + ['--sem=data/trophy/', '--troca=' + troca]
 
 
 def main():
