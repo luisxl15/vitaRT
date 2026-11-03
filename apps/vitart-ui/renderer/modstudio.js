@@ -78,11 +78,17 @@ function escrever(canal, t) {
 }
 async function tarefa(canal, m, a, fim) {
   if (st.ocupado) { avisar('Espere', 'Ainda tem uma operação rodando.', 'erro'); return; }
+  // "trabalhando" antes de pedir: numa tarefa rápida o evento de fim chega antes da resposta "iniciado", e marcar
+  // depois deixava a tela presa em "trabalhando" para sempre
   canais[canal].fim = fim;
+  ocupado(true);
   try {
     await vt.rpc(m, a);
-    ocupado(true);
-  } catch (e) { avisar('Não deu', e.message, 'erro'); }
+  } catch (e) {
+    ocupado(false);
+    canais[canal].fim = null;
+    avisar('Não deu', e.message, 'erro');
+  }
 }
 
 // ------------------------------------------------------------------ Mods

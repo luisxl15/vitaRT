@@ -15,7 +15,7 @@ import os
 import struct
 import sys
 
-import xxhash
+
 
 sys.path.insert(0, os.path.dirname(__file__))
 import ps2_audio  # noqa: E402
@@ -177,7 +177,7 @@ def tex0hash(g, i):
                                 blk[o >> 1] |= px(b_x + x, b_y + y) << (4 * (o & 1))
                     out += blk
             raw = bytes(out)
-        return xxhash.xxh3_64_intdigest(raw), psm, tw, th
+        return __import__("xxhash").xxh3_64_intdigest(raw), psm, tw, th
     if bpi == 32:
         d = g['data'][i]
         px = lambda x, y: d[(x + y * w) * 4:(x + y * w) * 4 + 4] if x < w and y < h else b'\0\0\0\0'  # noqa: E731
@@ -194,7 +194,7 @@ def tex0hash(g, i):
                             blk[o:o + 4] = px(b_x + x, b_y + y)
                     out += blk
             raw = bytes(out)
-        return xxhash.xxh3_64_intdigest(raw), 0, tw, th
+        return __import__("xxhash").xxh3_64_intdigest(raw), 0, tw, th
     return None
 
 
@@ -243,7 +243,7 @@ def main():
                         key = '%x' % h0
                         full = '%x-%08x' % (h0, bits)
                     else:
-                        ch = xxhash.xxh3_64_intdigest(palette(p, pi))
+                        ch = __import__("xxhash").xxh3_64_intdigest(palette(p, pi))
                         key = '%x-%x' % (h0, ch)
                         full = '%x-%x-%08x' % (h0, ch, bits)
                     total += 1

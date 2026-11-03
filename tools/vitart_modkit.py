@@ -422,6 +422,17 @@ def make_texture_mod(cfg, mid, name, game, changes, author='', description='', l
 
 # ------------------------------------------------------------------ mods de texto (tradução)
 TEXT_WAD = 'wad/_VitaTV/r_perma.wad_psp2'  # os textos que o vitart mostra (o modo PS TV)
+# registro com o texto: o GoW1 (só inglês) guarda em msgs_en.txt, sem MSGS_COUNT/MSGS_LINES; o GoW2 em MSGS_TXT
+TEXT_REC = {'gow1': 'msgs_en.txt', 'gow2': 'MSGS_TXT'}
+
+
+def text_body(cfg, game, wad=TEXT_WAD):
+    """O texto do jogo (o registro de TEXT_REC, até o primeiro zero)."""
+    recs = wad_records(read_psarc_file(psarc_path(cfg, game), wad), game)
+    rec = next((r for r in recs if r[2] == TEXT_REC[game]), None)
+    if rec is None:
+        raise ValueError('%s não tem %s' % (wad, TEXT_REC[game]))
+    return rec[3].split(b'\0')[0]
 # A fonte do GoW2 (a única do FLP_HUDA/FLP_ShellA, 132 glifos) usa os códigos das maiúsculas acentuadas para os
 # ícones dos botões (medido: Á Â Ä Ç É Ê Ó Ô Ú saem como ícones; Í e as minúsculas saem certas) e não tem ã/õ/Ã/Õ.
 FONT_FIX = {'gow2': str.maketrans({'Á': 'A', 'Â': 'A', 'Ä': 'A', 'Ã': 'A', 'À': 'A', 'Ç': 'C', 'É': 'E', 'Ê': 'E',
@@ -469,19 +480,22 @@ def make_text_mod(cfg, mid, name, game, txt_path, wad=TEXT_WAD, author='', descr
     if not body.endswith(b'\r\n'):
         body += b'\r\n'
     body += b'\0\0'  # o jogo percorre o texto com strtok: precisa do zero no fim
-    recs = {r[2]: r for r in wad_records(read_psarc_file(ps, wad), game) if r[2].startswith('MSGS_')}
-    if 'MSGS_TXT' not in recs:
-        raise ValueError('%s não tem MSGS_TXT' % wad)
+    rec_txt = TEXT_REC[game]
+    recs = {r[2]: r for r in wad_records(read_psarc_file(ps, wad), game) if r[2].startswith('MSGS_') or r[2] == rec_txt}
+    if rec_txt not in recs:
+        raise ValueError('%s não tem %s' % (wad, rec_txt))
     count, lines = msgs_need(body)
-    count, lines = max(count, recs['MSGS_COUNT'][5]), max(lines, recs['MSGS_LINES'][5])
+    if 'MSGS_COUNT' in recs:
+        count, lines = max(count, recs['MSGS_COUNT'][5]), max(lines, recs['MSGS_LINES'][5])
     mid = install_mod(cfg, mid, name, game, {}, author=author, description=description, log=log)
     d = os.path.join(mods_dir(cfg), mid)
     os.makedirs(os.path.join(d, 'records'), exist_ok=True)
     open(os.path.join(d, 'records', 'MSGS_TXT.txt'), 'wb').write(body)
     idx = names.index(wad) + 1
-    rows = ['%s\t%d\t%d\tMSGS_TXT\t0\trecords/MSGS_TXT.txt' % (PSARC[game], idx, recs['MSGS_TXT'][0]),
-            '%s\t%d\t%d\tMSGS_COUNT\t0\t=%d' % (PSARC[game], idx, recs['MSGS_COUNT'][0], count),
-            '%s\t%d\t%d\tMSGS_LINES\t0\t=%d' % (PSARC[game], idx, recs['MSGS_LINES'][0], lines)]
+    rows = ['%s\t%d\t%d\t%s\t0\trecords/MSGS_TXT.txt' % (PSARC[game], idx, recs[rec_txt][0], rec_txt)]
+    if 'MSGS_COUNT' in recs:  # o GoW2 dimensiona as tabelas por esses dois; o GoW1 não tem
+        rows += ['%s\t%d\t%d\tMSGS_COUNT\t0\t=%d' % (PSARC[game], idx, recs['MSGS_COUNT'][0], count),
+                 '%s\t%d\t%d\tMSGS_LINES\t0\t=%d' % (PSARC[game], idx, recs['MSGS_LINES'][0], lines)]
     open(os.path.join(d, 'records.tsv'), 'w', encoding='utf-8', newline='\n').write('\n'.join(rows) + '\n')
     log('%s: %d mensagens, %d linhas em %s' % (mid, count, lines, wad))
     rebuild(cfg, log)

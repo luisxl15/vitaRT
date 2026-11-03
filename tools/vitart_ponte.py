@@ -173,9 +173,7 @@ def m_converter(a):
 # ------------------------------------------------------------------ textos
 def m_exportar_textos(a):
     game, out = a['jogo'], a['saida']
-    recs = K.wad_records(K.read_psarc_file(K.psarc_path(cfg, game), K.TEXT_WAD), game)
-    body = next(r[3] for r in recs if r[2] == 'MSGS_TXT').split(b'\0')[0]
-    open(out, 'wb').write(body)
+    open(out, 'wb').write(K.text_body(cfg, game))
     return out
 
 
