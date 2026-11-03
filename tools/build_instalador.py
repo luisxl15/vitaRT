@@ -74,8 +74,9 @@ def sem_mods(jogo, tmp):
         txt = [l.split('=')[0] + '=0' if l.startswith('cheat_') else l
                for l in open(ini, encoding='utf-8', errors='replace').read().splitlines() if not l.startswith(fora)]
         open(os.path.join(troca, 'data', 'vitart_options.ini'), 'w', encoding='utf-8', newline='\n').write('\n'.join(txt) + '\n')
-    # troféus zerados: o runtime cria data/trophy/<NPWR>/unlocked.txt no primeiro troféu
-    return ['--sem=data/mods/%s/' % m for m in sem] + ['--sem=data/trophy/', '--troca=' + troca]
+    # troféus zerados e sem saves: o runtime cria data/trophy/<NPWR>/unlocked.txt no primeiro troféu e
+    # data/savedata0/GOW1|GOW2 no primeiro save
+    return ['--sem=data/mods/%s/' % m for m in sem] + ['--sem=data/trophy/', '--sem=data/savedata0/', '--troca=' + troca]
 
 
 def main():
