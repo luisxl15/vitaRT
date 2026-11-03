@@ -464,8 +464,58 @@ static uint64_t texpack_key(const gxmtex::Info &info, size_t base_bytes) {
 // VITART_TEXDUMP=dir (diagnóstico): cada textura (até 2048x2048) decodificada pela primeira vez vai para
 // dir/<chave do pack>_<l>x<a>_<hash do conteúdo>.rgba (RGBA cru), com a chave como em texpack_key (com a paleta, se P8).
 // Serve para montar entradas de pack (tools/texpack_*.py) para texturas que o pack do PS2 não cobre.
+// PNG RGBA sem compressão (blocos "stored" do deflate): basta para o dump e não precisa de biblioteca.
+static void write_png(const std::string &path, const uint8_t *rgba, uint32_t w, uint32_t h) {
+    static uint32_t crc_tab[256];
+    if (!crc_tab[1])
+        for (uint32_t n = 0; n < 256; n++) {
+            uint32_t c = n;
+            for (int k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320u ^ (c >> 1) : c >> 1;
+            crc_tab[n] = c;
+        }
+    std::vector<uint8_t> raw; // cada linha com o filtro 0 na frente
+    raw.reserve((size_t)(w * 4 + 1) * h);
+    for (uint32_t y = 0; y < h; y++) raw.push_back(0), raw.insert(raw.end(), rgba + (size_t)y * w * 4, rgba + (size_t)(y + 1) * w * 4);
+    std::vector<uint8_t> z = {0x78, 0x01};
+    uint32_t a = 1, b = 0;
+    for (size_t o = 0; o < raw.size() || o == 0;) {
+        const size_t n = std::min<size_t>(65535, raw.size() - o);
+        z.push_back(o + n == raw.size() ? 1 : 0);
+        z.push_back(n & 255), z.push_back(n >> 8), z.push_back(~n & 255), z.push_back((~n >> 8) & 255);
+        z.insert(z.end(), raw.begin() + o, raw.begin() + o + n);
+        o += n;
+        if (!n) break;
+    }
+    for (uint8_t c : raw) a = (a + c) % 65521, b = (b + a) % 65521;
+    for (int s = 24; s >= 0; s -= 8) z.push_back(((b << 16 | a) >> s) & 255);
+    FILE *f = std::fopen(path.c_str(), "wb");
+    if (!f) return;
+    auto be = [](uint32_t v) { return std::array<uint8_t, 4>{(uint8_t)(v >> 24), (uint8_t)(v >> 16), (uint8_t)(v >> 8), (uint8_t)v}; };
+    auto chunk = [&](const char *tipo, const std::vector<uint8_t> &d) {
+        const auto len = be((uint32_t)d.size());
+        std::fwrite(len.data(), 1, 4, f);
+        uint32_t c = 0xFFFFFFFFu;
+        for (int i = 0; i < 4; i++) c = crc_tab[(c ^ (uint8_t)tipo[i]) & 255] ^ (c >> 8);
+        for (uint8_t x : d) c = crc_tab[(c ^ x) & 255] ^ (c >> 8);
+        std::fwrite(tipo, 1, 4, f);
+        if (!d.empty()) std::fwrite(d.data(), 1, d.size(), f);
+        const auto cc = be(~c);
+        std::fwrite(cc.data(), 1, 4, f);
+    };
+    std::fwrite("\x89PNG\r\n\x1a\n", 1, 8, f);
+    std::vector<uint8_t> ihdr;
+    for (uint32_t v : {w, h}) { const auto x = be(v); ihdr.insert(ihdr.end(), x.begin(), x.end()); }
+    ihdr.insert(ihdr.end(), {8, 6, 0, 0, 0}); // 8 bits, RGBA
+    chunk("IHDR", ihdr), chunk("IDAT", z), chunk("IEND", {});
+    std::fclose(f);
+}
+
+// texdump=1 no ini (Settings.exe): as texturas originais do jogo, em PNG, em <dados>/texdump.
 static void texdump(const gxmtex::Info &info, size_t base_bytes, const std::vector<uint8_t> &px) {
-    static const char *dir = getenv("VITART_TEXDUMP");
+    static const char *env = getenv("VITART_TEXDUMP");
+    static const bool png = !env && ini_flag("texdump", false);
+    static const std::string dir_s = env ? std::string(env) : png ? data_path() + "/texdump" : std::string();
+    const char *dir = dir_s.empty() ? nullptr : dir_s.c_str();
     if (!dir || !base_bytes || info.width * info.height > 2048 * 2048 || px.size() < 4ull * info.width * info.height) return;
     const uint32_t wh[2] = {info.width, info.height};
     uint64_t key = fnv64(ptr<uint8_t>(info.data), std::min<size_t>(4096, base_bytes), fnv64(reinterpret_cast<const uint8_t *>(wh), 8));
@@ -476,8 +526,11 @@ static void texdump(const gxmtex::Info &info, size_t base_bytes, const std::vect
     if (!seen.insert(full).second) return;
     std::filesystem::create_directories(dir);
     char name[80];
-    std::snprintf(name, sizeof name, "/%016llx_%ux%u_%08x.rgba", (unsigned long long)key, info.width, info.height, (uint32_t)full);
-    if (FILE *f = std::fopen((std::string(dir) + name).c_str(), "wb")) {
+    std::snprintf(name, sizeof name, "/%016llx_%ux%u_%08x.%s", (unsigned long long)key, info.width, info.height, (uint32_t)full,
+                  png ? "png" : "rgba");
+    if (png) {
+        write_png(std::string(dir) + name, px.data(), info.width, info.height);
+    } else if (FILE *f = std::fopen((std::string(dir) + name).c_str(), "wb")) {
         std::fwrite(px.data(), 1, 4ull * info.width * info.height, f);
         std::fclose(f);
     }

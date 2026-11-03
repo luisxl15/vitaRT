@@ -89,3 +89,11 @@ kbd { display: inline-block; min-width: 24px; padding: 2px 7px; text-align: cent
 @media (max-width: 1240px) {
   .mapa { grid-template-columns: 1fr; }
 }
+
+/* ------------------------------------------------------------------ Avançado */
+.flags { display: grid; gap: 12px; max-width: 900px; }
+.flag { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 24px; padding: 18px 22px; }
+.flag-corpo { display: grid; gap: 6px; justify-items: start; }
+.flag-nome { font: 700 19px var(--f-titulo); }
+.flag-texto { font-size: 13.5px; max-width: 640px; }
+.flag .btn { margin-top: 6px; }

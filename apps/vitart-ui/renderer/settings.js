@@ -4,12 +4,15 @@
 const NAV_ICO = {
   video: '<rect x="1.5" y="3" width="13" height="8.5"/><path d="M5.5 14h5M8 11.5V14"/>',
   ctl: '<rect x="1.5" y="4.5" width="13" height="7.5" rx="1"/><path d="M4 7h1M6.5 7h1M9 7h1M11.5 7h1M4.5 9.5h7"/>',
+  avan: '<path d="M2 4h7M12 4h2M2 8h2M7 8h7M2 12h9M14 12h0"/><circle cx="10.5" cy="4" r="1.5"/><circle cx="5.5" cy="8" r="1.5"/><circle cx="12.5" cy="12" r="1.5"/>',
 };
 const SECOES = [
   { id: 'video', nome: 'Gráficos', sobre: 'API de vídeo', titulo: 'Gráficos', arte: 'rocha',
     sub: 'Escolha com que API o jogo desenha. A troca vale na próxima vez que o jogo abrir.' },
   { id: 'ctl', nome: 'Controles', sobre: 'Teclado e mouse', titulo: 'Mapa de teclas', arte: 'chave',
     sub: 'O esquema do God of War (2018) de PC levado aos botões dos jogos do Vita.' },
+  { id: 'avan', nome: 'Avançado', sobre: 'Diagnóstico', titulo: 'Avançado', arte: 'rocha',
+    sub: 'Janela de console, registro e dump das texturas originais. Valem na próxima vez que o jogo abrir.' },
 ];
 const st = { secao: null, opcoes: null, jogo: 2 };
 
@@ -52,7 +55,7 @@ const NOME_API = { vulkan: 'Vulkan', d3d11: 'Direct3D 11' };
 
 function montarVideo(sec) {
   sec.append(
-    el('div', { class: 'nota oculto', id: 'aviso-jogo' }, 'O jogo está aberto. Feche e abra de novo para trocar a API; se mudar alguma opção no menu de pausa antes de fechar, ele grava a API antiga por cima.'),
+    el('div', { class: 'nota oculto', id: 'aviso-jogo' }, 'O jogo está aberto: a troca vale quando ele abrir de novo.'),
     el('div', { class: 'apis', id: 'apis', role: 'radiogroup', 'aria-label': 'API de vídeo' }),
     el('div', { class: 'video-info painel' },
       el('div', {}, el('div', { class: 'caixa' }, 'Placa de vídeo'), el('div', { class: 'valor', id: 'v-placa', 'data-no-i18n': '' }, '...')),
@@ -212,7 +215,34 @@ function destacar(k, teclas) {
   $$('#mapa .linha').forEach(r => r.classList.toggle('acesa', !!k && r.dataset.teclas.split(' ').includes(k)));
 }
 
-const MONTAR = { video: montarVideo, ctl: montarCtl };
+// ------------------------------------------------------------------ Avançado
+const FLAGS = [
+  { k: 'console', nome: 'Janela de console', texto: 'A janela preta com as mensagens do vitart, aberta junto com o jogo. Desligada, o jogo abre sozinho.' },
+  { k: 'log', nome: 'Registro', texto: 'Grava as mensagens em logs/vitart.log, o arquivo que ajuda a investigar um problema.', pasta: 'log_pasta' },
+  { k: 'texdump', nome: 'Dump de texturas', texto: 'Grava cada textura original do jogo, na primeira vez que ela aparece, como PNG na pasta texdump. Deixa o jogo um pouco mais lento enquanto grava.', pasta: 'texdump_pasta' },
+];
+function montarAvan(sec) {
+  const f = st.opcoes?.flags || {};
+  sec.append(el('div', { class: 'flags' }, ...FLAGS.map(o => el('div', { class: 'flag painel' },
+    el('div', { class: 'flag-corpo' },
+      el('div', { class: 'flag-nome' }, o.nome),
+      el('div', { class: 'flag-texto mudo' }, o.texto),
+      o.pasta && st.opcoes ? el('button', { class: 'btn fino', html: icone('pasta') + '<span>Abrir pasta</span>', onclick: () => abrirPasta(st.opcoes[o.pasta]) }) : null),
+    el('label', { class: 'chave-liga', 'aria-label': o.nome },
+      el('input', { type: 'checkbox', checked: f[o.k] ? true : null, onchange: e => salvarFlag(o.k, e.target.checked) }), el('span'))))));
+}
+async function salvarFlag(k, v) {
+  try {
+    st.opcoes.flags = await vt.rpc('salvar_opcao', { chave: k, valor: v ? 1 : 0 });
+    avisar('Salvo', 'Vale na próxima vez que o jogo abrir.');
+  } catch (e) { avisar('Não deu', e.message, 'erro'); }
+}
+async function abrirPasta(p) {
+  try { await vt.rpc('criar_pasta', { pasta: p }); } catch (_) { /* abre mesmo assim */ }
+  vt.abrirLink(await vt.urlDe(p));
+}
+
+const MONTAR = { video: montarVideo, ctl: montarCtl, avan: montarAvan };
 
 // ------------------------------------------------------------------ início
 vt.aoEvento(m => {

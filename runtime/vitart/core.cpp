@@ -46,6 +46,27 @@ void logf(const char *fmt, ...) {
     }
 }
 
+static std::string g_data; // pasta de dados (--data); declarada aqui porque o ini_flag lê o ini dela
+bool ini_flag(const char *key, bool def) {
+    static std::map<std::string, std::string> kv;
+    static bool lido = false;
+    if (!lido && !g_data.empty()) {
+        lido = true;
+        if (FILE *f = fopen((g_data + "/vitart_options.ini").c_str(), "r")) {
+            char line[1024];
+            while (fgets(line, sizeof line, f)) {
+                std::string l = line;
+                while (!l.empty() && (unsigned char)l.back() <= 32) l.pop_back();
+                const size_t eq = l.find('=');
+                if (eq != std::string::npos && l[0] != '#') kv[l.substr(0, eq)] = l.substr(eq + 1);
+            }
+            fclose(f);
+        }
+    }
+    auto it = kv.find(key);
+    return it == kv.end() ? def : it->second != "0";
+}
+
 void fatal(const char *fmt, ...) {
     char buf[2048];
     va_list ap;
@@ -746,7 +767,7 @@ int wait_thread_end(Thread *t, uint32_t timeout_us, int *status) {
 }
 
 // =================================================================== partida
-static std::string g_app, g_data;
+static std::string g_app; // g_data fica lá em cima (ini_flag)
 std::string app_path() { return g_app; }
 std::string data_path() { return g_data; }
 
@@ -836,13 +857,13 @@ int main(int argc, char **argv) {
     }
     g_argv.assign(argv, argv + argc);
     std::vector<std::string> dlls;
-    std::string hle_vars;
+    std::string hle_vars, log_path;
     for (int i = 1; i < argc; i++) {
         std::string a = argv[i];
         if (a == "--app" && i + 1 < argc) g_app = argv[++i];
         else if (a == "--data" && i + 1 < argc) g_data = argv[++i];
         else if (a == "--hle-vars" && i + 1 < argc) hle_vars = argv[++i];
-        else if (a == "--log" && i + 1 < argc) g_logfile = fopen(argv[++i], "w");
+        else if (a == "--log" && i + 1 < argc) log_path = argv[++i];
         else if (a.rfind("--", 0) == 0) usage();
         else dlls.push_back(a);
     }
@@ -851,6 +872,13 @@ int main(int argc, char **argv) {
     g_main_dll = dlls[0];
     if (g_data.empty())
         g_data = g_app + "/../vitart-data";
+    // O exe é de janela (sem console): a janela de cmd só abre com console=1 (o padrão) no ini e quando ninguém
+    // passou saída (aberto pelo Explorer). Com saída redirecionada (testes, o iniciador) ela continua valendo.
+    if (ini_flag("console", true) && !GetStdHandle(STD_ERROR_HANDLE) && AllocConsole()) {
+        freopen("CONOUT$", "w", stdout);
+        freopen("CONOUT$", "w", stderr);
+    }
+    if (!log_path.empty() && ini_flag("log", true)) g_logfile = fopen(log_path.c_str(), "w");
     if (const char *tr = getenv("VITART_TRACE")) {
         g_trace = true;
         std::string f = tr;

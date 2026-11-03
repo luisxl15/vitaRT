@@ -28,6 +28,8 @@ namespace vt {
 
 // ---- log ----
 void logf(const char *fmt, ...);
+// chave=0/1 do vitart_options.ini que vale desde a abertura (console=, log=, texdump=, do Settings.exe)
+bool ini_flag(const char *key, bool def);
 [[noreturn]] void fatal(const char *fmt, ...);
 
 // ---- memória do guest ----

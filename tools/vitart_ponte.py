@@ -365,19 +365,53 @@ def m_opcoes(a):
         tl = ''
     return {'api': api if api in APIS else 'auto', 'ini': _ini(), 'placas': _placas(),
             'vulkan': os.path.exists(os.path.join(sysdir, 'vulkan-1.dll')), 'ultima': _api_da_ultima_sessao(),
-            'jogo_aberto': '"vitart.exe"' in tl or '"god of war collection.exe"' in tl}
+            'jogo_aberto': '"vitart.exe"' in tl or '"god of war collection.exe"' in tl,
+            'flags': _flags(), 'texdump_pasta': os.path.join(cfg['data'], 'texdump'),
+            'log_pasta': os.path.join(os.path.dirname(cfg['data']), 'logs')}
+
+
+def _gravar(chave, valor):
+    """chave=valor no ini, no lugar da linha que já existe, sem mexer nas outras (o jogo lê ao abrir)."""
+    linhas = open(_ini(), encoding='utf-8', errors='replace').read().splitlines() if os.path.exists(_ini()) else []
+    p = chave + '='
+    tem = any(l.startswith(p) for l in linhas)
+    linhas = [p + valor if l.startswith(p) else l for l in linhas] + ([] if tem else [p + valor])
+    open(_ini(), 'w', encoding='utf-8', newline='\n').write('\n'.join(linhas) + '\n')
 
 
 def m_salvar_api(a):
-    """Grava renderer=<api> sem mexer nas outras linhas (o jogo lê ao abrir)."""
     api = a.get('api')
     if api not in APIS:
         raise ValueError('API desconhecida: %s' % api)
-    linhas = open(_ini(), encoding='utf-8', errors='replace').read().splitlines() if os.path.exists(_ini()) else []
-    tem = any(l.startswith('renderer=') for l in linhas)
-    linhas = ['renderer=' + api if l.startswith('renderer=') else l for l in linhas] + ([] if tem else ['renderer=' + api])
-    open(_ini(), 'w', encoding='utf-8', newline='\n').write('\n'.join(linhas) + '\n')
+    _gravar('renderer', api)
     return api
+
+
+# chaves do Settings que o runtime lê ao abrir (core.cpp ini_flag) e o padrão de cada uma
+FLAGS = {'console': 1, 'log': 1, 'texdump': 0}
+
+
+def _flags():
+    v = dict(FLAGS)
+    if os.path.exists(_ini()):
+        for l in open(_ini(), encoding='utf-8', errors='replace'):
+            k, _, x = l.strip().partition('=')
+            if k in v:
+                v[k] = 0 if x.strip() == '0' else 1
+    return v
+
+
+def m_criar_pasta(a):
+    os.makedirs(a['pasta'], exist_ok=True)
+    return a['pasta']
+
+
+def m_salvar_opcao(a):
+    k = a.get('chave')
+    if k not in FLAGS:
+        raise ValueError('opção desconhecida: %s' % k)
+    _gravar(k, '1' if a.get('valor') else '0')
+    return _flags()
 
 
 def m_ajuda(a):

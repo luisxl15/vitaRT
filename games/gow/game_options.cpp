@@ -18,6 +18,7 @@
 // infinita << 15 | FPS medidos << 17 (0 com o contador desligado; o clipe do contador no HUD mostra esse número). As alternâncias têm um bit (0 Off, 1 On). Texturas e áudio: 1 Off, 2 On, 3 indisponível. Resolução: 1..4
 // (escala interna). FPS: 1 = 30, 2 = 60, 3 = máximo. As escolhas ficam em <dados>/vitart_options.ini.
 #include "vitart.h"
+#include <algorithm>
 #include <cmath>
 #include <vector>
 #include <chrono>
@@ -127,6 +128,21 @@ std::string ini_value(const char *line, size_t skip) {
 void save() {
     std::string iso = g_iso;
     if (const char *e = getenv("VITART_PS2_AUDIO"); e && *e) iso = e;
+    // o que não é do menu de pausa fica como está: as opções do Settings.exe (console=, log=, texdump=) e a API, que
+    // o Settings pode ter trocado com o jogo aberto (vale na próxima abertura)
+    std::vector<std::string> alheias;
+    if (FILE *f = fopen(ini_path().c_str(), "r")) {
+        static const char *nossas[] = {"#", "hd_textures=", "ps2_audio=", "resolution=", "fps=", "vsync=", "fps_counter=",
+                                       "borderless=", "auto_qte=", "cheat_", "enemy_health_bars=", "mod_", "ps2_iso="};
+        char line[1024];
+        while (fgets(line, sizeof line, f)) {
+            bool nossa = line[0] == '\n' || line[0] == '\r';
+            for (const char *p : nossas) nossa |= !strncmp(line, p, strlen(p));
+            if (!nossa) alheias.push_back(ini_value(line, 0));
+        }
+        fclose(f);
+    }
+    const bool tem_api = std::any_of(alheias.begin(), alheias.end(), [](const std::string &l) { return !l.rfind("renderer=", 0); });
     if (FILE *f = fopen(ini_path().c_str(), "w")) {
         fprintf(f, "# Opções do PC (mudam pelo menu de pausa do jogo: Options)\n");
         fprintf(f, "hd_textures=%u\nps2_audio=%u\nresolution=%u\nfps=%s\nvsync=%u\nfps_counter=%u\nborderless=%u\nauto_qte=%u\n",
@@ -136,7 +152,8 @@ void save() {
         fprintf(f, "cheat_infinite_health=%u\ncheat_infinite_magic=%u\ncheat_infinite_rage=%u\n", g_opt.inf_health ? 1u : 0u,
                 g_opt.inf_magic ? 1u : 0u, g_opt.inf_rage ? 1u : 0u);
         fprintf(f, "enemy_health_bars=%u\n", g_opt.hp_bars ? 1u : 0u);
-        fprintf(f, "renderer=%s\n", g_renderer.c_str());
+        if (!tem_api) fprintf(f, "renderer=%s\n", g_renderer.c_str());
+        for (const std::string &l : alheias) fprintf(f, "%s\n", l.c_str());
         for (auto &[id, on] : g_mods) fprintf(f, "mod_%s=%u\n", id.c_str(), on ? 1u : 0u); // carregador de mods
         if (!iso.empty()) fprintf(f, "ps2_iso=%s\n", iso.c_str());
         fclose(f);

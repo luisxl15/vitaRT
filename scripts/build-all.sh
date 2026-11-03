@@ -53,7 +53,7 @@ done
 "$CXX" -std=c++20 -O2 -w -D_CRT_SECURE_NO_WARNINGS -I"$HERE/runtime/arm" -I"$HERE/runtime/vitart" \
   -I"$HERE/third_party/libatrac9/src" -I"$HERE/third_party/stb" -I"$VK/Include" -o "$RT/vitart.exe" \
   "$HERE"/runtime/vitart/*.cpp "$HERE"/games/gow/*.cpp "$AT9OBJ"/*.o "$VK/Lib/vulkan-1.lib" \
-  -Xlinker /DELAYLOAD:vulkan-1.dll -ldelayimp
+  -Xlinker /DELAYLOAD:vulkan-1.dll -ldelayimp -Xlinker /SUBSYSTEM:WINDOWS -Xlinker /ENTRY:mainCRTStartup
 
 echo "== 6/7 shaders (Vulkan e Direct3D 11)"
 mkdir -p "$RT/spv/miss"
