@@ -70,8 +70,11 @@ def ensure(cfg, log=print):
     man_p = os.path.join(out, 'arte.json')
     if os.path.exists(man_p):
         man = json.load(open(man_p, encoding='utf-8'))
-        if man.get('versao') == VERSAO and all(os.path.exists(p) for p in man['arquivos'].values()):
-            return man['arquivos']
+        # o caminho guardado é o da máquina que gerou: em outro PC (jogo instalado) vale o mesmo nome nesta pasta
+        arqs = {k: p if os.path.exists(p) else os.path.join(out, os.path.basename(p.replace('\\', '/')))
+                for k, p in man.get('arquivos', {}).items()}
+        if man.get('versao') == VERSAO and arqs and all(os.path.exists(p) for p in arqs.values()):
+            return arqs
     os.makedirs(out, exist_ok=True)
     tmp = tempfile.mkdtemp(prefix='vitart_arte_')
     files = {}
