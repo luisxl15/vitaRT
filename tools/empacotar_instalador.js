@@ -1,10 +1,11 @@
 // Empacota a pasta do jogo montada (tools/montar_jogo.py) nos dados cifrados do instalador.
 //
 //   node tools/empacotar_instalador.js <pasta do jogo> <saída\dados> <work.bin ou .rif> <SHA-256 do PKG USA>
-//                                      [--sem=<caminho>]... [--troca=<pasta>]
+//                                      [--sem=<caminho>]... [--so=<caminho>]... [--troca=<pasta>]
 //
 // --sem pula o que começa com o caminho (relativo à pasta do jogo, com /); --troca põe os arquivos da pasta no lugar dos
 // de mesmo caminho (é assim que o build_instalador.py tira um mod: sem a pasta dele e com a lista e o menu refeitos).
+// --so leva só o que começa com um dos caminhos (os pacotes opcionais: texturas HD, PBR, áudio do PS2, vídeos HD).
 //
 // A chave sai da chave do conteúdo que está no work.bin (NoNpDrm, +0x50) junto com o SHA-256 do PKG:
 //   K = SHA-256("vitart-gow-instalador|" + chave16 + sha256_pkg)
@@ -75,6 +76,7 @@ async function main() {
   const args = process.argv.slice(2);
   const [jogo, dados, rifPath, shaPkg] = args.filter(a => !a.startsWith('--'));
   const sem = args.filter(a => a.startsWith('--sem=')).map(a => a.slice(6));
+  const so = args.filter(a => a.startsWith('--so=')).map(a => a.slice(5));
   const troca = args.find(a => a.startsWith('--troca='))?.slice(8);
   if (!shaPkg || !/^[0-9a-f]{64}$/i.test(shaPkg)) {
     console.error('uso: node tools/empacotar_instalador.js <pasta do jogo> <saída\\dados> <work.bin> <sha256 do PKG>');
@@ -86,9 +88,10 @@ async function main() {
 
   const relDe = p => path.relative(jogo, p).split(path.sep).join('/');
   const arquivos = listar(jogo).map(p => ({ p, rel: relDe(p) }))
-    .filter(a => !a.rel.startsWith('logs/') && !sem.some(c => a.rel.startsWith(c)))
+    .filter(a => !a.rel.startsWith('logs/') && !sem.some(c => a.rel.startsWith(c)) && (!so.length || so.some(c => a.rel.startsWith(c))))
     .map(a => troca && fs.existsSync(path.join(troca, a.rel)) ? { p: path.join(troca, a.rel), rel: a.rel, trocado: true } : a);
-  for (let i = vazias.length - 1; i >= 0; i--) if (sem.some(c => (vazias[i] + '/').startsWith(c))) vazias.splice(i, 1);
+  for (let i = vazias.length - 1; i >= 0; i--)
+    if (sem.some(c => (vazias[i] + '/').startsWith(c)) || (so.length && !so.some(c => (vazias[i] + '/').startsWith(c)))) vazias.splice(i, 1);
   if (sem.length || troca) console.log(`sem: ${sem.join(', ') || '-'}; trocados: ${arquivos.filter(a => a.trocado).map(a => a.rel).join(', ') || '-'}`);
   const totalOrig = arquivos.reduce((s, a) => s + fs.statSync(a.p).size, 0);
   console.log(`${arquivos.length} arquivos, ${(totalOrig / 1e9).toFixed(2)} GB`);

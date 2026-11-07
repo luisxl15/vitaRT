@@ -46,6 +46,7 @@ ipcMain.handle('licenca', (_e, p) => {
     const klic = M.lerLicenca(fs.readFileSync(p));
     if (M.verificaLicenca(klic) !== est.cab.verifica_licenca) throw new M.ErroInst('rif_licenca');
     est.klic = klic;
+    est.rifPath = p;
     return { ok: true };
   } catch (e) { est.klic = null; return falha(e); }
 });
@@ -60,6 +61,7 @@ ipcMain.handle('pkg', async (_e, p) => {
     const sha = await M.hashPkg(p, (f, t) => { if (Date.now() - ultimo > 80 || f === t) { ultimo = Date.now(); enviar('pkg-andar', f / t); } }, () => est.cancelar);
     hashando = false;
     est.sha = sha;
+    est.pkgPath = p;
     return { ok: true };
   } catch (e) { hashando = false; est.sha = null; return falha(e); }
 });
@@ -133,6 +135,32 @@ ipcMain.handle('instalar', async (_e, destino, opcoes) => {
       ultimo = Date.now();
       enviar('instalar-andar', { feito, total, arq, n, nArq, seg: (Date.now() - t0) / 1000 });
     }, () => est.cancelar);
+    // o jogo em si (3,2 GB) não vem no instalador: sai do PKG de quem instala
+    const extrator = path.join(__dirname, 'pfs_extrair.exe');
+    if (est.pkgPath && est.rifPath && fs.existsSync(extrator) && !fs.existsSync(path.join(destino, 'game', 'PCSA00126', 'eboot.bin'))) {
+      await M.extrairApp(extrator, est.pkgPath, est.rifPath, path.join(destino, 'game'), (etapa, feito, total) => {
+        if (Date.now() - ultimo < 100 && feito < total) return;
+        ultimo = Date.now();
+        enviar('instalar-andar', { feito, total, arq: etapa === 'pkg' ? 'PKG: game/PCSA00126' : 'PFS: game/PCSA00126', n: feito,
+          nArq: total, seg: (Date.now() - t0) / 1000, etapa });
+      }, () => est.cancelar);
+    }
+    // pacotes opcionais baixados (texturas HD, PBR, áudio do PS2, vídeos HD): ../opcionais/<nome>/manifesto.bin
+    const opc = path.resolve(DADOS, '..', 'opcionais');
+    for (const nome of fs.existsSync(opc) ? fs.readdirSync(opc) : []) {
+      const dir = path.join(opc, nome);
+      if (!fs.existsSync(path.join(dir, 'manifesto.bin'))) continue;
+      const { cifrado } = M.lerCabecalho(dir);
+      const man = M.lerManifesto(cifrado, est.K);
+      await M.instalar(dir, man, est.K, destino, (feito, total, arq, n) => {
+        if (Date.now() - ultimo < 100 && feito < total) return;
+        ultimo = Date.now();
+        enviar('instalar-andar', { feito, total, arq, n, nArq: man.arquivos.length, seg: (Date.now() - t0) / 1000, etapa: nome });
+      }, () => est.cancelar);
+    }
+    // a chave fica para o atualizador do Settings abrir as atualizações cifradas (DLLs e shaders) sem pedir o PKG
+    fs.mkdirSync(path.join(destino, 'data'), { recursive: true });
+    fs.writeFileSync(path.join(destino, 'data', 'vitart_chave.bin'), est.K);
     posInstalacao(destino, opcoes);
     est.instalando = false;
     return { ok: true, seg: (Date.now() - t0) / 1000 };

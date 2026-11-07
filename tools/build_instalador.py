@@ -35,6 +35,16 @@ Mantenha juntas as pastas "instalador" e "dados".
 '''
 
 
+# Pacotes opcionais (não saem do PKG e passam de 7 GB juntos): cada um vira <saída>/opcionais/<nome>, cifrado com a
+# mesma chave, para baixar à parte da release; o instalador instala os que achar ao lado dos dados.
+OPCIONAIS = [
+    ('texturas_hd', ['data/texpack/']),
+    ('pbr', ['data/pbr/']),
+    ('audio_ps2', ['data/ps2audio']),
+    ('videos_hd', ['data/videos/']),
+]
+
+
 # Mods que não vão no instalador. None = nenhum: o jogo instalado vem só com as texturas, sem traduções nem o Kratos do
 # GoW3 (decisão dele); quem quiser instala os mods depois pelo Mod Studio.
 SEM_MODS = None
@@ -142,13 +152,26 @@ def main():
     shutil.copy2(obj, lanc)
     open(os.path.join(out, 'Leia-me.txt'), 'w', encoding='utf-8-sig', newline='\r\n').write(LEIA_ME)
 
+    # o app do Vita sai do PKG de quem instala (tools/pfs_extrair.cpp): o extrator vai junto do instalador
+    pfs = os.path.join(tmp, 'pfs_extrair.exe')
+    pp = os.path.join(REPO, 'third_party', 'psvpfsparser')
+    subprocess.run([os.path.join(MJ.LLVM, 'clang++.exe'), '-std=c++20', '-O2', '-w', '-maes', '-msse4.1', '-municode',
+                    '-D_CRT_SECURE_NO_WARNINGS', '-I', pp, os.path.join(TOOLS, 'pfs_extrair.cpp')] +
+                   [os.path.join(pp, f) for f in sorted(os.listdir(pp)) if f.endswith('.cpp')] + ['-o', pfs, '-lbcrypt'], check=True)
+    shutil.copy2(pfs, os.path.join(app, 'pfs_extrair.exe'))
+
     if not a.sem_dados:
         extra = []
         print('== sem os mods')
         extra = sem_mods(jogo, tmp)
-        print('== dados (cifrados)')
-        subprocess.run(['node', os.path.join(TOOLS, 'empacotar_instalador.js'), jogo, os.path.join(out, 'dados'), a.rif, a.sha] + extra,
-                       check=True)
+        print('== dados (cifrados): sem o app do Vita (vem do PKG) e sem os pacotes opcionais')
+        fora = ['--sem=game/'] + ['--sem=' + c for _, cs in OPCIONAIS for c in cs]
+        subprocess.run(['node', os.path.join(TOOLS, 'empacotar_instalador.js'), jogo, os.path.join(out, 'dados'), a.rif, a.sha] +
+                       extra + fora, check=True)
+        for nome, cs in OPCIONAIS:
+            print('== pacote opcional:', nome)
+            subprocess.run(['node', os.path.join(TOOLS, 'empacotar_instalador.js'), jogo, os.path.join(out, 'opcionais', nome), a.rif,
+                            a.sha] + ['--so=' + c for c in cs], check=True)
     print('pronto:', lanc)
 
 

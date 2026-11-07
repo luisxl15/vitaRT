@@ -37,7 +37,7 @@ const TEXTOS = {
     'e.chave_pkg': 'O PKG não é a versão que este instalador espera (foi modificado ou está corrompido).',
     'e.falta_arquivos': 'Falta o PKG ou o work.bin.', 'e.manifesto': 'Os dados do instalador estão faltando ou corrompidos (manifesto.bin).',
     'e.falta_bloco': 'Falta o arquivo de dados {f}.', 'e.bloco_curto': 'Um arquivo de dados está menor do que devia (cópia incompleta?).',
-    'e.corrompido': 'Arquivo corrompido nos dados: {p}', 'e.cancelado': 'Cancelado.', 'e.generico': '{erro}',
+    'e.corrompido': 'Arquivo corrompido nos dados: {p}', 'e.extrator': 'Não deu para tirar o jogo do PKG: {msg}', 'e.cancelado': 'Cancelado.', 'e.generico': '{erro}',
   },
   en: {
     nome: 'English',
@@ -74,7 +74,7 @@ const TEXTOS = {
     'e.chave_pkg': 'The PKG is not the version this installer expects (it was modified or is corrupted).',
     'e.falta_arquivos': 'The PKG or the work.bin is missing.', 'e.manifesto': 'The installer data is missing or corrupted (manifesto.bin).',
     'e.falta_bloco': 'Data file {f} is missing.', 'e.bloco_curto': 'A data file is smaller than it should be (incomplete copy?).',
-    'e.corrompido': 'Corrupted file in the data: {p}', 'e.cancelado': 'Cancelled.', 'e.generico': '{erro}',
+    'e.corrompido': 'Corrupted file in the data: {p}', 'e.extrator': 'Could not extract the game from the PKG: {msg}', 'e.cancelado': 'Cancelled.', 'e.generico': '{erro}',
   },
   es: {
     nome: 'Español',
@@ -111,7 +111,7 @@ const TEXTOS = {
     'e.chave_pkg': 'El PKG no es la versión que espera este instalador (fue modificado o está dañado).',
     'e.falta_arquivos': 'Falta el PKG o el work.bin.', 'e.manifesto': 'Los datos del instalador faltan o están dañados (manifesto.bin).',
     'e.falta_bloco': 'Falta el archivo de datos {f}.', 'e.bloco_curto': 'Un archivo de datos es más pequeño de lo debido (¿copia incompleta?).',
-    'e.corrompido': 'Archivo dañado en los datos: {p}', 'e.cancelado': 'Cancelado.', 'e.generico': '{erro}',
+    'e.corrompido': 'Archivo dañado en los datos: {p}', 'e.extrator': 'No se pudo extraer el juego del PKG: {msg}', 'e.cancelado': 'Cancelado.', 'e.generico': '{erro}',
   },
   fr: {
     nome: 'Français',

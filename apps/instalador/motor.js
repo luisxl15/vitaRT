@@ -133,4 +133,37 @@ async function instalar(dados, man, K, destino, aoAndar, cancelado = () => false
   } finally { L.fechar(); }
 }
 
-module.exports = { ErroInst, CONTENT_ID, PKG_TAMANHO, lerLicenca, verificaLicenca, derivar, verificaChave, ivDe, conferirCabecalhoPkg, hashPkg, lerCabecalho, lerManifesto, instalar };
+// O app do Vita sai do PKG de quem instala (tools/pfs_extrair.cpp, ao lado do instalador): camada do PKG e PFS
+// decifradas para <destino>/PCSA00126. aoAndar(etapa, feito, total); o extrator manda "etapa", "progresso",
+// "pronto" e "erro" por linha.
+function extrairApp(exe, pkg, rif, destino, aoAndar, cancelado = () => false) {
+  const { spawn } = require('child_process');
+  return new Promise((ok, erro) => {
+    fs.mkdirSync(destino, { recursive: true });
+    const p = spawn(exe, [pkg, rif, destino], { windowsHide: true });
+    let etapa = 'pkg', resto = '', msg = '', pronto = null;
+    const tic = setInterval(() => { if (cancelado()) p.kill(); }, 300);
+    p.stdout.setEncoding('utf8');
+    p.stdout.on('data', c => {
+      resto += c;
+      let i;
+      while ((i = resto.indexOf('\n')) >= 0) {
+        const l = resto.slice(0, i).trim();
+        resto = resto.slice(i + 1);
+        if (l.startsWith('etapa ')) etapa = l.slice(6);
+        else if (l.startsWith('progresso ')) { const [a, b] = l.slice(10).split(' ').map(Number); aoAndar?.(etapa, a, b); }
+        else if (l.startsWith('pronto ')) pronto = l.slice(7);
+        else if (l.startsWith('erro ')) msg = l.slice(5);
+      }
+    });
+    p.on('error', e => { clearInterval(tic); erro(new ErroInst('extrator', { msg: e.message }, 'extrator: ' + e.message)); });
+    p.on('exit', code => {
+      clearInterval(tic);
+      if (cancelado()) return erro(new ErroInst('cancelado'));
+      if (code === 0 && pronto) ok(pronto);
+      else erro(new ErroInst('extrator', { msg }, 'extrair o app do PKG: ' + (msg || 'código ' + code)));
+    });
+  });
+}
+
+module.exports = { extrairApp, ErroInst, CONTENT_ID, PKG_TAMANHO, lerLicenca, verificaLicenca, derivar, verificaChave, ivDe, conferirCabecalhoPkg, hashPkg, lerCabecalho, lerManifesto, instalar };
