@@ -207,7 +207,11 @@ uint32_t encode() {
     const uint32_t tex = texpack_available() ? (g_opt.tex ? 2u : 1u) : 3u; // pack do jogo em execução (texpack/<jogo>)
     const uint32_t aud = ps2audio_available() ? (g_opt.audio ? 2u : 1u) : 3u;
     uint32_t fps = g_opt.counter ? gvk::measured_fps() : 0;
-    fps = fps > 127 ? 127 : fps; // a palavra passa por float no menu: até 2^24
+    // A palavra passa por float no menu: exata só até 2^24, e com 7 bits o contador parava em 127. O contador do HUD só
+    // lê a parte inteira de palavra / 2^17 (o erro do float fica nos bits de baixo), então jogando vai o FPS inteiro;
+    // em menu/pausa, onde a página Options decodifica os bits de baixo, fica até 127 para continuar exata.
+    const bool jogando = rd32(game_id() == 1 ? 0x812c2e04u : 0x812ec498u) == (game_id() == 1 ? 0xbu : 0xcu);
+    fps = std::min<uint32_t>(fps, jogando ? 9999u : 127u);
     return tex | aud << 2 | cur_scale() << 4 | g_opt.fps << 7 | (g_opt.vsync ? 1u : 0u) << 9 |
            (g_opt.auto_qte ? 1u : 0u) << 10 | (g_opt.counter ? 1u : 0u) << 11 | (g_opt.borderless ? 1u : 0u) << 12 |
            (g_opt.inf_health ? 1u : 0u) << 13 | (g_opt.inf_magic ? 1u : 0u) << 14 | (g_opt.inf_rage ? 1u : 0u) << 15 | (g_opt.hp_bars ? 1u : 0u) << 16 | fps << 17;

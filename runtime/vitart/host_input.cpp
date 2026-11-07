@@ -9,6 +9,13 @@
 //   DualSense, relatório 0x01 (USB): [1..4] analógicos, [5] [6] gatilhos, [8] direcional e botões como
 //     no DS4, [9] L1 R1 L2 R2 create options L3 R3; 0x31 (Bluetooth completo) = +1. O 0x01 curto do
 //     Bluetooth tem o layout do DS4.
+// Nintendo (0x057E): Pro Controller e compatíveis (0x2009) e o grip dos Joy-Con (0x200E). Pelo USB precisa do aperto de
+// mão (0x80 0x02, 0x80 0x03, 0x80 0x02, 0x80 0x04); nos dois pede o relatório completo (subcomando 0x03 0x30).
+//   0x30 (completo): [3] Y X B A SR SL R ZR, [4] - + RS LS home captura, [5] baixo cima direita esquerda SR SL L ZL,
+//     [6..8] analógico esquerdo e [9..11] direito em 12 bits (x baixo, y alto; y para cima), centro ~2048.
+//   0x3F (simples, Bluetooth sem pedir): [1] B A Y X L R ZL ZR, [2] - + LS RS home captura, [3] direcional (0 = cima,
+//     horário, 8 = solto), [4..11] LX LY RX RY em 16 bits (y para baixo).
+//   Botão pela posição, como no Vita: B (embaixo) = cruz, A = círculo, Y = quadrado, X = triângulo.
 #include "host_input.h"
 #include "vitart.h"
 
@@ -16,6 +23,7 @@
 #define NOMINMAX
 #include <windows.h>
 #include <hidsdi.h>
+#include <hidpi.h>
 #include <setupapi.h>
 #pragma comment(lib, "hid.lib")
 #pragma comment(lib, "setupapi.lib")
@@ -75,6 +83,7 @@ void deadzone(uint8_t &x, uint8_t &y, int dz) {
 struct SonyPad {
     HANDLE h = INVALID_HANDLE_VALUE;
     bool dualsense = false;
+    bool nintendo = false; // Switch (Pro Controller, grip dos Joy-Con)
     std::string path;
     std::mutex m;
     std::vector<uint8_t> report; // último relatório de entrada
@@ -111,6 +120,33 @@ void reader(std::shared_ptr<SonyPad> pad) {
     pad->alive = false; // desconectado: sai da lista na próxima varredura
 }
 
+// relatório de saída pelo canal de interrupção (o handle é OVERLAPPED), do tamanho que o dispositivo pede
+void hid_write(HANDLE h, const uint8_t *d, size_t n, USHORT len) {
+    std::vector<uint8_t> buf(std::max<size_t>(len, n), 0);
+    std::memcpy(buf.data(), d, n);
+    OVERLAPPED ov{};
+    ov.hEvent = CreateEventA(nullptr, TRUE, FALSE, nullptr);
+    DWORD done = 0;
+    if (!WriteFile(h, buf.data(), (DWORD)buf.size(), nullptr, &ov) && GetLastError() == ERROR_IO_PENDING)
+        if (WaitForSingleObject(ov.hEvent, 200) == WAIT_TIMEOUT) CancelIo(h);
+    GetOverlappedResult(h, &ov, &done, FALSE);
+    CloseHandle(ov.hEvent);
+}
+// Switch: aperto de mão do USB (o Bluetooth ignora) e o pedido do relatório completo 0x30
+void nintendo_init(HANDLE h) {
+    USHORT len = 64;
+    PHIDP_PREPARSED_DATA pp = nullptr;
+    if (HidD_GetPreparsedData(h, &pp)) {
+        HIDP_CAPS caps{};
+        if (HidP_GetCaps(pp, &caps) == HIDP_STATUS_SUCCESS && caps.OutputReportByteLength) len = caps.OutputReportByteLength;
+        HidD_FreePreparsedData(pp);
+    }
+    const uint8_t usb[][2] = {{0x80, 0x02}, {0x80, 0x03}, {0x80, 0x02}, {0x80, 0x04}};
+    for (auto &c : usb) hid_write(h, c, 2, len), Sleep(20);
+    const uint8_t full[] = {0x01, 0x00, 0x00, 0x01, 0x40, 0x40, 0x00, 0x01, 0x40, 0x40, 0x03, 0x30};
+    hid_write(h, full, sizeof full, len);
+}
+
 void scan_sony() {
     GUID hid;
     HidD_GetHidGuid(&hid);
@@ -134,8 +170,22 @@ void scan_sony() {
         if (h == INVALID_HANDLE_VALUE) continue;
         HIDD_ATTRIBUTES at{sizeof at};
         bool ds = false;
-        if (!HidD_GetAttributes(h, &at) || at.VendorID != 0x054C || !sony_pid(at.ProductID, ds)) {
+        const bool ok = HidD_GetAttributes(h, &at);
+        const bool nin = ok && at.VendorID == 0x057E && (at.ProductID == 0x2009 || at.ProductID == 0x200E);
+        if (!ok || (!nin && (at.VendorID != 0x054C || !sony_pid(at.ProductID, ds)))) {
             CloseHandle(h);
+            continue;
+        }
+        if (nin) {
+            nintendo_init(h);
+            auto pad = std::make_shared<SonyPad>();
+            pad->h = h, pad->nintendo = true, pad->path = path;
+            {
+                std::lock_guard<std::mutex> g(g_pads_mutex);
+                g_pads.push_back(pad);
+            }
+            std::thread(reader, pad).detach();
+            vt::logf("vitart: controle de Switch conectado (%04x:%04x)", at.VendorID, at.ProductID);
             continue;
         }
         // DualShock 4 por Bluetooth só manda o relatório completo depois de ler o recurso 0x02.
@@ -178,6 +228,55 @@ void sony_state(const std::vector<uint8_t> &r, bool dualsense, State &s) {
     if (misc & 0x80) s.buttons |= R3;
     if (misc & 0x10) s.buttons |= SELECT; // share / create
     if (misc & 0x20) s.buttons |= START;  // options
+}
+
+// eixo de 12 bits do Switch (centro ~2048, curso ~±1400) -> 0..255 do Vita
+uint8_t eixo12(int v, bool inverte) {
+    int d = (v - 2048) * 127 / 1400;
+    if (inverte) d = -d;
+    return (uint8_t)std::clamp(128 + d, 0, 255);
+}
+void nintendo_state(const std::vector<uint8_t> &r, State &s) {
+    if (r.size() >= 12 && (r[0] == 0x30 || r[0] == 0x21)) {
+        const uint8_t dir = r[3], mid = r[4], esq = r[5];
+        if (dir & 0x01) s.buttons |= SQUARE;   // Y
+        if (dir & 0x02) s.buttons |= TRIANGLE; // X
+        if (dir & 0x04) s.buttons |= CROSS;    // B
+        if (dir & 0x08) s.buttons |= CIRCLE;   // A
+        if (dir & 0x40) s.buttons |= R1;
+        if (dir & 0x80) s.buttons |= R2;       // ZR
+        if (mid & 0x01) s.buttons |= SELECT;   // -
+        if (mid & 0x02) s.buttons |= START;    // +
+        if (mid & 0x04) s.buttons |= R3;
+        if (mid & 0x08) s.buttons |= L3;
+        if (esq & 0x01) s.buttons |= DOWN;
+        if (esq & 0x02) s.buttons |= UP;
+        if (esq & 0x04) s.buttons |= RIGHT;
+        if (esq & 0x08) s.buttons |= LEFT;
+        if (esq & 0x40) s.buttons |= L1;
+        if (esq & 0x80) s.buttons |= L2;       // ZL
+        const uint8_t *a = &r[6], *b = &r[9];
+        s.lx = eixo12(a[0] | (a[1] & 0xF) << 8, false), s.ly = eixo12(a[1] >> 4 | a[2] << 4, true);
+        s.rx = eixo12(b[0] | (b[1] & 0xF) << 8, false), s.ry = eixo12(b[1] >> 4 | b[2] << 4, true);
+    } else if (r.size() >= 12 && r[0] == 0x3F) {
+        const uint8_t b1 = r[1], b2 = r[2];
+        if (b1 & 0x01) s.buttons |= CROSS;    // B
+        if (b1 & 0x02) s.buttons |= CIRCLE;   // A
+        if (b1 & 0x04) s.buttons |= SQUARE;   // Y
+        if (b1 & 0x08) s.buttons |= TRIANGLE; // X
+        if (b1 & 0x10) s.buttons |= L1;
+        if (b1 & 0x20) s.buttons |= R1;
+        if (b1 & 0x40) s.buttons |= L2;
+        if (b1 & 0x80) s.buttons |= R2;
+        if (b2 & 0x01) s.buttons |= SELECT;
+        if (b2 & 0x02) s.buttons |= START;
+        if (b2 & 0x04) s.buttons |= L3;
+        if (b2 & 0x08) s.buttons |= R3;
+        static const uint32_t hat[9] = {UP, UP | RIGHT, RIGHT, DOWN | RIGHT, DOWN, DOWN | LEFT, LEFT, UP | LEFT, 0};
+        s.buttons |= hat[std::min<uint8_t>(r[3] & 15, 8)];
+        auto u16 = [&](int i) { return (uint8_t)((r[i] | r[i + 1] << 8) >> 8); };
+        s.lx = u16(4), s.ly = u16(6), s.rx = u16(8), s.ry = u16(10);
+    }
 }
 
 int deflection(const State &s) {
@@ -259,6 +358,13 @@ State poll() {
         }
         if (r.empty()) continue;
         State s;
+        if (p->nintendo) {
+            nintendo_state(r, s);
+            deadzone(s.lx, s.ly, 20);
+            deadzone(s.rx, s.ry, 20);
+            take(s, 4);
+            continue;
+        }
         sony_state(r, p->dualsense, s);
         deadzone(s.lx, s.ly, 12);
         deadzone(s.rx, s.ry, 12);

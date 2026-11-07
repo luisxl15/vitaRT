@@ -61,6 +61,9 @@ def build(src_rgba):
 #     do Xbox Series (botão escuro, letra colorida em A/B/X/Y, símbolo branco no resto).
 #   --ps5 <PlayStation Series/Double do Kenney Input Prompts (CC0)>: controle da Sony -> texpack_ps5, no estilo do
 #     PS5 (símbolo branco em disco escuro).
+#   --switch <Nintendo Switch/Double do Kenney Input Prompts (CC0)>: Pro Controller e compatíveis -> texpack_switch.
+#     Botão pela posição, como o vitart lê o controle (B embaixo = cruz, A = círculo, Y = quadrado, X = triângulo).
+#     O atlas de base é o do Xbox já gravado (texpack_xbox/<jogo>/font_xbox.png): o original não precisa existir.
 PAD = {
     'gow1': {'SPACE': 'CROSS', 'RMB': 'TRIANGLE', 'F': 'CIRCLE', 'LMB': 'SQUARE', 'E': 'R2', 'Q': 'L1', 'CTRL': 'L2',
              'R': 'R1', 'TAB': 'START', 'ESC': 'SELECT', 'WASD': 'LS', 'SHIFT': 'RS', '1': 'UP', '2': 'RIGHT',
@@ -80,6 +83,18 @@ PS5 = {'CROSS': 'playstation_button_cross', 'CIRCLE': 'playstation_button_circle
        'SELECT': 'playstation5_button_create', 'LS': 'playstation_stick_l', 'RS': 'playstation_stick_r',
        'UP': 'playstation_dpad_up', 'RIGHT': 'playstation_dpad_right', 'DOWN': 'playstation_dpad_down',
        'LEFT': 'playstation_dpad_left'}
+
+SWITCH = {'CROSS': 'switch_button_b', 'CIRCLE': 'switch_button_a', 'SQUARE': 'switch_button_y', 'TRIANGLE': 'switch_button_x',
+          'L1': 'switch_button_l', 'L2': 'switch_button_zl', 'R1': 'switch_button_r', 'R2': 'switch_button_zr',
+          'START': 'switch_button_plus', 'SELECT': 'switch_button_minus', 'LS': 'switch_stick_l', 'RS': 'switch_stick_r',
+          'UP': 'switch_dpad_up', 'RIGHT': 'switch_dpad_right', 'DOWN': 'switch_dpad_down', 'LEFT': 'switch_dpad_left'}
+
+
+def switch_png(folder, name):
+    im = Image.open(os.path.join(folder, SWITCH[name] + '.png')).convert('RGBA')
+    if name in ('UP', 'DOWN', 'LEFT', 'RIGHT'):
+        return _crop(im)
+    return dark_style(im)
 
 
 def _crop(im):
@@ -128,9 +143,12 @@ def fit(im, w, h):
     return out
 
 
-def build_pad(src_rgba, game, icon):
-    a = np.frombuffer(open(src_rgba, 'rb').read()[:256 * 256 * 4], np.uint8).reshape(256, 256, 4)
-    atlas = Image.fromarray(a.copy(), 'RGBA').resize((256 * SCALE, 256 * SCALE), Image.LANCZOS)
+def build_pad(src_rgba, game, icon, base_png=None):
+    if base_png:  # atlas já ampliado (o de outro controle): só as células dos ícones mudam
+        atlas = Image.open(base_png).convert('RGBA')
+    else:
+        a = np.frombuffer(open(src_rgba, 'rb').read()[:256 * 256 * 4], np.uint8).reshape(256, 256, 4)
+        atlas = Image.fromarray(a.copy(), 'RGBA').resize((256 * SCALE, 256 * SCALE), Image.LANCZOS)
     for label, g in ICON_GLYPH.items():
         u0, u1, v0, v1 = CELLS[g]
         atlas.paste((0, 0, 0, 0), (round((u0 - 1) * SCALE), round((v0 - 1) * SCALE), round((u1 + 1) * SCALE), round((v1 + 1) * SCALE)))
@@ -142,16 +160,19 @@ def build_pad(src_rgba, game, icon):
 
 def main():
     src, data = sys.argv[1], sys.argv[2]
-    for flag, sub, png in (('--xbox', 'texpack_xbox', 'font_xbox.png'), ('--ps5', 'texpack_ps5', 'font_ps5.png')):
+    for flag, sub, png in (('--xbox', 'texpack_xbox', 'font_xbox.png'), ('--ps5', 'texpack_ps5', 'font_ps5.png'),
+                           ('--switch', 'texpack_switch', 'font_switch.png')):
         if flag not in sys.argv:
             continue
         k = sys.argv.index(flag)
         folder = sys.argv[k + 1]
-        icon = (lambda n: xbox_png(folder, n)) if flag == '--xbox' else (lambda n: ps5_png(folder, n))
+        icon = {'--xbox': lambda n: xbox_png(folder, n), '--ps5': lambda n: ps5_png(folder, n),
+                '--switch': lambda n: switch_png(folder, n)}[flag]
         for game in ('gow1', 'gow2'):
             d = os.path.join(data, sub, game)
             os.makedirs(d, exist_ok=True)
-            build_pad(src, game, icon).save(os.path.join(d, png))
+            base = os.path.join(data, 'texpack_xbox', game, 'font_xbox.png') if flag == '--switch' else None
+            build_pad(src, game, icon, base).save(os.path.join(d, png))
             with open(os.path.join(d, 'index.tsv'), 'w', encoding='utf-8') as fo:
                 fo.write('# atlas da fonte do HUD com os botões do controle (tools/kbm_atlas.py %s)\n' % flag)
                 fo.write('%s\t%s\n' % (FONT_KEY, png))

@@ -146,9 +146,10 @@ const FIXAS = [
   { g: 'janela', t: ['F9'], a: 'Capturar o quadro seguinte (diagnóstico, vai para a pasta capturas)' },
 ];
 // botões do controle (nome no ini -> rótulo); a ordem é a da tela
-const FISICOS = { CRUZ: '✕ Cruz / A', CIRCULO: '○ Círculo / B', QUADRADO: '□ Quadrado / X', TRIANGULO: '△ Triângulo / Y',
-  L1: 'L1 / LB', R1: 'R1 / RB', L2: 'L2 / LT', R2: 'R2 / RT', L3: 'L3 (analógico esquerdo)', R3: 'R3 (analógico direito)',
-  SELECT: 'Share / View', START: 'Options / Menu', CIMA: 'Direcional ↑', DIREITA: 'Direcional →', BAIXO: 'Direcional ↓',
+// rótulo: PlayStation / Xbox / Switch (o Switch vai pela posição: B embaixo = cruz)
+const FISICOS = { CRUZ: '✕ / A / B', CIRCULO: '○ / B / A', QUADRADO: '□ / X / Y', TRIANGULO: '△ / Y / X',
+  L1: 'L1 / LB / L', R1: 'R1 / RB / R', L2: 'L2 / LT / ZL', R2: 'R2 / RT / ZR', L3: 'L3 (analógico esquerdo)', R3: 'R3 (analógico direito)',
+  SELECT: 'Share / View / −', START: 'Options / Menu / +', CIMA: 'Direcional ↑', DIREITA: 'Direcional →', BAIXO: 'Direcional ↓',
   ESQUERDA: 'Direcional ←', NADA: '— nenhum —' };
 const ACOES_CONTROLE = ['cruz', 'circulo', 'quadrado', 'triangulo', 'l1', 'r1', 'l2', 'r2', 'l3', 'r3', 'select', 'start',
   'cima', 'direita', 'baixo', 'esquerda'];
@@ -231,7 +232,7 @@ function montarCtl(sec) {
       el('div', { class: 'mouse painel' }, el('div', { class: 'mouse-corpo', id: 'mouse' }), el('div', { class: 'caixa' }, 'Mouse'))),
     el('div', { class: 'mapa', id: 'mapa' }),
     el('h2', { class: 'titulo ctl-sub' }, 'Controle'),
-    el('div', { class: 'nota' }, 'Xbox, DualShock 4 e DualSense. Escolha que botão do controle faz cada ação do Vita. Os analógicos ficam como estão.'),
+    el('div', { class: 'nota' }, 'Xbox, DualShock 4, DualSense e Pro Controller do Switch. Escolha que botão do controle faz cada ação do Vita. Os analógicos ficam como estão.'),
     el('div', { class: 'controle-mapa painel', id: 'controle-mapa' }),
     el('div', { class: 'nota' }, 'O teclado só vale com a janela do jogo em foco. Controles funcionam ao mesmo tempo, e os ícones dos botões seguem o último que você usou. A cruz (✕) também pula as cenas em vídeo. O jogo relê o arquivo sozinho: dá para trocar com ele aberto.'),
     el('div', { class: 'captura oculto', id: 'captura' },

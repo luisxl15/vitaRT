@@ -312,14 +312,15 @@ void texpack_set_enabled(bool on) {
 // Com um controle XInput, os de vitart-data/texpack_xbox (botões do Xbox, tools/kbm_atlas.py --xbox); com um da Sony,
 // os de texpack_ps5 (botões do PS5, --ps5).
 // No mapa de jobs/PNGs as chaves levam um sal por variante, para não se confundirem com as do pack normal.
-int input_icon_mode(); // hle_sys.cpp: 0 = PlayStation, 1 = teclado/mouse, 2 = Xbox
+int input_icon_mode(); // hle_sys.cpp: 0 = PlayStation, 1 = teclado/mouse, 2 = Xbox, 3 = Switch
 static std::unordered_map<uint64_t, std::string> g_texkbm; // chave com sal -> PNG
 constexpr uint64_t kKbmSalt = 0x4B424D5F49434F4Eull;      // "KBM_ICON"
 constexpr uint64_t kXboxSalt = 0x58424F585F49434Full;     // "XBOX_ICO"
 constexpr uint64_t kPs5Salt = 0x5053355F49434F4Eull;      // "PS5_ICON"
-static bool g_icon_atlas[3] = {}; // modo de ícones (0 PS5, 1 teclado, 2 Xbox) com atlas instalado
+constexpr uint64_t kSwitchSalt = 0x4E53575F49434F4Eull;   // "NSW_ICON" (texpack_switch, tools/kbm_atlas.py --switch)
+static bool g_icon_atlas[4] = {}; // modo de ícones (0 PS5, 1 teclado, 2 Xbox, 3 Switch) com atlas instalado
 // (lido pela thread de kbm_icons.cpp: só consulta; quem carrega os packs é a thread de renderização)
-bool icon_atlas_available(int mode) { return mode >= 0 && mode < 3 && g_icon_atlas[mode]; }
+bool icon_atlas_available(int mode) { return mode >= 0 && mode < 4 && g_icon_atlas[mode]; }
 static void texpack_load();
 static const std::string &tp_path(uint64_t key) {
     auto it = g_texkbm.find(key);
@@ -374,7 +375,8 @@ static void texpack_load() {
     // VITART_TEXKBM_DIR / VITART_TEXXBOX_DIR (testes): outra pasta de ícones, sem mexer na instalada
     for (const auto &[env, sub, salt, what, mode] : {std::tuple{"VITART_TEXKBM_DIR", "texpack_kbm", kKbmSalt, "teclado e mouse", 1},
                                                      std::tuple{"VITART_TEXXBOX_DIR", "texpack_xbox", kXboxSalt, "Xbox", 2},
-                                                     std::tuple{"VITART_TEXPS5_DIR", "texpack_ps5", kPs5Salt, "PS5", 0}}) {
+                                                     std::tuple{"VITART_TEXPS5_DIR", "texpack_ps5", kPs5Salt, "PS5", 0},
+                                                     std::tuple{"VITART_TEXSWITCH_DIR", "texpack_switch", kSwitchSalt, "Switch", 3}}) {
         const char *kd = getenv(env);
         const std::filesystem::path kroot = kd && *kd ? std::filesystem::path(kd) : std::filesystem::path(data_path()) / sub;
         for (auto &dir : std::filesystem::directory_iterator(kroot, ec)) {
@@ -1192,9 +1194,9 @@ static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t ida
                                  info.height, info.base, info.type, (int)ok, n);
                     }
                     const uint64_t kk0 = ok ? texkbm_key(info, n, kPs5Salt) : 0, kk1 = ok ? texkbm_key(info, n, kKbmSalt) : 0,
-                                   kk2 = ok ? texkbm_key(info, n, kXboxSalt) : 0;
-                    const uint64_t kk = mode == 1 ? kk1 : mode == 2 ? kk2 : kk0;
-                    e.kbm_alt = kk0 || kk1 || kk2;
+                                   kk2 = ok ? texkbm_key(info, n, kXboxSalt) : 0, kk3 = ok ? texkbm_key(info, n, kSwitchSalt) : 0;
+                    const uint64_t kk = mode == 1 ? kk1 : mode == 2 ? kk2 : mode == 3 ? kk3 : kk0;
+                    e.kbm_alt = kk0 || kk1 || kk2 || kk3;
                     if (ok) {
                         const uint32_t wh[2] = {info.width, info.height};
                         uint64_t fk = fnv64(ptr<uint8_t>(info.data), std::min<size_t>(4096, n), fnv64(reinterpret_cast<const uint8_t *>(wh), 8));
@@ -1231,7 +1233,7 @@ static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t ida
             font_draw |= e.font;
             keep.push_back(e.px);
             t.rgba = e.px->data();
-            t.key = (e.kbm_used ? e.hash ^ (e.icon_mode == 2 ? kXboxSalt : e.icon_mode == 1 ? kKbmSalt : kPs5Salt) : e.rw ? e.hash ^ 0x9E3779B97F4A7C15ull : e.hash) | 1; // HD do pack é outra textura na GPU
+            t.key = (e.kbm_used ? e.hash ^ (e.icon_mode == 3 ? kSwitchSalt : e.icon_mode == 2 ? kXboxSalt : e.icon_mode == 1 ? kKbmSalt : kPs5Salt) : e.rw ? e.hash ^ 0x9E3779B97F4A7C15ull : e.hash) | 1; // HD do pack é outra textura na GPU
             if (e.rw) {
                 // HD do pack: tamanho do PNG e cadeia de mipmaps completa (sem cintilar de longe).
                 t.width = e.rw, t.height = e.rh;

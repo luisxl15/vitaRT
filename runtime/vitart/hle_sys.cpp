@@ -178,7 +178,7 @@ static KbmInput keyboard_mouse() {
 // (PlayStation), 2 = controle XInput (Xbox). Um DualShock lido pelo HID e também emulado como XInput (DS4Windows)
 // fica com os do PlayStation.
 static std::atomic<int> g_icon_mode{1};
-int input_icon_mode() { // VITART_ICON_MODE=0/1/2 (testes): fixa o modo
+int input_icon_mode() { // VITART_ICON_MODE=0/1/2/3 (testes): fixa o modo
     static const int forced = getenv("VITART_ICON_MODE") ? atoi(getenv("VITART_ICON_MODE")) : -1;
     return forced >= 0 ? forced : g_icon_mode.load();
 }
@@ -228,6 +228,7 @@ static void ctrl_read(arc_ctx *ctx) {
     }
     {   // ícones do teclado ou do controle: o último que mexeu
         if (kbm.buttons || kbm.mx || kbm.my) g_icon_mode = 1;
+        else if (pad.active & 4) g_icon_mode = 3; // Switch (Pro Controller e compatíveis)
         else if (pad.active & 2) g_icon_mode = 0;
         else if (pad.active & 1) g_icon_mode = 2;
     }
