@@ -15,5 +15,10 @@ contextBridge.exposeInMainWorld('vt', {
   salvarArquivo: (nome, filtros) => ipcRenderer.invoke('salvar-arquivo', nome, filtros),
   escolherPasta: () => ipcRenderer.invoke('escolher-pasta'),
   abrirLink: url => ipcRenderer.invoke('abrir-link', url),
+  atualizacao: async (acao, dados) => {
+    const r = await ipcRenderer.invoke('atualizacao', acao, dados);
+    if (!r.ok) throw Object.assign(new Error(r.erro), { codigo: r.codigo });
+    return r.r;
+  },
   janela: acao => ipcRenderer.send('janela', acao),
 });

@@ -262,8 +262,9 @@ def main():
     if os.path.isdir(app):
         shutil.rmtree(app)  # a cópia anterior, gerada aqui
     os.makedirs(app)
-    for f in ('main.js', 'preload.js', 'package.json'):
+    for f in ('main.js', 'preload.js', 'package.json', 'atualizador.js'):
         shutil.copy2(os.path.join(REPO, 'apps', 'vitart-ui', f), app)
+    shutil.copy2(os.path.join(REPO, 'apps', 'instalador', 'motor.js'), app)  # o atualizador abre os pacotes como o instalador
     shutil.copytree(os.path.join(REPO, 'apps', 'vitart-ui', 'renderer'), os.path.join(app, 'renderer'))
     shutil.copy2(ico, os.path.join(app, 'vitart.ico'))
     open(os.path.join(app, 'repo.json'), 'w', encoding='utf-8').write('{"relativo": ".."}')

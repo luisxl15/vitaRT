@@ -105,6 +105,38 @@ ipcMain.handle('escolher-pasta', async () => {
 });
 ipcMain.handle('abrir-link', (_e, url) => shell.openExternal(url));
 
+// ------------------------------------------------------------------ atualizações (Settings)
+// a pasta do jogo instalado é a de cima de Ferramentas; em desenvolvimento, VITART_JOGO
+const JOGO = process.env.VITART_JOGO || path.dirname(REPO);
+let AT = null;
+const at = () => (AT ||= require('./atualizador.js'));
+const evento = msg => { if (janela && !janela.isDestroyed()) janela.webContents.send('ponte-ev', msg); };
+ipcMain.handle('atualizacao', async (_e, acao, dados) => {
+  try {
+    if (acao === 'verificar') return { ok: true, r: await at().verificar(JOGO) };
+    if (acao === 'instalar') {
+      let ultimo = 0;
+      const r = await at().instalarPacote(JOGO, dados.pacote, (etapa, feito, total) => {
+        if (Date.now() - ultimo < 120 && feito < total) return;
+        ultimo = Date.now();
+        evento({ ev: 'atualizacao', pacote: dados.pacote.nome, etapa, feito, total });
+      }, dados.tag);
+      return { ok: true, r };
+    }
+    if (acao === 'chave') {
+      const rif = await dialog.showOpenDialog(janela, { title: 'work.bin da sua licença', properties: ['openFile'],
+        filters: [{ name: 'work.bin', extensions: ['bin', 'rif'] }] });
+      if (rif.canceled) return { ok: false, erro: 'cancelado' };
+      const pkg = await dialog.showOpenDialog(janela, { title: 'PKG americano do jogo (PCSA00126)', properties: ['openFile'],
+        filters: [{ name: 'PKG', extensions: ['pkg'] }] });
+      if (pkg.canceled) return { ok: false, erro: 'cancelado' };
+      await at().chaveDosArquivos(JOGO, rif.filePaths[0], pkg.filePaths[0], (f, t) => evento({ ev: 'atualizacao', etapa: 'chave', feito: f, total: t }));
+      return { ok: true, r: true };
+    }
+    return { ok: false, erro: 'ação desconhecida' };
+  } catch (e) { return { ok: false, erro: e.message, codigo: e.codigo }; }
+});
+
 // botões da barra de título (a janela não tem moldura do Windows)
 ipcMain.on('janela', (_e, acao) => {
   if (!janela) return;

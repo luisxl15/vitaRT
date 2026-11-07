@@ -3,6 +3,7 @@
 const NAV_ICO = {
   video: '<rect x="1.5" y="3" width="13" height="8.5"/><path d="M5.5 14h5M8 11.5V14"/>',
   ctl: '<rect x="1.5" y="4.5" width="13" height="7.5" rx="1"/><path d="M4 7h1M6.5 7h1M9 7h1M11.5 7h1M4.5 9.5h7"/>',
+  atual: '<path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M2.5 13.5h11"/>',
   avan: '<path d="M2 4h7M12 4h2M2 8h2M7 8h7M2 12h9M14 12h0"/><circle cx="10.5" cy="4" r="1.5"/><circle cx="5.5" cy="8" r="1.5"/><circle cx="12.5" cy="12" r="1.5"/>',
 };
 const SECOES = [
@@ -10,6 +11,8 @@ const SECOES = [
     sub: 'Escolha com que API o jogo desenha. A troca vale na próxima vez que o jogo abrir.' },
   { id: 'ctl', nome: 'Controles', sobre: 'Teclado, mouse e controle', titulo: 'Controles', arte: 'chave',
     sub: 'O esquema do God of War (2018) de PC, com cada tecla e botão trocável.' },
+  { id: 'atual', nome: 'Atualizações', sobre: 'Correções e pacotes', titulo: 'Atualizações', arte: 'rocha',
+    sub: 'Correções novas do vitart e os pacotes opcionais (texturas HD, PBR, áudio do PS2, vídeos HD), direto da página do projeto.' },
   { id: 'avan', nome: 'Avançado', sobre: 'Diagnóstico', titulo: 'Avançado', arte: 'rocha',
     sub: 'Janela de console, registro e dump das texturas originais. Valem na próxima vez que o jogo abrir.' },
 ];
@@ -410,7 +413,75 @@ async function abrirPasta(p) {
   vt.abrirLink(await vt.urlDe(p));
 }
 
-const MONTAR = { video: montarVideo, ctl: montarCtl, avan: montarAvan };
+// ------------------------------------------------------------------ Atualizações
+// apps/vitart-ui/atualizador.js: releases do GitHub, pacotes cifrados com a chave do jogo (data/vitart_chave.bin)
+const NOME_OPC = { texturas_hd: 'Texturas HD', pbr: 'Materiais PBR', audio_ps2: 'Áudio do PS2', videos_hd: 'Vídeos HD (cenas remasterizadas)' };
+const atu = { info: null, ocupado: false };
+function montarAtual(sec) {
+  sec.append(
+    el('div', { class: 'atu-topo painel' },
+      el('div', {}, el('div', { class: 'caixa' }, 'Versão instalada'), el('div', { class: 'valor', id: 'atu-local', 'data-no-i18n': '' }, '...')),
+      el('div', {}, el('div', { class: 'caixa' }, 'Na página do projeto'), el('div', { class: 'valor', id: 'atu-remota', 'data-no-i18n': '' }, '...')),
+      el('div', { class: 'atu-botoes' },
+        el('button', { class: 'btn fino', onclick: verificarAtual }, 'Procurar de novo'),
+        el('button', { class: 'btn', id: 'atu-aplicar', disabled: true, onclick: () => aplicarPacote(atu.info.atualizacao) }, 'Atualizar'))),
+    el('div', { class: 'atu-barra oculto', id: 'atu-barra' }, el('div', { class: 'atu-enchimento', id: 'atu-ench' }), el('span', { id: 'atu-txt' })),
+    el('div', { class: 'nota', id: 'atu-notas' }),
+    el('h2', { class: 'titulo ctl-sub' }, 'Pacotes opcionais'),
+    el('div', { class: 'nota' }, 'Não vêm do PKG do jogo, por isso ficam à parte. Cada um abre só com a chave do seu jogo.'),
+    el('div', { class: 'atu-opcs', id: 'atu-opcs' }));
+  verificarAtual();
+}
+const gb = b => (b / 1073741824 >= 1 ? (b / 1073741824).toFixed(2) + ' GB' : (b / 1048576).toFixed(0) + ' MB');
+async function verificarAtual() {
+  $('#atu-remota').textContent = tr('procurando...');
+  try {
+    atu.info = await vt.atualizacao('verificar');
+    const i = atu.info;
+    $('#atu-local').textContent = i.local || tr('desconhecida');
+    $('#atu-remota').textContent = i.remota || '-';
+    $('#atu-aplicar').disabled = !i.nova || atu.ocupado;
+    $('#atu-aplicar').textContent = i.nova ? tr('Atualizar ({t})', { t: gb(i.atualizacao.tamanho) }) : tr('Em dia');
+    $('#atu-notas').textContent = i.notas || '';
+    $('#atu-opcs').replaceChildren(...i.opcionais.map(o => el('div', { class: 'flag painel' },
+      el('div', { class: 'flag-corpo' }, el('div', { class: 'flag-nome' }, NOME_OPC[o.nome.slice(9)] || o.nome),
+        el('div', { class: 'flag-texto mudo' }, gb(o.tamanho) + (o.instalado ? ' · ' + tr('instalado') : ''))),
+      el('button', { class: 'btn fino', disabled: atu.ocupado ? true : null, onclick: () => aplicarPacote(o) },
+        o.instalado ? 'Instalar de novo' : 'Baixar e instalar'))));
+    if (!i.opcionais.length) $('#atu-opcs').append(el('div', { class: 'mudo' }, 'Nenhum pacote opcional nesta versão.'));
+  } catch (e) { $('#atu-remota').textContent = '-'; avisar('Atualizações', e.message, 'erro'); }
+}
+async function aplicarPacote(pac) {
+  if (!pac || atu.ocupado) return;
+  atu.ocupado = true;
+  $('#atu-barra').classList.remove('oculto');
+  try {
+    try { await vt.atualizacao('instalar', { pacote: pac, tag: atu.info.remota }); } catch (e) {
+      if (e.codigo !== 'sem_chave') throw e;
+      // instalação antiga, sem a chave salva: o work.bin e o PKG uma vez
+      if (!(await confirmar('Chave do jogo', 'Para abrir os pacotes, aponte o work.bin da sua licença e o PKG do jogo (só desta vez).', 'Apontar'))) throw new Error(tr('Cancelado.'));
+      await vt.atualizacao('chave');
+      await vt.atualizacao('instalar', { pacote: pac, tag: atu.info.remota });
+    }
+    if (pac.nome === 'atualizacao') {
+      $('#atu-txt').textContent = tr('Refazendo o menu do jogo...');
+      try { await vt.rpc('reconstruir', {}); } catch (_) { /* o Mod Studio refaz depois */ }
+    }
+    avisar('Pronto', pac.nome === 'atualizacao' ? 'Atualizado. Abra o Settings de novo para ver as telas novas.' : 'Pacote instalado.');
+  } catch (e) { avisar('Não deu', e.message, 'erro'); }
+  atu.ocupado = false;
+  $('#atu-barra').classList.add('oculto');
+  verificarAtual();
+}
+vt.aoEvento(m => {
+  if (m.ev !== 'atualizacao' || !$('#atu-ench')) return;
+  const f = m.total ? m.feito / m.total : 0;
+  $('#atu-ench').style.width = (100 * f).toFixed(1) + '%';
+  const nome = { baixando: 'Baixando', instalando: 'Instalando', chave: 'Conferindo o PKG' }[m.etapa] || m.etapa;
+  $('#atu-txt').textContent = tr(nome) + ' ' + Math.round(100 * f) + '%' + (m.etapa === 'baixando' ? ' · ' + gb(m.feito) + ' / ' + gb(m.total) : '');
+});
+
+const MONTAR = { video: montarVideo, ctl: montarCtl, atual: montarAtual, avan: montarAvan };
 
 // ------------------------------------------------------------------ início
 vt.aoEvento(m => {
