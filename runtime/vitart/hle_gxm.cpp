@@ -903,6 +903,87 @@ static void squeeze_text(gvk::Draw &d, uint32_t prog, std::vector<uint8_t> &copy
 // lado em que está (squeeze_hud_x). O guest continua desenhando nos 720x408 dele; o host é W vezes mais largo.
 static uint64_t g_uw_proj = 0, g_uw_hud = 0;
 static bool alvo_de_tela_g(uint32_t w, uint32_t h) { return h && w * 100 >= h * 170 && w * 100 <= h * 182; }
+// HUD 3D (o do GoW1 é geometria com g_Projection presa à câmera, ~14 unidades à frente): os vértices vão para a tela
+// na CPU com g_Transforms[0] e a projeção original. Peça perto da câmera, sem gravar profundidade e que não cobre a tela
+// = HUD; devolve o lado (-1 borda esquerda, 1 direita, 0 centro) ou 2 se não é HUD.
+static int ancora_hud_3d(const gvk::Draw &d, uint32_t vprog, uint32_t vuniform, uint32_t words, const pbr::VertexInfo &vi,
+                         const float *P, const int *xr, const int *wr) {
+    if (d.depth_write || !d.vertex_count || d.vertex_count > 4096) return 2;
+    int loc = -1, k = 0;
+    const uint32_t np = rd32(vprog + 0x24);
+    for (uint32_t i = 0; i < np; i++) {
+        const uint32_t pp = gxp_param(vprog, i);
+        if ((*ptr<uint8_t>(pp + 4) & 15) != 0) continue;
+        std::string name = gstr(pp + rd32(pp));
+        for (char &ch : name) ch = (char)std::tolower((unsigned char)ch);
+        if (loc < 0 && name.find("pos") != std::string::npos) loc = k;
+        k++;
+    }
+    if (loc < 0) return 2;
+    const float *T = vi.transforms >= 0 && (uint32_t)vi.transforms + 16 <= words ? ptr<float>(vuniform) + vi.transforms : nullptr;
+    const uint8_t *base = nullptr;
+    uint32_t stride = 0, fmt = 9;
+    const float *cpu = nullptr;
+    if (d.raw_attrs.empty()) {
+        if ((uint32_t)loc >= d.attr_count) return 2;
+        cpu = d.attrs + (size_t)loc * d.vertex_count * 4;
+    } else {
+        const gvk::VertexAttr *a = nullptr;
+        for (const auto &x : d.raw_attrs)
+            if (x.location == (uint32_t)loc) a = &x;
+        if (!a || a->comps < 3) return 2;
+        const gvk::VertexStream &st = d.raw_streams[a->stream];
+        base = st.data + a->offset, stride = st.stride, fmt = a->fmt;
+    }
+    float x0 = 1e30f, x1 = -1e30f, z0 = 1e30f, z1 = -1e30f;
+    static const uint32_t dq = getenv("VITART_UI_LOG_QUADRO") ? (uint32_t)atoi(getenv("VITART_UI_LOG_QUADRO")) : 0;
+    const bool diag = dq && g_present_frame.load() + 1 >= dq && g_present_frame.load() <= dq + 1;
+    for (uint32_t v = 0; v < d.vertex_count; v++) {
+        float q[3];
+        for (int c = 0; c < 3; c++) q[c] = cpu ? cpu[4 * v + c] : attr_value(base + (size_t)v * stride, fmt, c);
+        float e[4] = {q[0], q[1], q[2], 1.f};
+        if (T)
+            for (int r = 0; r < 3; r++) e[r] = T[r] * q[0] + T[4 + r] * q[1] + T[8 + r] * q[2] + T[12 + r];
+        z0 = std::min(z0, e[2]), z1 = std::max(z1, e[2]);
+        if (!diag && z1 - z0 > 0.5f) return 2; // não é plana: cenário (sai cedo, isto roda em todo desenho sem profundidade)
+        if (!std::isfinite(e[2])) return 2;
+        const float cx = P[xr[0]] * e[0] + P[xr[1]] * e[1] + P[xr[2]] * e[2] + P[xr[3]];
+        const float cw = P[wr[0]] * e[0] + P[wr[1]] * e[1] + P[wr[2]] * e[2] + P[wr[3]];
+        if (!(cw > 1e-4f)) { if (!diag) return 2; continue; }
+        x0 = std::min(x0, cx / cw), x1 = std::max(x1, cx / cw);
+    }
+    if (diag)
+        if (FILE *lf = std::fopen("hud3d.log", "a"))
+            std::fprintf(lf, "%08x nv %u z %.1f..%.1f x %.2f..%.2f T %d fmt %u P x[%.3f %.3f %.3f %.3f] w[%.3f %.3f %.3f %.3f]%c", vprog,
+                         d.vertex_count, z0, z1, x0, x1, T ? 1 : 0, fmt, P[xr[0]], P[xr[1]], P[xr[2]], P[xr[3]], P[wr[0]], P[wr[1]],
+                         P[wr[2]], P[wr[3]], 10),
+                std::fclose(lf);
+    if (x0 > x1 || x1 - x0 >= 1.9f || z1 - z0 > 0.5f) return 2; // HUD = peça plana (sprites expandidos no shader)
+    // profundidade do HUD: a mais repetida entre as peças planas do quadro anterior (no GoW1, -1128,3); partículas
+    // também são planas, mas cada uma numa profundidade
+    // pontuação por profundidade com esquecimento (10% por quadro): o HUD aparece todo quadro na mesma, partículas não
+    static uint32_t quadro = UINT32_MAX;
+    static std::map<int, float> pontos;
+    static float hud_z = NAN;
+    if (const uint32_t f = g_present_frame.load(); f != quadro) {
+        float melhor = 0;
+        float z = NAN;
+        for (auto it = pontos.begin(); it != pontos.end();) {
+            it->second *= 0.9f;
+            if (it->second > melhor) melhor = it->second, z = (float)it->first / 10.f;
+            it = it->second < 0.05f ? pontos.erase(it) : std::next(it);
+        }
+        hud_z = melhor >= 4.f ? z : NAN, quadro = f;
+    }
+    pontos[(int)std::lround(z0 * 10.f)] += 1.f;
+    const float c = 0.5f * (x0 + x1);
+    const int r = !(std::fabs(z0 - hud_z) < 1.f) ? 2 : c < -0.1f ? -1 : c > 0.1f ? 1 : 0;
+    if (diag)
+        if (FILE *lf = std::fopen("hud3d.log", "a")) std::fprintf(lf, "  plano z %.1f hud_z %.1f -> %d%c", z0, hud_z, r, 10), std::fclose(lf);
+    return r;
+}
+static uint64_t g_uw_hud3d = 0;
+
 static void ultrawide(gvk::Draw &d, uint32_t vprog, uint32_t vuniform, uint32_t vsize, std::vector<uint8_t> &uni_copy,
                       std::vector<uint8_t> &pos_copy) {
     const float W = gvk::aspect_widen();
@@ -963,9 +1044,23 @@ static void ultrawide(gvk::Draw &d, uint32_t vprog, uint32_t vuniform, uint32_t 
                 std::fclose(lf);
     }
     if (base < 0) return;
+    // HUD 3D preso à borda: x' = x / W + âncora * (1 - 1/W) * w (estreita em volta da borda, não do centro)
+    int anc = 0;
+    if (base == vi.proj) {
+        const int wr_c[4] = {3, 7, 11, 15}, wr_l[4] = {12, 13, 14, 15};
+        const int *wr = idx[1] == 4 ? wr_c : wr_l;
+        const int a = ancora_hud_3d(d, vprog, vuniform, words, vi, ptr<float>(vuniform) + base, idx, wr);
+        if (a != 2) anc = a, g_uw_hud3d++;
+    }
     uni_copy.assign(ptr<uint8_t>(vuniform), ptr<uint8_t>(vuniform) + vsize);
     float *m = reinterpret_cast<float *>(uni_copy.data()) + base;
-    for (int i : idx) m[i] /= W;
+    if (anc) {
+        const int wr_c[4] = {3, 7, 11, 15}, wr_l[4] = {12, 13, 14, 15};
+        const int *wr = idx[1] == 4 ? wr_c : wr_l;
+        for (int i = 0; i < 4; i++) m[idx[i]] = m[idx[i]] / W + (float)anc * (1.f - 1.f / W) * m[wr[i]];
+    } else {
+        for (int i : idx) m[i] /= W;
+    }
     d.vert_uniforms = uni_copy.data();
     g_uw_proj++;
 }
