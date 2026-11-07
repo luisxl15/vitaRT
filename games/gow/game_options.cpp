@@ -384,6 +384,8 @@ bool kratos_no_ar() {
     };
     if (!kp || !legivel(kp + 4, 4)) return tem_y = false;
     const uint32_t obj = rd32(kp + 4);
+    // objeto 0 enquanto a fase carrega: obj_ok também começa em 0, então sem esta linha lia o endereço 0x7c
+    if (!obj) return tem_y = false;
     if (obj != obj_ok) {
         if (!legivel(obj, 0x100)) return tem_y = false;
         obj_ok = obj, tem_y = false;
