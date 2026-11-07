@@ -1,6 +1,5 @@
-// vitart Settings: a API de vídeo do jogo (renderer= no vitart_options.ini) e o mapa completo de teclado e mouse.
-// O mapa espelha o código: games/gow/gow_profile.cpp (game_keyboard_buttons), runtime/vitart/hle_sys.cpp (WASD e
-// Shift) e runtime/vitart/gxm_window.cpp (F9, F11, Alt+Enter). Mudou lá, muda aqui.
+// vitart Settings: a API de vídeo do jogo (renderer= no vitart_options.ini), o mapa de teclado/mouse e de controle
+// (controles_<jogo>.ini, que o runtime lê em input_map.cpp) e as opções de diagnóstico.
 const NAV_ICO = {
   video: '<rect x="1.5" y="3" width="13" height="8.5"/><path d="M5.5 14h5M8 11.5V14"/>',
   ctl: '<rect x="1.5" y="4.5" width="13" height="7.5" rx="1"/><path d="M4 7h1M6.5 7h1M9 7h1M11.5 7h1M4.5 9.5h7"/>',
@@ -9,8 +8,8 @@ const NAV_ICO = {
 const SECOES = [
   { id: 'video', nome: 'Gráficos', sobre: 'API de vídeo', titulo: 'Gráficos', arte: 'rocha',
     sub: 'Escolha com que API o jogo desenha. A troca vale na próxima vez que o jogo abrir.' },
-  { id: 'ctl', nome: 'Controles', sobre: 'Teclado e mouse', titulo: 'Mapa de teclas', arte: 'chave',
-    sub: 'O esquema do God of War (2018) de PC levado aos botões dos jogos do Vita.' },
+  { id: 'ctl', nome: 'Controles', sobre: 'Teclado, mouse e controle', titulo: 'Controles', arte: 'chave',
+    sub: 'O esquema do God of War (2018) de PC, com cada tecla e botão trocável.' },
   { id: 'avan', nome: 'Avançado', sobre: 'Diagnóstico', titulo: 'Avançado', arte: 'rocha',
     sub: 'Janela de console, registro e dump das texturas originais. Valem na próxima vez que o jogo abrir.' },
 ];
@@ -96,33 +95,71 @@ async function escolherApi(id) {
 }
 
 // ------------------------------------------------------------------ Controles
-// Cada linha: grupo, teclas (alternativas; "+" junta teclas apertadas juntas), botão do Vita e ação. gow1/gow2:
-// o que muda entre os dois jogos; só: a linha vale só naquele jogo.
+// O mapa vem de <dados>/controles_<jogo>.ini (runtime/vitart/input_map.cpp lê, até com o jogo aberto); sem o arquivo,
+// o padrão de games/gow/gow_profile.cpp (a ponte tem a mesma lista). Cada linha é uma ação do Vita: clicar captura a
+// tecla nova; Shift/Ctrl/Alt + tecla vira combinação. O controle troca botão por botão.
 const GRUPOS = { mov: 'Movimento', luta: 'Combate', acao: 'Interação', menu: 'Menus', janela: 'Janela (vitart)' };
-const MAPA = [
-  { g: 'mov', t: ['W A S D'], b: 'Analógico esquerdo', a: 'Andar' },
-  { g: 'mov', t: ['Shift+W A S D'], b: 'Analógico direito', a: 'Esquivar / rolar' },
-  { g: 'mov', t: ['Space'], b: '✕ Cruz', a: 'Pular', gow2: 'Pular; segurado no ar, plana com as asas de Ícaro' },
-  { g: 'luta', t: ['LMB'], b: '□ Quadrado', a: 'Ataque leve' },
-  { g: 'luta', t: ['RMB'], b: '△ Triângulo', a: 'Ataque pesado' },
-  { g: 'luta', t: ['MMB', 'F'], b: '○ Círculo', a: 'Agarrar (e os QTEs de círculo)' },
-  { g: 'luta', t: ['Shift+MMB', 'V'], b: 'L3 + R3', a: 'Rage of the Gods', gow2: 'Rage of the Titans' },
-  { g: 'luta', t: ['Q'], b: 'L1', a: 'Defender / aparar', gow2: 'Defender; com o Golden Fleece, refletir' },
-  { g: 'luta', t: ['LCtrl'], b: 'L2', a: 'Magia', gow2: 'Item' },
-  { g: 'acao', t: ['E'], b: 'R2', b2: 'R1', a: 'Interagir (baús, portas, alavancas)' },
-  { g: 'acao', t: ['R'], b: 'R1', b2: 'R2', a: 'O outro botão R' },
-  { g: 'acao', t: ['C'], b: 'L1 + R1', a: 'Amuleto das Moiras (congela o tempo)', so: 2 },
-  { g: 'menu', t: ['1', 'Up'], b: 'Direcional ↑', a: 'Magia do direcional para cima; navegar nos menus' },
-  { g: 'menu', t: ['2', 'Right'], b: 'Direcional →', a: 'Magia do direcional para a direita; navegar nos menus' },
-  { g: 'menu', t: ['3', 'Down'], b: 'Direcional ↓', a: 'Magia do direcional para baixo; navegar nos menus' },
-  { g: 'menu', t: ['4', 'Left'], b: 'Direcional ←', a: 'Magia do direcional para a esquerda; navegar nos menus' },
-  { g: 'menu', t: ['Esc', 'Backspace'], b: 'SELECT', a: 'Pausa' },
-  { g: 'menu', t: ['I', 'K', 'Tab', 'Enter'], b: 'START', a: 'Power Up (melhorar armas e magias)' },
-  { g: 'janela', t: ['F11', 'Alt+Enter'], b: '', a: 'Tela cheia / janela' },
-  { g: 'janela', t: ['F9'], b: '', a: 'Capturar o quadro seguinte (diagnóstico, vai para a pasta capturas)' },
+const ACOES = [
+  { id: 'andar_cima', g: 'mov', b: 'Analógico ↑', a: 'Andar para a frente' },
+  { id: 'andar_baixo', g: 'mov', b: 'Analógico ↓', a: 'Andar para trás' },
+  { id: 'andar_esquerda', g: 'mov', b: 'Analógico ←', a: 'Andar para a esquerda' },
+  { id: 'andar_direita', g: 'mov', b: 'Analógico →', a: 'Andar para a direita' },
+  { id: 'analogico_direito', g: 'mov', b: 'Analógico direito', a: 'Segurando, as teclas de andar esquivam / rolam' },
+  { id: 'cruz', g: 'mov', b: '✕ Cruz', a: 'Pular', gow2: 'Pular; segurado no ar, plana com as asas de Ícaro' },
+  { id: 'quadrado', g: 'luta', b: '□ Quadrado', a: 'Ataque leve' },
+  { id: 'triangulo', g: 'luta', b: '△ Triângulo', a: 'Ataque pesado' },
+  { id: 'circulo', g: 'luta', b: '○ Círculo', a: 'Agarrar (e os QTEs de círculo)' },
+  { id: 'furia', g: 'luta', b: 'L3 + R3', a: 'Rage of the Gods', gow2: 'Rage of the Titans' },
+  { id: 'l1', g: 'luta', b: 'L1', a: 'Defender / aparar', gow2: 'Defender; com o Golden Fleece, refletir' },
+  { id: 'l2', g: 'luta', b: 'L2', a: 'Magia', gow2: 'Item' },
+  { id: 'r2', g: 'acao', b: 'R2', a: 'Interagir (baús, portas, alavancas)', gow2: 'O outro botão R' },
+  { id: 'r1', g: 'acao', b: 'R1', a: 'O outro botão R', gow2: 'Interagir (baús, portas, alavancas)' },
+  { id: 'amuleto', g: 'acao', b: 'L1 + R1', a: 'Amuleto das Moiras (congela o tempo)', so: 2 },
+  { id: 'cima', g: 'menu', b: 'Direcional ↑', a: 'Magia do direcional para cima; navegar nos menus' },
+  { id: 'direita', g: 'menu', b: 'Direcional →', a: 'Magia do direcional para a direita; navegar nos menus' },
+  { id: 'baixo', g: 'menu', b: 'Direcional ↓', a: 'Magia do direcional para baixo; navegar nos menus' },
+  { id: 'esquerda', g: 'menu', b: 'Direcional ←', a: 'Magia do direcional para a esquerda; navegar nos menus' },
+  { id: 'select', g: 'menu', b: 'SELECT', a: 'Pausa' },
+  { id: 'start', g: 'menu', b: 'START', a: 'Power Up (melhorar armas e magias)' },
 ];
+// fixas do vitart (gxm_window.cpp), não entram no arquivo
+const FIXAS = [
+  { g: 'janela', t: ['F11', 'ALT+ENTER'], a: 'Tela cheia / janela' },
+  { g: 'janela', t: ['F9'], a: 'Capturar o quadro seguinte (diagnóstico, vai para a pasta capturas)' },
+];
+// botões do controle (nome no ini -> rótulo); a ordem é a da tela
+const FISICOS = { CRUZ: '✕ Cruz / A', CIRCULO: '○ Círculo / B', QUADRADO: '□ Quadrado / X', TRIANGULO: '△ Triângulo / Y',
+  L1: 'L1 / LB', R1: 'R1 / RB', L2: 'L2 / LT', R2: 'R2 / RT', L3: 'L3 (analógico esquerdo)', R3: 'R3 (analógico direito)',
+  SELECT: 'Share / View', START: 'Options / Menu', CIMA: 'Direcional ↑', DIREITA: 'Direcional →', BAIXO: 'Direcional ↓',
+  ESQUERDA: 'Direcional ←', NADA: '— nenhum —' };
+const ACOES_CONTROLE = ['cruz', 'circulo', 'quadrado', 'triangulo', 'l1', 'r1', 'l2', 'r2', 'l3', 'r3', 'select', 'start',
+  'cima', 'direita', 'baixo', 'esquerda'];
+const ROTULO_ACAO = { l3: 'L3 (fúria, junto do R3)', r3: 'R3 (fúria, junto do L3)' };
+
+// nome no ini (input_map.cpp) -> tecla do desenho
+const DESENHO = { SPACE: 'Space', LBUTTON: 'LMB', RBUTTON: 'RMB', MBUTTON: 'MMB', LCTRL: 'LCtrl', CTRL: 'LCtrl', RCTRL: 'RCtrl',
+  SHIFT: 'Shift', LSHIFT: 'Shift', RSHIFT: 'Shift', ALT: 'Alt', LALT: 'Alt', RALT: 'Alt', TAB: 'Tab', ENTER: 'Enter', RETURN: 'Enter',
+  ESCAPE: 'Esc', ESC: 'Esc', BACKSPACE: 'Backspace', BACK: 'Backspace', UP: 'Up', DOWN: 'Down', LEFT: 'Left', RIGHT: 'Right',
+  CAPSLOCK: 'Caps', TILDE: '`', MINUS: '-', PLUS: '=', LBRACKET: '[', RBRACKET: ']', BACKSLASH: '\\', SEMICOLON: ';', QUOTE: "'",
+  COMMA: ',', PERIOD: '.', SLASH: '/' };
 const NOME_TECLA = { Space: 'Espaço', LMB: 'Botão esquerdo', RMB: 'Botão direito', MMB: 'Botão do meio', LCtrl: 'Ctrl esquerdo',
-  Up: '↑', Down: '↓', Left: '←', Right: '→', Backspace: 'Backspace', Enter: 'Enter', Esc: 'Esc', Tab: 'Tab', Shift: 'Shift', Alt: 'Alt' };
+  RCtrl: 'Ctrl direito', Up: '↑', Down: '↓', Left: '←', Right: '→', Backspace: 'Backspace', Enter: 'Enter', Esc: 'Esc', Tab: 'Tab',
+  Shift: 'Shift', Alt: 'Alt', Caps: 'Caps Lock', XBUTTON1: 'Mouse 4', XBUTTON2: 'Mouse 5' };
+// KeyboardEvent.code -> nome no ini
+function nomeDoCodigo(c) {
+  if (/^Key[A-Z]$/.test(c)) return c.slice(3);
+  if (/^Digit[0-9]$/.test(c)) return c.slice(5);
+  if (/^F([1-9]|1[0-9]|2[0-4])$/.test(c)) return c;
+  if (/^Numpad[0-9]$/.test(c)) return 'NUM' + c.slice(6);
+  return ({ Space: 'SPACE', ShiftLeft: 'SHIFT', ShiftRight: 'SHIFT', ControlLeft: 'LCTRL', ControlRight: 'RCTRL', AltLeft: 'ALT',
+    AltRight: 'ALT', Tab: 'TAB', Enter: 'ENTER', NumpadEnter: 'ENTER', Escape: 'ESCAPE', Backspace: 'BACKSPACE', ArrowUp: 'UP',
+    ArrowDown: 'DOWN', ArrowLeft: 'LEFT', ArrowRight: 'RIGHT', CapsLock: 'CAPSLOCK', Backquote: 'TILDE', Minus: 'MINUS',
+    Equal: 'PLUS', BracketLeft: 'LBRACKET', BracketRight: 'RBRACKET', Backslash: 'BACKSLASH', Semicolon: 'SEMICOLON',
+    Quote: 'QUOTE', Comma: 'COMMA', Period: 'PERIOD', Slash: 'SLASH', Insert: 'INSERT', Delete: 'DELETE', Home: 'HOME',
+    End: 'END', PageUp: 'PAGEUP', PageDown: 'PAGEDOWN' })[c] || null;
+}
+const MOD = { SHIFT: 1, LCTRL: 1, RCTRL: 1, ALT: 1 };
+const BOTAO_MOUSE = ['LBUTTON', 'MBUTTON', 'RBUTTON', 'XBUTTON1', 'XBUTTON2'];
 
 // teclado desenhado: [id, rótulo, largura em unidades]; null = espaço
 const TECLADO = [
@@ -135,13 +172,31 @@ const TECLADO = [
 ];
 const SETAS = [[null, ['Up', '↑', 1], null], [['Left', '←', 1], ['Down', '↓', 1], ['Right', '→', 1]]];
 
+const ctl = { dados: {}, captura: null };
+const tagJogo = () => (st.jogo === 2 ? 'gow2' : 'gow1');
+
 function linhasDoJogo() {
-  return MAPA.filter(l => !l.so || l.so === st.jogo).map(l => ({
-    ...l,
-    botao: st.jogo === 2 && l.b2 ? l.b2 : l.b,
-    acao: st.jogo === 2 && l.gow2 ? l.gow2 : l.a,
-    teclas: [...new Set(l.t.flatMap(x => x.split('+').flatMap(p => p.split(' '))))],
-  }));
+  const tec = ctl.dados[tagJogo()]?.atual.teclado || {};
+  return ACOES.filter(l => !l.so || l.so === st.jogo).map(l => ({
+    ...l, acao: st.jogo === 2 && l.gow2 ? l.gow2 : l.a, t: tec[l.id] || [], editavel: true,
+  })).concat(FIXAS.map(f => ({ ...f, b: '', acao: f.a, editavel: false })));
+}
+const desenhoDe = n => DESENHO[n] || n;
+const teclasDe = combos => [...new Set(combos.flatMap(c => c.split('+').map(desenhoDe)))];
+
+async function carregarCtl(forcar) {
+  const j = tagJogo();
+  if (!ctl.dados[j] || forcar) ctl.dados[j] = await vt.rpc('controles', { jogo: j });
+}
+async function salvarCtl(mudar) {
+  const j = tagJogo(), d = ctl.dados[j];
+  const novo = { teclado: { ...d.atual.teclado }, controle: { ...d.atual.controle } };
+  mudar(novo);
+  try {
+    ctl.dados[j] = await vt.rpc('salvar_controles', { jogo: j, ...novo });
+    pintarCtl();
+    avisar('Salvo', st.opcoes?.jogo_aberto ? 'Já vale no jogo aberto.' : 'Vale quando o jogo abrir.');
+  } catch (e) { avisar('Não deu', e.message, 'erro'); }
 }
 
 function montarCtl(sec) {
@@ -149,15 +204,29 @@ function montarCtl(sec) {
     el('div', { class: 'barra-acoes' },
       el('div', { class: 'jogos', role: 'tablist', 'aria-label': 'Jogo' },
         ...[[1, 'God of War'], [2, 'God of War II']].map(([g, n]) =>
-          el('button', { role: 'tab', 'data-g': g, 'data-no-i18n': '', onclick: () => { st.jogo = g; pintarCtl(); } }, n))),
-      el('div', { class: 'direita mudo legenda' }, 'Passe o mouse numa tecla ou numa linha para ver as duas juntas.')),
+          el('button', { role: 'tab', 'data-g': g, 'data-no-i18n': '', onclick: async () => { st.jogo = g; await carregarCtl(); pintarCtl(); } }, n))),
+      el('div', { class: 'direita' },
+        el('span', { class: 'mudo legenda' }, 'Clique numa linha para trocar a tecla.'),
+        el('button', { class: 'btn fino', onclick: restaurarCtl }, 'Restaurar padrão'))),
     el('div', { class: 'ctl-topo' },
       el('div', { class: 'teclado painel', id: 'teclado' }),
       el('div', { class: 'mouse painel' }, el('div', { class: 'mouse-corpo', id: 'mouse' }), el('div', { class: 'caixa' }, 'Mouse'))),
     el('div', { class: 'mapa', id: 'mapa' }),
-    el('div', { class: 'nota' }, 'O teclado só vale com a janela do jogo em foco. Controles (Xbox, DualShock 4, DualSense) funcionam ao mesmo tempo, e os ícones dos botões seguem o último que você usou. Espaço (✕) também pula as cenas em vídeo.'));
+    el('h2', { class: 'titulo ctl-sub' }, 'Controle'),
+    el('div', { class: 'nota' }, 'Xbox, DualShock 4 e DualSense. Escolha que botão do controle faz cada ação do Vita. Os analógicos ficam como estão.'),
+    el('div', { class: 'controle-mapa painel', id: 'controle-mapa' }),
+    el('div', { class: 'nota' }, 'O teclado só vale com a janela do jogo em foco. Controles funcionam ao mesmo tempo, e os ícones dos botões seguem o último que você usou. A cruz (✕) também pula as cenas em vídeo. O jogo relê o arquivo sozinho: dá para trocar com ele aberto.'),
+    el('div', { class: 'captura oculto', id: 'captura' },
+      el('div', { class: 'captura-caixa painel' },
+        el('div', { class: 'caixa', id: 'captura-acao' }),
+        el('div', { class: 'captura-titulo titulo' }, 'Aperte a tecla ou o botão do mouse'),
+        el('div', { class: 'mudo', id: 'captura-dica' }, 'Segure Shift, Ctrl ou Alt antes para fazer uma combinação.'),
+        el('div', { class: 'captura-botoes' },
+          el('button', { class: 'btn fino', onclick: () => fimCaptura(null, 'limpar') }, 'Sem tecla'),
+          el('button', { class: 'btn fino', onclick: () => fimCaptura(null) }, 'Cancelar')))));
   montarTeclado();
-  pintarCtl();
+  carregarCtl().then(pintarCtl).catch(e => avisar('Controles', e.message, 'erro'));
+  ligarCaptura();
 }
 
 function tecla([id, rot, w]) {
@@ -178,41 +247,125 @@ function montarTeclado() {
   });
 }
 
-function capa(id) {
-  return el('kbd', {}, NOME_TECLA[id] ? tr(NOME_TECLA[id]) : id);
+function capa(nome) {
+  const id = desenhoDe(nome);
+  return el('kbd', {}, NOME_TECLA[id] ? tr(NOME_TECLA[id]) : NOME_TECLA[nome] ? tr(NOME_TECLA[nome]) : id);
 }
 function pintarCtl() {
+  if (!$('#mapa')) return;
   $$('.jogos button').forEach(b => b.setAttribute('aria-selected', String(+b.dataset.g === st.jogo)));
   const linhas = linhasDoJogo();
-  const usadas = new Map(); // tecla -> grupo
-  linhas.forEach(l => l.teclas.forEach(k => usadas.has(k) || usadas.set(k, l.g)));
+  // tecla -> grupo, e teclas repetidas em duas ações (aviso)
+  const usadas = new Map(), donos = new Map();
+  linhas.forEach(l => l.t.forEach(c => {
+    teclasDe([c]).forEach(k => usadas.has(k) || usadas.set(k, l.g));
+    if (l.editavel) donos.set(c, (donos.get(c) || 0) + 1);
+  }));
   $$('.tecla').forEach(t => { t.dataset.g = usadas.get(t.dataset.k) || ''; t.classList.toggle('usada', usadas.has(t.dataset.k)); });
   $('#mapa').replaceChildren(...Object.entries(GRUPOS).map(([g, nome]) => {
     const ls = linhas.filter(l => l.g === g);
     return el('div', { class: 'grupo', 'data-g': g },
       el('h3', { class: 'caixa' }, nome),
       ...ls.map(l => {
-        const r = el('div', { class: 'linha' },
-          el('div', { class: 'teclas' }, ...l.t.flatMap((alt, j) => [
-            j ? el('span', { class: 'ou' }, 'ou') : null,
-            ...alt.split('+').flatMap((parte, k) => [k ? el('span', { class: 'mais' }, '+') : null, ...parte.split(' ').map(capa)]),
-          ])),
-          el('div', { class: 'botao' }, l.botao || '—'),
+        const chips = l.t.flatMap((alt, j) => [
+          j ? el('span', { class: 'ou' }, 'ou') : null,
+          el('span', { class: 'combo' + (donos.get(alt) > 1 ? ' repetida' : ''), title: donos.get(alt) > 1 ? tr('Também usada em outra ação') : '' },
+            ...alt.split('+').flatMap((parte, k) => [k ? el('span', { class: 'mais' }, '+') : null, capa(parte)]),
+            l.editavel ? el('button', { class: 'tira', 'aria-label': tr('Tirar'), onclick: ev => { ev.stopPropagation(); tirarTecla(l.id, j); } }, '×') : null),
+        ]);
+        const r = el('div', { class: 'linha' + (l.editavel ? ' editavel' : '') },
+          el('div', { class: 'teclas' }, ...(chips.length ? chips : [el('span', { class: 'mudo' }, l.editavel ? 'sem tecla' : '')]),
+            l.editavel ? el('button', { class: 'mais-tecla', 'aria-label': tr('Adicionar outra tecla'), title: tr('Adicionar outra tecla'),
+              onclick: ev => { ev.stopPropagation(); iniciarCaptura(l, l.t.length); } }, '+') : null),
+          el('div', { class: 'botao' }, l.b || '—'),
           el('div', { class: 'acao' }, l.acao));
-        r.addEventListener('mouseenter', () => destacar(null, l.teclas));
+        if (l.editavel) r.addEventListener('click', () => iniciarCaptura(l, 0));
+        r.addEventListener('mouseenter', () => destacar(null, teclasDe(l.t)));
         r.addEventListener('mouseleave', () => destacar(null, null));
-        r.dataset.teclas = l.teclas.join(' ');
+        r.dataset.teclas = teclasDe(l.t).join(' ');
         return r;
       }));
   }));
-  cascata($$('#mapa .linha'), [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], 14, 300);
+  pintarControle();
+  cascata($$('#mapa .linha'), [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], 10, 260);
 }
 
-// tecla -> linhas que a usam; linha -> as teclas dela
+function pintarControle() {
+  const d = ctl.dados[tagJogo()];
+  if (!d) return;
+  const nomeAcao = id => ROTULO_ACAO[id] || (ACOES.find(a => a.id === id)?.b || id);
+  $('#controle-mapa').replaceChildren(...ACOES_CONTROLE.map(id => el('label', { class: 'ctl-linha' },
+    el('span', { class: 'ctl-acao' }, nomeAcao(id)),
+    el('select', { onchange: e => salvarCtl(n => { n.controle[id] = e.target.value; }) },
+      ...Object.entries(FISICOS).map(([k, rot]) => el('option', { value: k, selected: d.atual.controle[id] === k ? true : null }, rot))),
+    d.atual.controle[id] !== d.padrao.controle[id] ? el('span', { class: 'ctl-mudou', title: tr('Diferente do padrão') }, '●') : null)));
+}
+
 function destacar(k, teclas) {
   const on = new Set(teclas || (k ? [k] : []));
   $$('.tecla').forEach(t => t.classList.toggle('acesa', on.has(t.dataset.k)));
   $$('#mapa .linha').forEach(r => r.classList.toggle('acesa', !!k && r.dataset.teclas.split(' ').includes(k)));
+}
+
+function tirarTecla(id, j) {
+  salvarCtl(n => { n.teclado[id] = n.teclado[id].filter((_, i) => i !== j); });
+}
+async function restaurarCtl() {
+  if (!(await confirmar('Restaurar padrão', 'Volta o teclado, o mouse e o controle deste jogo ao esquema original.', 'Restaurar'))) return;
+  const p = ctl.dados[tagJogo()].padrao;
+  salvarCtl(n => { n.teclado = { ...p.teclado }; n.controle = { ...p.controle }; });
+}
+
+// captura: a próxima tecla (com Shift/Ctrl/Alt segurados vira combinação) ou botão do mouse
+function iniciarCaptura(l, idx) {
+  ctl.captura = { id: l.id, idx, mods: new Set(), soltar: null };
+  $('#captura-acao').textContent = `${l.b} · ${l.acao || l.a}`;
+  const c = $('#captura');
+  c.classList.remove('oculto');
+  animar($('.captura-caixa'), [{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], 220);
+}
+function fimCaptura(nome, como) {
+  const c = ctl.captura;
+  ctl.captura = null;
+  $('#captura').classList.add('oculto');
+  if (!c || (!nome && como !== 'limpar')) return;
+  salvarCtl(n => {
+    const lista = [...(n.teclado[c.id] || [])];
+    if (como === 'limpar') lista.splice(c.idx, 1);
+    else if (c.idx < lista.length) lista[c.idx] = nome;
+    else lista.push(nome);
+    n.teclado[c.id] = [...new Set(lista)];
+  });
+}
+function ligarCaptura() {
+  const combinado = base => {
+    const m = [...ctl.captura.mods].filter(x => x !== base);
+    return m.length ? m.join('+') + '+' + base : base;
+  };
+  window.addEventListener('keydown', e => {
+    if (!ctl.captura) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const n = nomeDoCodigo(e.code);
+    if (!n) return;
+    if (MOD[n]) { ctl.captura.mods.add(n === 'RCTRL' ? 'LCTRL' : n); return; }
+    fimCaptura(combinado(n));
+  }, true);
+  window.addEventListener('keyup', e => {
+    if (!ctl.captura) return;
+    const n = nomeDoCodigo(e.code);
+    if (n && MOD[n]) { // soltou o modificador sem outra tecla: ele sozinho
+      const m = n === 'RCTRL' ? 'LCTRL' : n;
+      if (ctl.captura.mods.has(m)) { ctl.captura.mods.delete(m); fimCaptura(ctl.captura.mods.size ? combinado(m) : m); }
+    }
+  }, true);
+  $('#captura').addEventListener('mousedown', e => {
+    if (!ctl.captura || e.target.closest('button')) return;
+    e.preventDefault();
+    const n = BOTAO_MOUSE[e.button];
+    if (n) fimCaptura(combinado(n));
+  });
+  $('#captura').addEventListener('contextmenu', e => e.preventDefault());
 }
 
 // ------------------------------------------------------------------ Avançado
