@@ -1,0 +1,7 @@
+psvpfsparser (motoharu), copiado de Vita3K/external/psvpfstools (https://github.com/Vita3K/psvpfstools), usado
+pelo extrator do instalador (tools/pfs_extrair.cpp) para decifrar o PFS do app a partir do PKG e da licença de
+quem instala.
+
+Mudanças do vitart: OpenSSLCryptoOperations trocado por WinCryptoOperations (AES-NI + BCrypt, sem OpenSSL);
+F00DFileKeyEncryptor (boost::property_tree) removido, fica só o nativo; rif2zrif/zrif2rif/PsvPfsParserConfig fora
+(a chave vem do work.bin direto).
