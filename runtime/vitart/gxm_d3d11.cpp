@@ -134,6 +134,7 @@ struct Target {
     ComPtr<ID3D11DepthStencilView> dsv;
     uint64_t cver = 1, dver = 1; // sobem a cada escrita na cor / na profundidade
     uint64_t cena = 0;           // sobe a cada sceGxmBeginScene neste alvo (leitura do próprio alvo, ver Snap)
+    bool le_a_si = false;        // algum desenho já leu este alvo enquanto desenhava nele: copiar no começo da cena
 };
 std::map<uint32_t, Target> g_targets;
 std::map<uint32_t, uint32_t> g_depth_owner; // superfície de profundidade -> alvo de cor que a usa
@@ -172,11 +173,14 @@ struct Snap {
 std::map<std::pair<uint32_t, int>, Snap> g_snaps; // alvo e o que se lê: 0 cor, 1 profundidade, 2 o próprio alvo
 
 uint64_t g_frame_no = 0;
-// proprio: o desenho lê o alvo em que desenha (a água distorce a cena). No Vita a textura lê a memória, o que a
-// cena anterior gravou: a cópia vale até a próxima cena, em vez de uma por desenho.
+// proprio: o desenho lê o alvo em que desenha (a água distorce a cena). No Vita (por ladrilhos) o que a cena
+// desenha só chega à memória no fim dela: a textura vê o alvo como estava quando a cena começou. Por isso, depois
+// da primeira leitura, a cópia sai no begin_scene (copiar no 1º desenho que lê pegava a cor com que o efeito limpa
+// o alvo: GoW2 debaixo d'água, Amuleto das Moiras, submundo -> tela azul ou preta).
 ID3D11ShaderResourceView *snapshot(Target &t, uint32_t owner, bool depth, bool proprio = false) {
     Snap &sn = g_snaps[{owner, proprio ? 2 : depth ? 1 : 0}];
-    const uint64_t ver = proprio ? (g_frame_no << 24 | t.cena) : depth ? t.dver : t.cver;
+    const uint64_t ver = proprio ? (1ull << 63 | t.cena) : depth ? t.dver : t.cver;
+    if (proprio) t.le_a_si = true;
     if (sn.im.tex && sn.ver == ver) return sn.im.srv.Get();
     if (!sn.im.tex) {
         D3D11_TEXTURE2D_DESC td{};
@@ -678,6 +682,7 @@ void begin_scene(uint32_t color_addr, uint8_t stencil) {
     g_ctx->ClearDepthStencilView(it->second.dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, stencil);
     it->second.dver++;
     it->second.cena++;
+    if (it->second.le_a_si) snapshot(it->second, color_addr, false, true);
 }
 
 void draw_enemy_bars(uint32_t color_addr, const EnemyBar *bars, uint32_t n) {

@@ -195,7 +195,7 @@ Pastas
   game\\         os arquivos do jogo, vindos do PKG do Vita
   data\\         texturas HD, PBR, áudio do PS2, vídeos remasterizados, mods, saves e troféus
   shaders\\      cache de shaders
-  Ferramentas\\  vitart Troféus, vitart Mod Studio e vitart Settings (precisam do Python 3 com numpy e Pillow)
+  Ferramentas\\  vitart Troféus, vitart Mod Studio e vitart Settings (trazem o próprio Python, não precisa instalar)
   logs\\         registro da última sessão (logs\\vitart.log), útil se algo der errado
 
 Settings.exe: a API de vídeo (Automático, Vulkan ou Direct3D 11) e o mapa completo de teclado e mouse.
@@ -275,6 +275,8 @@ def main():
     if os.path.isdir(ddst):
         shutil.rmtree(ddst)
     shutil.copytree(os.path.join(REPO, 'docs', 'modding'), ddst)
+    import python_portatil  # o PC de quem instala pode não ter Python
+    python_portatil.montar(os.path.join(fer, 'python'))
     print('== Settings.exe')
     settings_exe(ico, os.path.join(dst, 'Settings.exe'))
 

@@ -14,7 +14,7 @@ OpName, OpMemberName, OpExtInstImport, OpExtInst = 5, 6, 11, 12
 OpMemoryModel, OpEntryPoint, OpExecutionMode, OpCapability = 14, 15, 16, 17
 OpTypeVoid, OpTypeBool, OpTypeInt, OpTypeFloat, OpTypeVector = 19, 20, 21, 22, 23
 OpTypeArray, OpTypeRuntimeArray, OpTypeStruct, OpTypePointer, OpTypeFunction = 28, 29, 30, 32, 33
-OpConstant, OpConstantComposite = 43, 44
+OpConstant, OpConstantComposite, OpConstantNull = 43, 44, 46
 OpFunction, OpFunctionEnd, OpVariable, OpLoad, OpStore, OpAccessChain = 54, 56, 59, 61, 62, 65
 OpDecorate, OpMemberDecorate = 71, 72
 OpCompositeExtract, OpCompositeConstruct = 81, 80
@@ -110,7 +110,15 @@ class Builder:
     # -------------------------------------------------------------- globais
     def variable(self, t, sc, name=None):
         i = self.id()
-        self.types += self.inst(OpVariable, self.ptr(sc, t), i, sc)
+        # Private nasce zerado: registrador lido antes de escrito é indefinido no Vulkan (a NVIDIA dá zero, o
+        # compilador da AMD aproveita e sai lixo). Ver tools/spv_zerar_private.py.
+        if sc == SCPrivate:
+            ptr_t = self.ptr(sc, t)
+            init = self.id()
+            self.types += self.inst(OpConstantNull, t, init)
+            self.types += self.inst(OpVariable, ptr_t, i, sc, init)
+        else:
+            self.types += self.inst(OpVariable, self.ptr(sc, t), i, sc)
         if name:
             self.name(i, name)
         return i

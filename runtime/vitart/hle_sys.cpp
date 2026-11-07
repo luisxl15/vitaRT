@@ -221,8 +221,9 @@ static void ctrl_read(arc_ctx *ctx) {
     const KbmInput kbm = keyboard_mouse();
     uint32_t buttons = kbm.buttons | scripted_buttons() | pad.buttons;
     uint8_t lx = pad.lx, ly = pad.ly, rx = pad.rx, ry = pad.ry;
-    if (kbm.mx || kbm.my) { // teclas: inclinação total (diagonal com o mesmo raio)
-        const int r = kbm.mx && kbm.my ? 90 : 127;
+    if (kbm.mx || kbm.my) { // teclas: inclinação total, inclusive na diagonal (canto do quadrado, como o analógico
+        // do Vita chega: com raio 90 o jogo lia meia inclinação e o Kratos andava devagar no W+D)
+        const int r = 127;
         const uint8_t x = (uint8_t)(128 + kbm.mx * r), y = (uint8_t)(128 + kbm.my * r);
         if (kbm.roll) rx = x, ry = y;
         else lx = x, ly = y;

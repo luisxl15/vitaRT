@@ -980,6 +980,10 @@ static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t ida
             const uint8_t *base = ptr<uint8_t>(c.streams[st] + mini * stride + off);
             float *dst = &attrs[k * nv * 4];
             const uint32_t nc = comps < 4 ? comps : 4;
+            // o que falta do vec4 sai (0, 0, 0, 1), como o Vulkan faz no caminho cru (a AMD e o D3D11 passam por
+            // aqui com os formatos de 3 componentes de 8/16 bits, e w = 0 jogava a posição para o infinito)
+            if (nc < 4)
+                for (uint32_t v = 0; v < nv; v++) dst[4 * v + 3] = 1.0f;
             if (fmt == 9) { // float: cópia direta
                 for (uint32_t v = 0; v < nv; v++) std::memcpy(dst + 4 * v, base + (size_t)v * stride, 4 * nc);
             } else {

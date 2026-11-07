@@ -34,8 +34,13 @@ let resto = '';
 let janela = null;
 
 function iniciarPonte() {
-  const py = process.env.VITART_PYTHON || 'python';
-  ponte = spawn(py, ['-P', path.join(REPO, 'tools', 'vitart_ponte.py')], {
+  // o jogo instalado traz um Python próprio em Ferramentas\python (tools/python_portatil.py): não depende do PC ter
+  // Python. -E -s: nem PYTHONPATH/PYTHONHOME nem os pacotes do usuário de um Python instalado se metem.
+  const portatil = path.join(REPO, 'python', 'python.exe');
+  const temPortatil = !process.env.VITART_PYTHON && fs.existsSync(portatil);
+  const py = process.env.VITART_PYTHON || (temPortatil ? portatil : 'python');
+  const args = (temPortatil ? ['-E', '-s'] : []).concat(['-P', path.join(REPO, 'tools', 'vitart_ponte.py')]);
+  ponte = spawn(py, args, {
     cwd: path.join(REPO, 'tools'),
     env: { ...process.env, PYTHONIOENCODING: 'utf-8', PYTHONUNBUFFERED: '1' },
     windowsHide: true,

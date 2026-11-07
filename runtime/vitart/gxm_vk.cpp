@@ -287,6 +287,7 @@ struct Target {
     VkFramebuffer fb = VK_NULL_HANDLE;
     uint64_t cver = 1, dver = 1; // sobem a cada escrita na cor / na profundidade
     uint64_t cena = 0;           // sobe a cada sceGxmBeginScene neste alvo (leitura do próprio alvo, ver Snap)
+    bool le_a_si = false;        // algum desenho já leu este alvo enquanto desenhava nele: copiar no começo da cena
 };
 std::map<uint32_t, Target> g_targets;
 
@@ -504,6 +505,30 @@ struct Snap {
 };
 std::map<std::pair<uint32_t, int>, Snap> g_snaps;
 Image g_white;
+// Versão da cópia do próprio alvo: a cena. No Vita (por ladrilhos) o que a cena desenha só chega à memória no fim
+// dela; a textura que aponta para o alvo vê o que havia quando a cena começou. Copiar no primeiro desenho que lê
+// pegava também o que a cena já tinha pintado: o efeito de debaixo d'água, o do Amuleto das Moiras e o do submundo
+// do GoW2 limpam o alvo com uma cor e depois distorcem a cena por cima -> tela toda azul ou preta.
+uint64_t ver_proprio(const Target &t) { return 1ull << 63 | t.cena; }
+// Copia src para a cópia sn (cria na primeira vez). Fora de render pass.
+bool copiar_snap(Snap &sn, Image &src, bool depth, uint64_t ver) {
+    Image &snap = sn.im;
+    if (!snap.img && !make_image(snap, src.w, src.h, src.fmt, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT))
+        return false;
+    sn.ver = ver;
+    end_pass();
+    const VkImageLayout back = depth ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    barrier(src, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+    barrier(snap, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+    VkImageCopy c{};
+    c.srcSubresource = c.dstSubresource = {(VkImageAspectFlags)(depth ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT), 0, 0, 1};
+    c.extent = {src.w, src.h, 1};
+    vkCmdCopyImage(g_cmd, src.img, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, snap.img, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &c);
+    barrier(src, back);
+    barrier(snap, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    g_stats.snapshots++;
+    return true;
+}
 // Mapas neutros do PBR (mapa ausente no desenho): normal reta e ORM com peso 0 (fica a cor original).
 Image g_pbr_flat, g_pbr_none;
 
@@ -974,7 +999,9 @@ void begin_scene(uint32_t color_addr, uint8_t stencil) {
     barrier(dep, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     it->second.dver++;
     it->second.cena++;
+    if (it->second.le_a_si) copiar_snap(g_snaps[{color_addr, 2}], it->second.color, false, ver_proprio(it->second));
 }
+
 
 // Barras de vida dos inimigos (enemy_hp.cpp), no estilo do GoW3: moldura escura, fundo vermelho-escuro e o
 // preenchimento vermelho em degradê com um brilho em cima. Copiadas para o alvo de cor antes do present (a captura de
@@ -1870,31 +1897,17 @@ bool draw(const Draw &d) {
             // lendo o alvo em que desenha: cópia de quando a cena (ou o quadro) começou a ler, não a cada desenho
             const bool proprio = !t.depth && it->first == d.target_addr;
             Image &src = t.depth ? it->second.depth : it->second.color;
-            const VkImageLayout back = t.depth ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-                                               : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-            const VkImageAspectFlags aspect = t.depth ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
-            const uint64_t ver = proprio ? (g_frame_no << 24 | it->second.cena) : t.depth ? it->second.dver : it->second.cver;
+            const uint64_t ver = proprio ? ver_proprio(it->second) : t.depth ? it->second.dver : it->second.cver;
             Snap &sn = g_snaps[{owner, proprio ? 2 : t.depth ? 1 : 0}];
             Image &snap = sn.im;
             if (snap.img && sn.ver == ver) {
                 img_info[t.binding].imageView = snap.view;
                 continue;
             }
-            if (!snap.img &&
-                !make_image(snap, src.w, src.h, src.fmt, VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT))
-                return false;
-            sn.ver = ver;
-            end_pass();
-            barrier(src, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-            barrier(snap, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-            VkImageCopy c{};
-            c.srcSubresource = c.dstSubresource = {aspect, 0, 0, 1};
-            c.extent = {src.w, src.h, 1};
-            vkCmdCopyImage(g_cmd, src.img, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, snap.img,
-                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &c);
-            barrier(src, back);
-            barrier(snap, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            g_stats.snapshots++;
+            // primeira leitura do próprio alvo: dali em diante a cópia sai no começo de cada cena (begin_scene); a
+            // desta cena já perdeu o que havia antes dela, fica a de agora
+            if (proprio) it->second.le_a_si = true;
+            if (!copiar_snap(sn, src, t.depth, ver)) return false;
             static int snaplog = getenv("VITART_VK_SNAPLOG") ? atoi(getenv("VITART_VK_SNAPLOG")) : 0;
             if (snaplog > 0) {
                 snaplog--;
