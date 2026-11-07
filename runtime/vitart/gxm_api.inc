@@ -26,6 +26,10 @@ void shutdown();
 uint32_t render_scale();
 uint32_t auto_render_scale();
 bool set_render_scale(uint32_t s);
+// Ultrawide: quanto os alvos de tela ficam mais largos que os 720x408 do jogo (1 = 16:9 do jogo). O jogo desenha com
+// a câmera na proporção nova (game_options.cpp) e o HUD encolhe de volta (hle_gxm.cpp, squeeze_hud).
+float aspect_widen();
+bool set_aspect_widen(float w);
 // Contador de FPS no canto da imagem (opção do menu de pausa).
 void set_fps_counter(bool on);
 void draw_enemy_bars(uint32_t color_addr, const EnemyBar *bars, uint32_t n);

@@ -77,10 +77,14 @@ struct Options {
     bool auto_qte = false; // QTE automático (game_qte_auto)
     bool inf_health = false, inf_magic = false, inf_rage = false; // cheats (cheats_tick)
     bool hp_bars = true; // barras de vida dos inimigos (enemy_hp.cpp)
+    uint32_t aspecto = 1; // proporção da tela: 1 Auto (a do monitor), 2 16:9, 3 16:10, 4 21:9, 5 32:9, 6 4:3
 };
+// proporção de cada escolha do menu (1 = Auto, pelo monitor); nomes do ini na mesma ordem
+const float kAspecto[] = {0.f, 0.f, 16.f / 9.f, 1.6f, 64.f / 27.f, 32.f / 9.f, 4.f / 3.f};
+const char *kAspectoNome[] = {"", "auto", "16:9", "16:10", "21:9", "32:9", "4:3"};
 Options g_opt;
 // Pedidos vindos do menu (thread do jogo), aplicados no próximo quadro: 0 = nenhum.
-std::atomic<uint32_t> g_req_ehp{0};
+std::atomic<uint32_t> g_req_ehp{0}, g_req_asp{0};
 std::atomic<uint32_t> g_req_tex{0}, g_req_aud{0}, g_req_res{0}, g_req_fps{0}, g_req_cnt{0}, g_req_dsp{0}, g_req_vsync{0}, g_req_qte{0},
     g_req_hp{0}, g_req_mp{0}, g_req_rage{0}, g_req_trophy{0}, g_req_restart{0};
 // Carregador de mods (hle_io.cpp, docs/modding/README.md): mod_<id>=0/1 no ini (vale ao reiniciar). O menu lista os mods
@@ -133,7 +137,7 @@ void save() {
     std::vector<std::string> alheias;
     if (FILE *f = fopen(ini_path().c_str(), "r")) {
         static const char *nossas[] = {"#", "hd_textures=", "ps2_audio=", "resolution=", "fps=", "vsync=", "fps_counter=",
-                                       "borderless=", "auto_qte=", "cheat_", "enemy_health_bars=", "mod_", "ps2_iso="};
+                                       "borderless=", "auto_qte=", "cheat_", "enemy_health_bars=", "mod_", "ps2_iso=", "aspect="};
         char line[1024];
         while (fgets(line, sizeof line, f)) {
             bool nossa = line[0] == '\n' || line[0] == '\r';
@@ -152,6 +156,7 @@ void save() {
         fprintf(f, "cheat_infinite_health=%u\ncheat_infinite_magic=%u\ncheat_infinite_rage=%u\n", g_opt.inf_health ? 1u : 0u,
                 g_opt.inf_magic ? 1u : 0u, g_opt.inf_rage ? 1u : 0u);
         fprintf(f, "enemy_health_bars=%u\n", g_opt.hp_bars ? 1u : 0u);
+        fprintf(f, "aspect=%s\n", kAspectoNome[g_opt.aspecto >= 1 && g_opt.aspecto <= 6 ? g_opt.aspecto : 1]);
         if (!tem_api) fprintf(f, "renderer=%s\n", g_renderer.c_str());
         for (const std::string &l : alheias) fprintf(f, "%s\n", l.c_str());
         for (auto &[id, on] : g_mods) fprintf(f, "mod_%s=%u\n", id.c_str(), on ? 1u : 0u); // carregador de mods
@@ -178,6 +183,9 @@ void load() {
             if (sscanf(line, "cheat_infinite_magic=%u", &v) == 1) g_opt.inf_magic = v != 0;
             if (sscanf(line, "cheat_infinite_rage=%u", &v) == 1) g_opt.inf_rage = v != 0;
             if (sscanf(line, "enemy_health_bars=%u", &v) == 1) g_opt.hp_bars = v != 0;
+            if (!strncmp(line, "aspect=", 7))
+                for (uint32_t i = 1; i <= 6; i++)
+                    if (ini_value(line, 7) == kAspectoNome[i]) g_opt.aspecto = i;
             char mid[128];
             if (sscanf(line, "mod_%127[A-Za-z0-9_]=%u", mid, &v) == 2) set_mod(mid, v != 0);
             if (!strncmp(line, "ps2_iso=", 8)) g_iso = ini_value(line, 8);
@@ -254,6 +262,13 @@ void on_import(arc_ctx *ctx, uint32_t stub) {
     if (!std::strcmp(key, "rage")) g_req_rage = v;
     if (!std::strcmp(key, "trophy")) g_req_trophy = v;
     if (!std::strcmp(key, "restart")) g_req_restart = v;
+    if (!std::strcmp(key, "asp") && v <= 6) g_req_asp = v;
+    // aspq: consulta síncrona da linha Aspect Ratio (a palavra não tem mais bits livres): 1 = o índice no campo do
+    // estado, 2 = o estado de sempre de volta
+    if (!std::strcmp(key, "aspq")) {
+        const uint32_t obj = rd32(op->optr);
+        if (obj && rd32(obj) == op->vtbl) wr32(obj + op->field, v == 1 ? g_opt.aspecto : encode());
+    }
     // moda..modp: liga/desliga o mod de índice 0..15 do menu
     if (!std::strncmp(key, "mod", 3) && key[3] >= 'a' && key[3] <= 'p' && !key[4]) g_req_mod[key[3] - 'a'] = v;
     // modq: consulta síncrona do menu (a página Mods): 1 = os bits dos mods (ligados) no campo do estado, que o
@@ -426,7 +441,59 @@ void game_options_init() {
     gvk::set_borderless(g_opt.borderless);
 }
 
+// VITART_ASPECTO_SONDA=1 (diagnóstico do ultrawide): já jogando, acha todo float 16:9 (0x3fe38e39) na memória do
+// jogo, troca um de cada vez por 21:9 durante 40 quadros e anota se a projeção dos shaders mudou (g_Projection no
+// GoW1, g_ViewProjection no GoW2); volta o valor original depois.
+void sonda_aspecto() {
+    static const bool liga = getenv("VITART_ASPECTO_SONDA") != nullptr;
+    if (!liga || !game_id()) return;
+    const bool jogando = rd32(game_id() == 1 ? 0x812c2e04u : 0x812ec498u) == (game_id() == 1 ? 0xbu : 0xcu);
+    static std::vector<uint32_t> cand;
+    static int fase = -1, espera = 0;
+    static uint32_t quadros_jogando = 0;
+    static float base = 0;
+    auto fx = [] {
+        float p[16] = {};
+        uint32_t age = 0;
+        if (game_id() == 1) return last_projection(p) ? p[0] : 0.f;
+        return last_view_projection(p, age) ? std::sqrt(p[0] * p[0] + p[4] * p[4] + p[8] * p[8]) : 0.f;
+    };
+    if (!jogando) return;
+    if (fase == -1) {
+        if (++quadros_jogando < 300) return; // 5 s de jogo, câmera assentada
+        for (uint32_t a = 0x81000000u; a < 0xC0000000u;) {
+            MEMORY_BASIC_INFORMATION mi{};
+            if (!VirtualQuery(mem_base() + a, &mi, sizeof mi)) break;
+            const uint32_t fim = (uint32_t)std::min<uint64_t>(0xC0000000ull, (uint64_t)((uint8_t *)mi.BaseAddress - mem_base()) + mi.RegionSize);
+            if (mi.State == MEM_COMMIT && !(mi.Protect & (PAGE_NOACCESS | PAGE_GUARD)))
+                for (uint32_t q = a; q + 4 <= fim; q += 4)
+                    if (rd32(q) == 0x3fe38e39u && cand.size() < 400) cand.push_back(q);
+            a = fim > a ? fim : a + 0x1000;
+        }
+        base = fx();
+        logf("vitart: sonda do aspecto: %zu floats 16:9, projeção base %.4f", cand.size(), base);
+        fase = 0, espera = 0;
+        return;
+    }
+    if (fase >= (int)cand.size()) return;
+    const uint32_t a = cand[fase];
+    if (espera == 0) {
+        const float v = 2.370370f;
+        uint32_t w;
+        std::memcpy(&w, &v, 4);
+        if (rd32(a) == 0x3fe38e39u) wr32(a, w);
+    }
+    if (++espera == 40) {
+        const float agora = fx();
+        logf("vitart: sonda do aspecto: %08x -> projeção %.4f (base %.4f)%s", a, agora, base,
+             std::fabs(agora - base) > 0.01f ? "  <== MUDOU" : "");
+        wr32(a, 0x3fe38e39u);
+    }
+    if (espera >= 60) fase++, espera = 0;
+}
+
 void game_options_tick() {
+    sonda_aspecto();
     static bool inited = false;
     if (!inited) {
         inited = true;
@@ -588,6 +655,19 @@ void game_options_tick() {
         g_opt.scale = v, changed = true;
         gvk::set_render_scale(v);
         logf("vitart: resolução interna %ux (%ux%u)", v, 960 * v, 544 * v);
+    }
+    if (const uint32_t v = g_req_asp.exchange(0); v >= 1 && v <= 6 && v != g_opt.aspecto) {
+        g_opt.aspecto = v, changed = true;
+        logf("vitart: proporção da tela %s", kAspectoNome[v]);
+    }
+    // ultrawide: o quanto a imagem fica mais larga que a do jogo (720x408). Auto = a do monitor; perto do 16:9 fica 1
+    {
+        float a = kAspecto[g_opt.aspecto <= 6 ? g_opt.aspecto : 1];
+        if (a <= 0) a = (float)GetSystemMetrics(SM_CXSCREEN) / (float)std::max(1, GetSystemMetrics(SM_CYSCREEN));
+        if (const char *e = getenv("VITART_ASPECT")) a = (float)std::atof(e); // teste
+        float w = a / (720.f / 408.f);
+        if (std::fabs(a - 16.f / 9.f) < 0.03f) w = 1.f;
+        gvk::set_aspect_widen(w);
     }
     if (const uint32_t v = g_req_fps.exchange(0); v >= 1 && v <= 3 && v != g_opt.fps) {
         g_opt.fps = v, changed = true;

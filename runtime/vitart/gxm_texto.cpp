@@ -4,6 +4,9 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
 #include <unordered_map>
 
 // Glifos (triângulos ligados) -> linhas (glifos lado a lado na mesma altura) -> cada linha encolhe s vezes na
@@ -112,4 +115,123 @@ bool squeeze_text_lines(gvk::Draw &d, int pos, float s, std::vector<uint8_t> &co
         x = a + (x - a) * s;
     }
     return true;
+}
+
+// Ultrawide: o HUD (FlashUI) encolhe f vezes na largura, cada grupo preso ao lado em que está: todo à esquerda do
+// meio -> borda esquerda, todo à direita -> borda direita, cruzando o meio -> centro (menus, barra de chefe). Um
+// desenho do jogo junta pedaços de lugares diferentes (a barra de vida e o contador de orbes no mesmo), então o
+// lado é por grupo: triângulos ligados = pedaço; pedaços encostados (na mesma altura, ou um dentro do outro) = grupo.
+// Pedaço de tela cheia (fundo, fade) fica esticado. Devolve se mexeu.
+bool squeeze_hud_x(gvk::Draw &d, int pos, float f, std::vector<uint8_t> &copy) {
+    const uint32_t nv = d.vertex_count;
+    if (!nv || !d.index_data || (f >= 0.999f && f <= 1.001f)) return false;
+    float *cpu = nullptr;
+    uint8_t *raw = nullptr;
+    uint32_t stride = 0;
+    if (d.raw_attrs.empty()) {
+        if ((uint32_t)pos >= d.attr_count) return false;
+        cpu = const_cast<float *>(d.attrs) + (size_t)pos * nv * 4;
+    } else {
+        const gvk::VertexAttr *a = nullptr;
+        for (const auto &x : d.raw_attrs)
+            if (x.location == (uint32_t)pos) a = &x;
+        if (!a || a->fmt != 9 || a->comps < 2) return false;
+        gvk::VertexStream &st = d.raw_streams[a->stream];
+        if (st.data != copy.data()) { // o texto já pode ter copiado este stream
+            copy.assign(st.data, st.data + st.size);
+            st.data = copy.data();
+        }
+        raw = copy.data() + a->offset, stride = st.stride;
+    }
+    auto xy = [&](uint32_t v, int c) -> float & {
+        return cpu ? cpu[4 * v + c] : *reinterpret_cast<float *>(raw + (size_t)v * stride + 4 * c);
+    };
+    // pedaços: componentes ligadas pelos triângulos
+    std::vector<uint32_t> up(nv);
+    for (uint32_t v = 0; v < nv; v++) up[v] = v;
+    auto root = [&](uint32_t v) {
+        while (up[v] != v) v = up[v] = up[up[v]];
+        return v;
+    };
+    auto index = [&](uint32_t i) -> int64_t {
+        const int64_t r = d.index_size == 4 ? (int64_t)static_cast<const uint32_t *>(d.index_data)[i]
+                                            : (int64_t)static_cast<const uint16_t *>(d.index_data)[i];
+        return r + d.vertex_offset;
+    };
+    const uint32_t n = d.index_count;
+    const uint32_t ntri = d.topology == 0 ? n / 3 : n >= 3 ? n - 2 : 0;
+    std::vector<uint8_t> usado(nv, 0);
+    for (uint32_t t = 0; t < ntri; t++) {
+        int64_t i0, i1, i2;
+        if (d.topology == 0) i0 = index(3 * t), i1 = index(3 * t + 1), i2 = index(3 * t + 2);
+        else if (d.topology == 1) i0 = index(t), i1 = index(t + 1), i2 = index(t + 2);
+        else i0 = index(0), i1 = index(t + 1), i2 = index(t + 2);
+        if (i0 < 0 || i1 < 0 || i2 < 0 || i0 >= nv || i1 >= nv || i2 >= nv) continue;
+        usado[i0] = usado[i1] = usado[i2] = 1;
+        const float ax = xy((uint32_t)i1, 0) - xy((uint32_t)i0, 0), ay = xy((uint32_t)i1, 1) - xy((uint32_t)i0, 1);
+        const float bx = xy((uint32_t)i2, 0) - xy((uint32_t)i0, 0), by = xy((uint32_t)i2, 1) - xy((uint32_t)i0, 1);
+        if (std::fabs(ax * by - ay * bx) < 1e-9f) continue; // degenerado das faixas: não liga pedaços
+        up[root((uint32_t)i1)] = root((uint32_t)i0);
+        up[root((uint32_t)i2)] = root((uint32_t)i0);
+    }
+    struct Caixa { float x0 = 1e30f, x1 = -1e30f, y0 = 1e30f, y1 = -1e30f; };
+    std::unordered_map<uint32_t, uint32_t> peca_de; // raiz -> índice do pedaço
+    std::vector<Caixa> pecas;
+    std::vector<uint32_t> peca_v(nv, UINT32_MAX);
+    for (uint32_t v = 0; v < nv; v++) {
+        if (!usado[v] || !std::isfinite(xy(v, 0)) || !std::isfinite(xy(v, 1))) continue;
+        auto [it, novo] = peca_de.try_emplace(root(v), (uint32_t)pecas.size());
+        if (novo) pecas.push_back({});
+        Caixa &c = pecas[it->second];
+        c.x0 = std::min(c.x0, xy(v, 0)), c.x1 = std::max(c.x1, xy(v, 0));
+        c.y0 = std::min(c.y0, xy(v, 1)), c.y1 = std::max(c.y1, xy(v, 1));
+        peca_v[v] = it->second;
+    }
+    if (pecas.empty()) return false;
+    // grupos: pedaços encostados (folga de 3% da tela na largura) e com altura em comum
+    const uint32_t np = (uint32_t)pecas.size();
+    std::vector<uint32_t> grp(np);
+    for (uint32_t i = 0; i < np; i++) grp[i] = i;
+    auto gr = [&](uint32_t i) {
+        while (grp[i] != i) i = grp[i] = grp[grp[i]];
+        return i;
+    };
+    if (np <= 4096)
+        for (uint32_t i = 0; i < np; i++)
+            for (uint32_t j = i + 1; j < np; j++) {
+                const Caixa &a = pecas[i], &b = pecas[j];
+                const bool perto_x = a.x0 <= b.x1 + 0.06f && b.x0 <= a.x1 + 0.06f;
+                const bool mesma_altura = a.y0 <= b.y1 && b.y0 <= a.y1;
+                if (perto_x && mesma_altura) grp[gr(j)] = gr(i);
+            }
+    std::vector<Caixa> grupos(np);
+    for (uint32_t i = 0; i < np; i++) {
+        Caixa &g = grupos[gr(i)];
+        const Caixa &c = pecas[i];
+        g.x0 = std::min(g.x0, c.x0), g.x1 = std::max(g.x1, c.x1);
+    }
+    static int diag = getenv("VITART_UI_LOG") ? 400 : 0; // diagnóstico: os pedaços e grupos dos primeiros desenhos
+    static int conta = 0;
+    if (diag > 0 && ++conta % 40 == 0) {
+        diag--;
+        std::string t;
+        char buf[96];
+        for (uint32_t i = 0; i < np && i < 24; i++) {
+            const Caixa &c = pecas[i], &g = grupos[gr(i)];
+            std::snprintf(buf, sizeof buf, " [%.2f..%.2f y%.2f..%.2f g%.2f..%.2f]", c.x0, c.x1, c.y0, c.y1, g.x0, g.x1);
+            t += buf;
+        }
+        if (FILE *lf = std::fopen("hud_pecas.log", "a")) std::fprintf(lf, "%u pedacos%s\n", np, t.c_str()), std::fclose(lf);
+    }
+    bool mexeu = false;
+    for (uint32_t v = 0; v < nv; v++) {
+        if (peca_v[v] == UINT32_MAX) continue;
+        const Caixa &c = pecas[peca_v[v]];
+        if (c.x1 - c.x0 >= 1.9f) continue; // tela cheia
+        const Caixa &g = grupos[gr(peca_v[v])];
+        const float anc = g.x1 <= 0.02f ? -1.f : g.x0 >= -0.02f ? 1.f : 0.f;
+        xy(v, 0) = anc + (xy(v, 0) - anc) * f;
+        mexeu = true;
+    }
+    return mexeu;
 }

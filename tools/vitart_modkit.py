@@ -63,7 +63,7 @@ def default_config():
             'work': os.path.join(inst, 'data', 'modkit_work'),
             'xdelta3': os.path.join(TOOLS, 'bin', 'xdelta3.exe'),
             'sevenzip': r'C:\Program Files\7-Zip\7z.exe',
-            'python': shutil.which('python') or 'python',
+            'python': sys.executable or shutil.which('python') or 'python',  # o Python portátil de Ferramentas, se for ele
         }
     return {
         'app': os.path.join(proj, '_deps', 'vita3k-win', 'bin', 'portable', 'fs', 'ux0', 'app', 'PCSA00126'),
@@ -79,6 +79,9 @@ def load_config():
     cfg = default_config()
     if os.path.exists(CONFIG):
         cfg.update(json.load(open(CONFIG, encoding='utf-8')))
+    # Python gravado de outra máquina (ou de antes do Python portátil): usa o que está rodando agora
+    if not (cfg.get('python') and (os.path.exists(cfg['python']) or shutil.which(cfg['python']))):
+        cfg['python'] = sys.executable
     return cfg
 
 

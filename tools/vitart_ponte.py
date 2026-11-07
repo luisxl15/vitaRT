@@ -366,7 +366,7 @@ def m_opcoes(a):
     return {'api': api if api in APIS else 'auto', 'ini': _ini(), 'placas': _placas(),
             'vulkan': os.path.exists(os.path.join(sysdir, 'vulkan-1.dll')), 'ultima': _api_da_ultima_sessao(),
             'jogo_aberto': '"vitart.exe"' in tl or '"god of war collection.exe"' in tl,
-            'flags': _flags(), 'texdump_pasta': os.path.join(cfg['data'], 'texdump'),
+            'flags': _flags(), 'aspecto': _aspecto(), 'texdump_pasta': os.path.join(cfg['data'], 'texdump'),
             'log_pasta': os.path.join(os.path.dirname(cfg['data']), 'logs')}
 
 
@@ -377,6 +377,27 @@ def _gravar(chave, valor):
     tem = any(l.startswith(p) for l in linhas)
     linhas = [p + valor if l.startswith(p) else l for l in linhas] + ([] if tem else [p + valor])
     open(_ini(), 'w', encoding='utf-8', newline='\n').write('\n'.join(linhas) + '\n')
+
+
+# proporção da tela (ultrawide): aspect= no ini, a mesma escolha da linha Aspect Ratio do menu do jogo
+ASPECTOS = ['auto', '16:9', '16:10', '21:9', '32:9', '4:3']
+
+
+def _aspecto():
+    if os.path.exists(_ini()):
+        for l in open(_ini(), encoding='utf-8', errors='replace'):
+            if l.startswith('aspect='):
+                v = l[7:].strip()
+                return v if v in ASPECTOS else 'auto'
+    return 'auto'
+
+
+def m_salvar_aspecto(a):
+    v = a.get('aspecto')
+    if v not in ASPECTOS:
+        raise ValueError('proporção desconhecida: %s' % v)
+    _gravar('aspect', v)
+    return v
 
 
 def m_salvar_api(a):

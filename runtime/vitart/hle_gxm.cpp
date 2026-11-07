@@ -843,18 +843,21 @@ static uint32_t attr_size(uint32_t fmt) { return fmt <= 1 || fmt == 4 || fmt == 
 // encolhe na largura em volta da âncora: o centro se ela está centralizada na tela, senão a borda do lado em que
 // está. Espaçamento e alinhamento continuam os do jogo; molduras, barras e ícones de malha ficam como estão.
 // VITART_TEXTO_ESTICADO=1 desliga.
-static void squeeze_text(gvk::Draw &d, uint32_t prog, std::vector<uint8_t> &copy) {
-    static const bool off = getenv("VITART_TEXTO_ESTICADO") != nullptr;
-    if (off || !d.target_w || !d.target_h || !d.vertex_count || !d.index_data) return;
-    const float s = (4.f / 3.f) / ((float)d.target_w / (float)d.target_h);
-    if (s > 0.99f) return; // alvo 4:3 (ou mais estreito): nada esticado
-    // só o shader que repassa a posição: atributo "position" e nenhuma matriz nos uniforms
+// Shader que repassa a posição (a interface: a CPU do jogo já manda em coordenada de tela): location do atributo
+// "position" e nenhuma matriz nos uniforms; -1 se não é. Em cache por programa.
+static int ui_pos_attr(uint32_t prog) {
+    static std::unordered_map<uint32_t, int> cache;
+    auto it = cache.find(prog);
+    if (it != cache.end()) return it->second;
     int pos = -1, k = 0;
+    bool matriz = false;
+    std::string nomes;
     const uint32_t np = rd32(prog + 0x24);
     for (uint32_t i = 0; i < np; i++) {
         const uint32_t p = gxp_param(prog, i);
         const uint32_t cat = *ptr<uint8_t>(p + 4) & 15;
         std::string name = gstr(p + rd32(p));
+        nomes += (nomes.empty() ? "" : " ") + name;
         for (char &ch : name) ch = (char)std::tolower((unsigned char)ch);
         if (cat == 0) {
             if (pos < 0 && name.find("position") != std::string::npos) pos = k;
@@ -862,11 +865,107 @@ static void squeeze_text(gvk::Draw &d, uint32_t prog, std::vector<uint8_t> &copy
         } else if (cat == 1 && (name.find("proj") != std::string::npos || name.find("transform") != std::string::npos ||
                                 name.find("world") != std::string::npos || name.find("view") != std::string::npos ||
                                 name.find("mat") != std::string::npos)) {
-            return;
+            matriz = true;
         }
     }
+    if (matriz) pos = -1;
+    if (getenv("VITART_UI_LOG") && pos >= 0) logf("vitart: shader de interface 0x%08x: %s", prog, nomes.c_str());
+    return cache[prog] = pos;
+}
+// o HUD de verdade é o FlashUI (atributos aPosition/aTexCoord); os "input.position" são passes do motor (névoa,
+// resolve, sombras) que já cobrem a tela larga
+static bool flash_ui(uint32_t prog) {
+    static std::unordered_map<uint32_t, bool> cache;
+    auto it = cache.find(prog);
+    if (it != cache.end()) return it->second;
+    bool r = false;
+    const uint32_t np = rd32(prog + 0x24);
+    for (uint32_t i = 0; i < np; i++) {
+        const uint32_t p = gxp_param(prog, i);
+        if ((*ptr<uint8_t>(p + 4) & 15) == 0 && !std::strcmp(gstr(p + rd32(p)), "aPosition")) r = true;
+    }
+    return cache[prog] = r;
+}
+static void squeeze_text(gvk::Draw &d, uint32_t prog, std::vector<uint8_t> &copy) {
+    static const bool off = getenv("VITART_TEXTO_ESTICADO") != nullptr;
+    if (off || !d.target_w || !d.target_h || !d.vertex_count || !d.index_data) return;
+    const float s = (4.f / 3.f) / ((float)d.target_w / (float)d.target_h);
+    if (s > 0.99f) return; // alvo 4:3 (ou mais estreito): nada esticado
+    const int pos = ui_pos_attr(prog);
     if (pos < 0) return;
     if (squeeze_text_lines(d, pos, s, copy)) g_text_draws++;
+}
+
+// Ultrawide (gvk::aspect_widen): nos alvos de tela, a projeção dos shaders 3D ganha campo de visão na largura (a linha
+// x de g_Projection / g_ViewProjection dividida por W, numa cópia dos uniforms) e o HUD encolhe de volta, preso ao
+// lado em que está (squeeze_hud_x). O guest continua desenhando nos 720x408 dele; o host é W vezes mais largo.
+static uint64_t g_uw_proj = 0, g_uw_hud = 0;
+static bool alvo_de_tela_g(uint32_t w, uint32_t h) { return h && w * 100 >= h * 170 && w * 100 <= h * 182; }
+static void ultrawide(gvk::Draw &d, uint32_t vprog, uint32_t vuniform, uint32_t vsize, std::vector<uint8_t> &uni_copy,
+                      std::vector<uint8_t> &pos_copy) {
+    const float W = gvk::aspect_widen();
+    if (static int diag = getenv("VITART_UI_LOG") ? 3000 : 0; diag > 0 && flash_ui(vprog)) {
+        static int conta = 0;
+        if (++conta % 7 == 0) {
+            diag--;
+            uint32_t tex = 0;
+            for (const auto &t : d.textures) tex = tex ? tex : t.target_addr;
+            if (FILE *lf = std::fopen("hud_alvos.log", "a"))
+                std::fprintf(lf, "alvo %08x %ux%u, lê alvo %08x, %u vértices, quadro %u\n", d.target_addr, d.target_w, d.target_h, tex,
+                             d.vertex_count, g_present_frame.load()),
+                    std::fclose(lf);
+        }
+    }
+    if (std::fabs(W - 1.f) < 0.002f || !alvo_de_tela_g(d.target_w, d.target_h)) return;
+    const int pos = ui_pos_attr(vprog);
+    if (pos >= 0) {
+        if (flash_ui(vprog) && squeeze_hud_x(d, pos, 1.f / W, pos_copy)) g_uw_hud++;
+        return;
+    }
+    if (!vuniform || !vsize) return;
+    const pbr::VertexInfo &vi = pbr_prog(vprog).vi;
+    const uint32_t words = vsize / 4;
+    int base = -1, idx[4] = {0, 4, 8, 12};
+    auto wrow = [](const float *m, int a, int b, int c, int e) {
+        const float z = std::fabs(m[c]);
+        if (!(z > 1e-6f) || !std::isfinite(z)) return false;
+        return std::fabs(m[a]) < 1e-3f * z && std::fabs(m[b]) < 1e-3f * z && std::fabs(m[e]) < 1e-3f * z;
+    };
+    if (vi.proj >= 0 && (uint32_t)vi.proj + 16 <= words) {
+        const float *m = ptr<float>(vuniform) + vi.proj;
+        if (wrow(m, 3, 7, 11, 15)) base = vi.proj;                                       // colunas: x = 0, 4, 8, 12
+        else if (wrow(m, 12, 13, 14, 15)) base = vi.proj, idx[1] = 1, idx[2] = 2, idx[3] = 3; // linhas: x = 0..3
+    } else if (vi.view_proj >= 0 && (uint32_t)vi.view_proj + 16 <= words) {
+        base = vi.view_proj; // GoW2: mundo -> clip pronto, em colunas (o mesmo uso do enemy_hp.cpp)
+    }
+    if (static const uint32_t dq = getenv("VITART_UI_LOG_QUADRO") ? (uint32_t)atoi(getenv("VITART_UI_LOG_QUADRO")) : 0; dq && g_present_frame.load() + 2 >= dq && g_present_frame.load() <= dq + 2) {
+        std::string nomes;
+        const uint32_t np = rd32(vprog + 0x24);
+        for (uint32_t i = 0; i < np; i++) {
+            const uint32_t p = gxp_param(vprog, i);
+            nomes += std::string(" ") + gstr(p + rd32(p));
+        }
+        const float *m = ptr<float>(vuniform) + base;
+        if (FILE *lf = std::fopen("hud_proj.log", "a"))
+            std::fprintf(lf, "proj %08x %u vert prof %u/%d tf %s:%s%c", vprog, d.vertex_count, d.depth_func, (int)d.depth_write,
+                         [&] {
+                             static char b[160];
+                             b[0] = 0;
+                             if (vi.transforms >= 0 && (uint32_t)vi.transforms + 16 <= words) {
+                                 const float *t = ptr<float>(vuniform) + vi.transforms;
+                                 std::snprintf(b, sizeof b, "c(%.1f %.1f %.1f) l(%.1f %.1f %.1f)", t[12], t[13], t[14], t[3], t[7], t[11]);
+                             }
+                             return b;
+                         }(),
+                         nomes.c_str(), 10),
+                std::fclose(lf);
+    }
+    if (base < 0) return;
+    uni_copy.assign(ptr<uint8_t>(vuniform), ptr<uint8_t>(vuniform) + vsize);
+    float *m = reinterpret_cast<float *>(uni_copy.data()) + base;
+    for (int i : idx) m[i] /= W;
+    d.vert_uniforms = uni_copy.data();
+    g_uw_proj++;
 }
 
 static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t idata, uint32_t icount);
@@ -1205,6 +1304,8 @@ static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t ida
     }
     std::vector<uint8_t> text_copy; // stream da posição com o texto já estreitado (vale até o gvk::draw)
     if (font_draw) squeeze_text(d, vp->program, text_copy);
+    std::vector<uint8_t> uw_uniforms; // ultrawide: uniforms com a projeção mais larga (vale até o gvk::draw)
+    ultrawide(d, vp->program, c.vuniform, c.vuniform ? vsize : 0, uw_uniforms, text_copy);
     const uint64_t tg = now_ns();
     g_t_tex += tg - t_tex0;
     const bool drew = gvk::draw(d);

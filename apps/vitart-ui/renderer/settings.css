@@ -25,6 +25,8 @@
 .api-uso { margin-top: auto; font: 600 10.5px var(--f-caixa); letter-spacing: .15em; text-transform: uppercase; color: #8fbf73; }
 .api-uso::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: #5d9c4c; box-shadow: 0 0 6px #5d9c4c; vertical-align: 1px; }
 
+.aspectos { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 24px; max-width: 1040px; margin-top: 18px; padding: 16px 22px; }
+.aspectos .legenda { margin-top: 4px; max-width: 560px; }
 .video-info { display: grid; grid-template-columns: 1.2fr 1fr 1.6fr; gap: 22px; max-width: 1040px; margin-top: 18px; padding: 18px 22px; }
 .video-info .valor { margin-top: 4px; font: 15px var(--f-titulo); color: var(--marfim); user-select: text; }
 .video-info .valor.fino { font: 12px/1.5 Consolas, monospace; color: var(--cinza); word-break: break-all; }

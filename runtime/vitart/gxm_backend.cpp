@@ -64,6 +64,8 @@ void shutdown() { TO(shutdown); }
 uint32_t render_scale() { return TO(render_scale); }
 uint32_t auto_render_scale() { return TO(auto_render_scale); }
 bool set_render_scale(uint32_t s) { return TO(set_render_scale, s); }
+float aspect_widen() { return TO(aspect_widen); }
+bool set_aspect_widen(float w) { return TO(set_aspect_widen, w); }
 void set_fps_counter(bool on) { TO(set_fps_counter, on); }
 void draw_enemy_bars(uint32_t color_addr, const EnemyBar *bars, uint32_t n) { TO(draw_enemy_bars, color_addr, bars, n); }
 uint32_t measured_fps() { return TO(measured_fps); }

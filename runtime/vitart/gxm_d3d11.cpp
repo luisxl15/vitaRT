@@ -135,8 +135,15 @@ struct Target {
     uint64_t cver = 1, dver = 1; // sobem a cada escrita na cor / na profundidade
     uint64_t cena = 0;           // sobe a cada sceGxmBeginScene neste alvo (leitura do próprio alvo, ver Snap)
     bool le_a_si = false;        // algum desenho já leu este alvo enquanto desenhava nele: copiar no começo da cena
+    uint32_t gw = 0, gh = 0;     // tamanho no guest
 };
 std::map<uint32_t, Target> g_targets;
+// ultrawide: como no gxm_vk.cpp, alvos com cara de tela ficam g_widen vezes mais largos
+float g_widen = 1.f;
+bool alvo_de_tela(uint32_t gw, uint32_t gh) { return gh && gw * 100 >= gh * 170 && gw * 100 <= gh * 182; }
+uint32_t host_w(uint32_t gw, uint32_t gh, uint32_t s, float widen) {
+    return alvo_de_tela(gw, gh) && widen != 1.f ? ((uint32_t)(gw * s * widen + 1.f) & ~1u) : gw * s;
+}
 std::map<uint32_t, uint32_t> g_depth_owner; // superfície de profundidade -> alvo de cor que a usa
 Target *g_open = nullptr;                   // alvo ligado ao output merger
 
@@ -160,7 +167,8 @@ bool get_target(uint32_t addr, uint32_t w, uint32_t h, Target *&out) {
     auto it = g_targets.find(addr);
     if (it != g_targets.end()) return out = &it->second, true;
     Target t;
-    if (!make_target(t, w * scale_now(), h * scale_now())) return false;
+    if (!make_target(t, host_w(w, h, scale_now(), g_widen), h * scale_now())) return false;
+    t.gw = w, t.gh = h;
     out = &(g_targets[addr] = std::move(t));
     return true;
 }
@@ -776,10 +784,11 @@ bool draw(const Draw &d) {
     // positiva o shader inverte o y (cbuffer b0.w) e a altura fica positiva.
     static const float halfpix = getenv("VITART_VK_HALFPIX") ? (float)std::atof(getenv("VITART_VK_HALFPIX")) : 0.5f;
     const float rs = (float)scale_now();
+    const float rsx = tgt->gw ? (float)tgt->color.w / (float)tgt->gw : rs; // ultrawide: x tem a própria escala
     const float flip = d.vps[3] > 0 ? -1.f : 1.f;
     D3D11_VIEWPORT vp{};
-    vp.TopLeftX = (d.vps[0] - d.vps[1] + halfpix) * rs;
-    vp.Width = 2 * d.vps[1] * rs;
+    vp.TopLeftX = (d.vps[0] - d.vps[1] + halfpix) * rsx;
+    vp.Width = 2 * d.vps[1] * rsx;
     vp.TopLeftY = (d.vps[2] - std::fabs(d.vps[3]) + halfpix) * rs;
     vp.Height = 2 * std::fabs(d.vps[3]) * rs;
     vp.MinDepth = std::clamp(d.vps[4], 0.f, 1.f);
@@ -1091,23 +1100,34 @@ uint32_t render_scale() { return scale_now(); }
 uint32_t auto_render_scale() { return scale_auto(); }
 // Troca a resolução interna com o jogo rodando: cada alvo é recriado na escala nova com a imagem atual
 // reduzida/ampliada com filtro; a profundidade volta limpa e as cópias amostráveis são refeitas sob demanda.
-bool set_render_scale(uint32_t s) {
-    std::lock_guard<std::recursive_mutex> lock(g_lock);
-    s = s < 1 ? 1 : s > 8 ? 8 : s;
-    const uint32_t cur = scale_now();
-    if (s == cur) return true;
-    if (!g_dev || g_targets.empty()) return g_scale_override = s, true;
+bool refazer_alvos(uint32_t s, float widen) {
     for (auto &kv : g_targets) {
         Target &t = kv.second;
         Target n;
-        if (!make_target(n, t.color.w / cur * s, t.color.h / cur * s)) return false;
+        if (!make_target(n, t.gw ? host_w(t.gw, t.gh, s, widen) : t.color.w, t.gh ? t.gh * s : t.color.h)) return false;
         blit(t.color.srv.Get(), n.rtv.Get(), 0, 0, (float)n.color.w, (float)n.color.h);
-        n.cver = t.cver + 1, n.dver = t.dver + 1;
+        n.cver = t.cver + 1, n.dver = t.dver + 1, n.gw = t.gw, n.gh = t.gh, n.cena = t.cena, n.le_a_si = t.le_a_si;
         t = std::move(n);
     }
     g_snaps.clear();
     g_open = nullptr;
+    return true;
+}
+bool set_render_scale(uint32_t s) {
+    std::lock_guard<std::recursive_mutex> lock(g_lock);
+    s = s < 1 ? 1 : s > 8 ? 8 : s;
+    if (s == scale_now()) return true;
+    if (g_dev && !g_targets.empty() && !refazer_alvos(s, g_widen)) return false;
     g_scale_override = s;
+    return true;
+}
+float aspect_widen() { return g_widen; }
+bool set_aspect_widen(float w) {
+    std::lock_guard<std::recursive_mutex> lock(g_lock);
+    w = w < 0.5f ? 0.5f : w > 2.5f ? 2.5f : w;
+    if (std::fabs(w - g_widen) < 0.002f) return true;
+    if (g_dev && !g_targets.empty() && !refazer_alvos(scale_now(), w)) return false;
+    g_widen = w;
     return true;
 }
 

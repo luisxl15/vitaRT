@@ -92,6 +92,14 @@ uint32_t scale_auto() {
     return s;
 }
 uint32_t scale_now() { return g_scale_override ? g_scale_override : scale_auto(); }
+// Ultrawide: os alvos com cara de tela (720x408, as metades e quartos usados nos passes de tela cheia) ficam g_widen
+// vezes mais largos no host; o jogo desenha com a proporção maior (game_options.cpp escreve o aspecto da câmera) e
+// os 720 pixels do guest se espalham pela largura nova. Sombras e alvos quadrados ficam como estão.
+float g_widen = 1.f;
+bool alvo_de_tela(uint32_t gw, uint32_t gh) { return gh && gw * 100 >= gh * 170 && gw * 100 <= gh * 182; }
+uint32_t host_w(uint32_t gw, uint32_t gh, uint32_t s, float widen) {
+    return alvo_de_tela(gw, gh) && widen != 1.f ? ((uint32_t)(gw * s * widen + 1.f) & ~1u) : gw * s;
+}
 float g_aniso = 1.f;                         // anisotropia máxima dos samplers (1 = desligada)
 VkPipelineCache g_pcache = VK_NULL_HANDLE;   // persistido em vk_pipeline_cache.bin
 bool g_pcache_dirty = false;
@@ -284,6 +292,7 @@ bool submit_wait() {
 
 struct Target {
     Image color, depth;
+    uint32_t gw = 0, gh = 0; // tamanho no guest (o do host sai de host_w e da escala)
     VkFramebuffer fb = VK_NULL_HANDLE;
     uint64_t cver = 1, dver = 1; // sobem a cada escrita na cor / na profundidade
     uint64_t cena = 0;           // sobe a cada sceGxmBeginScene neste alvo (leitura do próprio alvo, ver Snap)
@@ -453,7 +462,8 @@ bool get_target(uint32_t addr, uint32_t w, uint32_t h, Target *&out) {
         return true;
     }
     Target t;
-    w *= scale_now(), h *= scale_now();
+    t.gw = w, t.gh = h;
+    w = host_w(w, h, scale_now(), g_widen), h *= scale_now();
     if (!make_image(t.color, w, h, kColor,
                     VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
                         VK_IMAGE_USAGE_STORAGE_BIT))
@@ -2040,8 +2050,10 @@ bool draw(const Draw &d) {
     // Sem compensar, toda passada de tela cheia lê entre texels: o quadro borra e a máscara de névoa
     // vaza 1 px além dos personagens (o contorno escuro). Medido no replay: +0,5 deixa nítido e sem halo.
     static const float halfpix = getenv("VITART_VK_HALFPIX") ? (float)std::atof(getenv("VITART_VK_HALFPIX")) : 0.5f;
+    // escala do guest para o host, por eixo: no ultrawide o alvo de tela é mais largo que a escala
     const float rs = (float)scale_now();
-    vp.x = (vp.x + halfpix) * rs, vp.y = (vp.y + halfpix) * rs, vp.width *= rs, vp.height *= rs;
+    const float rsx = tgt->gw ? (float)tgt->color.w / (float)tgt->gw : rs;
+    vp.x = (vp.x + halfpix) * rsx, vp.y = (vp.y + halfpix) * rs, vp.width *= rsx, vp.height *= rs;
     vp.minDepth = vp.minDepth < 0 ? 0 : (vp.minDepth > 1 ? 1 : vp.minDepth);
     vp.maxDepth = vp.maxDepth < 0 ? 0 : (vp.maxDepth > 1 ? 1 : vp.maxDepth);
     vkCmdSetViewport(g_cmd, 0, 1, &vp);
@@ -2141,15 +2153,34 @@ bool read_target(uint32_t addr, std::vector<uint8_t> &rgba, uint32_t &w, uint32_
 // amostráveis e os conjuntos de textura que apontavam para as imagens velhas são refeitos sob demanda.
 uint32_t render_scale() { return scale_now(); }
 uint32_t auto_render_scale() { return scale_auto(); }
+bool refazer_alvos(uint32_t s, float widen);
 bool set_render_scale(uint32_t s) {
     std::lock_guard<std::recursive_mutex> lock(g_lock);
     s = s < 1 ? 1 : s > 8 ? 8 : s;
-    const uint32_t cur = scale_now();
-    if (s == cur) return true;
+    if (s == scale_now()) return true;
     if (!g_dev || g_targets.empty()) {
         g_scale_override = s;
         return true;
     }
+    if (!refazer_alvos(s, g_widen)) return false;
+    g_scale_override = s;
+    return true;
+}
+float aspect_widen() { return g_widen; }
+bool set_aspect_widen(float w) {
+    std::lock_guard<std::recursive_mutex> lock(g_lock);
+    w = w < 0.5f ? 0.5f : w > 2.5f ? 2.5f : w;
+    if (std::fabs(w - g_widen) < 0.002f) return true;
+    if (!g_dev || g_targets.empty()) {
+        g_widen = w;
+        return true;
+    }
+    if (!refazer_alvos(scale_now(), w)) return false;
+    g_widen = w;
+    return true;
+}
+// Os alvos de novo no tamanho da escala s e da largura widen: o conteúdo atual reduzido/ampliado com filtro.
+bool refazer_alvos(uint32_t s, float widen) {
     if (!frame_flush(true)) return false;
     vkDeviceWaitIdle(g_dev);
     if (!begin_cmd()) return false;
@@ -2157,7 +2188,7 @@ bool set_render_scale(uint32_t s) {
     std::vector<VkFramebuffer> old_fb;
     for (auto &kv : g_targets) {
         Target &t = kv.second;
-        const uint32_t w = t.color.w / cur * s, h = t.color.h / cur * s;
+        const uint32_t w = t.gw ? host_w(t.gw, t.gh, s, widen) : t.color.w, h = t.gh ? t.gh * s : t.color.h;
         Target n;
         if (!make_image(n.color, w, h, kColor,
                         VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
@@ -2186,7 +2217,7 @@ bool set_render_scale(uint32_t s) {
         vkCmdClearDepthStencilImage(g_cmd, n.depth.img, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &dc, 1, &dr);
         barrier(n.color, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
         barrier(n.depth, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-        n.cver = t.cver + 1, n.dver = t.dver + 1;
+        n.cver = t.cver + 1, n.dver = t.dver + 1, n.gw = t.gw, n.gh = t.gh, n.cena = t.cena, n.le_a_si = t.le_a_si;
         old.push_back(t.color), old.push_back(t.depth), old_fb.push_back(t.fb);
         t = n;
     }
@@ -2196,7 +2227,6 @@ bool set_render_scale(uint32_t s) {
     for (auto &kv : g_snaps) destroy(kv.second.im);
     g_snaps.clear();
     g_tex_sets_stale = true;
-    g_scale_override = s;
     return true;
 }
 

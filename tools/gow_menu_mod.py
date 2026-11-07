@@ -37,6 +37,9 @@ FIELDS = [('_level0/:VtEhp', 65536, 1), ('_level0/:VtRage', 32768, 1), ('_level0
           ('_level0/:VtVsync', 512, 1), ('_level0/:VtFps', 128, 3), ('_level0/:VtRes', 16, 7),
           ('_level0/:VtAud', 4, 3), ('_level0/:VtTex', 1, 3)]
 RES_TEXT = {1: '1x  (960x544)', 2: '2x  (1920x1088)', 3: '3x  (2880x1632)', 4: '4x  (3840x2176)'}
+# proporção da tela (ultrawide): Auto = a da janela; o valor não cabe na palavra (24 bits cheios), vem pela
+# consulta síncrona "aspq" como a página Mods (game_options.cpp)
+ASP_TEXT = {1: 'Auto', 2: '16:9', 3: '16:10', 4: '21:9', 5: '32:9', 6: '4:3'}
 FPS_TEXT = {1: '30 FPS', 2: '60 FPS', 3: 'Max FPS'}  # Max: taxa do monitor; VSync Off: sem limite (patch_gow*_dt.py)
 # linha: (chave do fscommand, nome do clipe, rótulo, variável decodificada, variável do texto, tipo, textos)
 LINES = {
@@ -44,6 +47,7 @@ LINES = {
     'aud': ('VtAudio', 'PS2 Audio', '_level0/:VtAud', '_level0/:VtAudText', 'avail', None),
     'res': ('VtResolution', 'Resolution', '_level0/:VtRes', '_level0/:VtResText', 'list', RES_TEXT),
     'fps': ('VtFrameRate', 'Frame Rate', '_level0/:VtFps', '_level0/:VtFpsText', 'list', FPS_TEXT),
+    'asp': ('VtAspect', 'Aspect Ratio', '_level0/:VtAsp', '_level0/:VtAspText', 'list', ASP_TEXT),
     'vsync': ('VtVsync', 'VSync', '_level0/:VtVsync', '_level0/:VtVsyncText', 'toggle', {1: 'Off', 2: 'On'}),
     'cnt': ('VtFpsCounter', 'FPS Counter', '_level0/:VtCnt', '_level0/:VtCntText', 'toggle', {1: 'Off', 2: 'On'}),
     'dsp': ('VtDisplayMode', 'Display Mode', '_level0/:VtDsp', '_level0/:VtDspText', 'toggle', {1: 'Windowed', 2: 'Borderless'}),
@@ -75,8 +79,8 @@ GAMES = {
         state='PS2_Cheat', wad=(30, b'FLP_HUD'), shell=(30, b'FLP_Shell'), nobody=(24,),
         new=[(5, 'tex'), (6, 'aud'), (7, 'res'), (8, 'fps'), (11, 'vsync'), (9, 'cnt'), (10, 'dsp'), (12, 'qte'),
              (13, 'hp'), (14, 'mp'), (15, 'rage'), (16, 'trophy'), (17, 'cat_gfx'), (18, 'cat_game'), (19, 'cat_cheat'),
-             (20, 'back')],
-        pages={0: [1, 2, 17, 18, 19, 3, 4], 1: [5, 7, 8, 11, 9, 10, 20], 2: [6, 12, 20], 3: [13, 14, 15, 16, 20]},
+             (20, 'back'), (21, 'asp')],
+        pages={0: [1, 2, 17, 18, 19, 3, 4], 1: [5, 7, 21, 8, 11, 9, 10, 20], 2: [6, 12, 20], 3: [13, 14, 15, 16, 20]},
         old={1: ('MusicVolume', 'A'), 2: ('SFXVolume', 'A'), 3: ('Controller', 'B'), 4: ('Return', 'B')},
         y=(-175.0, 175.0), row_k=1.0, frames=(7, 8, 9), kx=22, x_state='3',
         dyn_label=False),
@@ -84,8 +88,8 @@ GAMES = {
         state='PS2_OverUnder', wad=(1, b'FLP_HUDA'), shell=(1, b'FLP_ShellA'), nobody=(0, 24),  # tag 0: parâmetro (o tamanho é o valor)
         new=[(7, 'res'), (8, 'fps'), (9, 'vsync'), (10, 'cnt'), (11, 'dsp'), (12, 'qte'), (13, 'tex'), (14, 'aud'),
              (15, 'hp'), (16, 'mp'), (17, 'rage'), (18, 'trophy'), (19, 'cat_gfx'), (20, 'cat_game'), (21, 'cat_cheat'),
-             (22, 'back'), (23, 'ehp')],
-        pages={0: [1, 2, 3, 4, 5, 19, 20, 21, 6], 1: [13, 7, 8, 9, 10, 11, 22], 2: [14, 12, 23, 22], 3: [15, 16, 17, 18, 22]},
+             (22, 'back'), (23, 'ehp'), (24, 'asp')],
+        pages={0: [1, 2, 3, 4, 5, 19, 20, 21, 6], 1: [13, 7, 24, 8, 9, 10, 11, 22], 2: [14, 12, 23, 22], 3: [15, 16, 17, 18, 22]},
         old={1: ('MessageTips', 'A'), 2: ('MusicVolume', 'A'), 3: ('SFXVolume', 'A'), 4: ('Controller', 'B'),
              5: ('FlightControls', 'A'), 6: ('Return', 'B')},
         y=(-165.0, 207.5), row_k=1.0, frames=(9, 10, 11), kx=19, x_state='4',
@@ -281,6 +285,11 @@ def show_script(f):
         a.label('q1' + q)
     if any(k == 'trophy' for _, k in CFG['new']):
         a.setv('_level0/:VtTrophy', 1)  # a ação volta a "Press X" a cada abertura da página
+    if any(k == 'asp' for _, k in CFG['new']):
+        # proporção da tela: consulta síncrona (1 = o índice no campo do estado, 2 = o estado de volta)
+        a.fscommand('FSCommand:VT_aspq_1')
+        a.push('_level0/:VtAsp').getv(STATE).setvar()
+        a.fscommand('FSCommand:VT_aspq_2')
     if MODS:
         # estado dos mods: consulta síncrona ao vitart (game_options.cpp, "modq"): com 1 ele põe no campo do estado
         # um bit por mod ligado, lido aqui mesmo; com 2 volta o estado de sempre
@@ -427,8 +436,13 @@ def make_label(f, ref, text, center=False):
     adv = glyph_advances(f, cmd0['font'])
     glyphs = []
     for ch in text:
-        g = font.cmap[ord(ch)]
-        assert g >= 0, 'fonte sem %r' % ch
+        g = font.cmap[ord(ch)] if ord(ch) < len(font.cmap) else -1
+        if g < 0:  # a fonte do menu não tem a letra (nome de mod com acento): a letra sem acento, ou nada
+            import unicodedata
+            base = unicodedata.normalize('NFKD', ch).encode('ascii', 'ignore').decode()
+            g = font.cmap[ord(base[0])] if base and ord(base[0]) < len(font.cmap) else -1
+            if g < 0:
+                continue
         glyphs.append((g, adv.get(g, round(font.widths[g] * 0.73))))
     st = flp.Static()
     st.h = bytearray(ref.h)

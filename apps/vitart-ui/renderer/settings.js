@@ -56,6 +56,10 @@ function montarVideo(sec) {
   sec.append(
     el('div', { class: 'nota oculto', id: 'aviso-jogo' }, 'O jogo está aberto: a troca vale quando ele abrir de novo.'),
     el('div', { class: 'apis', id: 'apis', role: 'radiogroup', 'aria-label': 'API de vídeo' }),
+    el('div', { class: 'aspectos painel' },
+      el('div', {}, el('div', { class: 'caixa' }, 'Proporção da tela'),
+        el('div', { class: 'mudo legenda' }, 'Ultrawide: o jogo mostra mais cenário dos lados e o HUD vai para as bordas. Auto usa a do monitor. Também muda no menu de pausa do jogo (Options › Graphics).')),
+      el('div', { class: 'jogos', id: 'aspectos', role: 'radiogroup', 'aria-label': 'Proporção da tela' })),
     el('div', { class: 'video-info painel' },
       el('div', {}, el('div', { class: 'caixa' }, 'Placa de vídeo'), el('div', { class: 'valor', id: 'v-placa', 'data-no-i18n': '' }, '...')),
       el('div', {}, el('div', { class: 'caixa' }, 'Última sessão'), el('div', { class: 'valor', id: 'v-ultima' }, '...')),
@@ -81,6 +85,17 @@ function pintarApis() {
   $('#v-ultima').textContent = o.ultima ? tr('{a} em {b}', { a: NOME_API[o.ultima.api], b: new Date(o.ultima.quando * 1000).toLocaleString(IDIOMA) }) : tr('Ainda sem registro');
   $('#v-ini').textContent = o.ini;
   $('#aviso-jogo').classList.toggle('oculto', !o.jogo_aberto);
+  $('#aspectos').replaceChildren(...['auto', '16:9', '16:10', '21:9', '32:9', '4:3'].map(v =>
+    el('button', { role: 'radio', 'aria-selected': String((o.aspecto || 'auto') === v), 'data-no-i18n': v === 'auto' ? null : '',
+      onclick: () => escolherAspecto(v) }, v === 'auto' ? 'Auto' : v)));
+}
+
+async function escolherAspecto(v) {
+  try {
+    st.opcoes.aspecto = await vt.rpc('salvar_aspecto', { aspecto: v });
+    pintarApis();
+    avisar('Salvo', st.opcoes.jogo_aberto ? 'Vale quando o jogo abrir de novo (ou troque no menu de pausa).' : 'Vale na próxima vez que o jogo abrir.');
+  } catch (e) { avisar('Não deu', e.message, 'erro'); }
 }
 
 async function escolherApi(id) {
