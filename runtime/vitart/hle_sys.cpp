@@ -3,6 +3,7 @@
 // overlays, NP, troféus, AppUtil e diálogos comuns. Assinaturas e layouts das estruturas: vita-headers.
 #include "vitart.h"
 #include "host_input.h"
+#include "input_map.h"
 #include "host_audio.h"
 #include "gxm_vk.h"
 #include "trophy_banner.h"
@@ -167,12 +168,9 @@ static KbmInput keyboard_mouse() {
     KbmInput k;
 #ifdef _WIN32
     if (!gvk::has_focus()) return k;
-    auto down = [](int vk) { return (GetAsyncKeyState(vk) & 0x8000) != 0; };
-    const bool shift = down(VK_SHIFT);
-    k.buttons = game_keyboard_buttons(down);
-    k.mx = (down('D') ? 1 : 0) - (down('A') ? 1 : 0);
-    k.my = (down('S') ? 1 : 0) - (down('W') ? 1 : 0);
-    k.roll = shift;
+    // teclas do jogador (controles_<jogo>.ini, pelo Settings) ou o padrão do jogo (input_map.cpp)
+    const inmap::Teclado t = inmap::teclado();
+    k.buttons = t.buttons, k.mx = t.mx, k.my = t.my, k.roll = t.roll;
 #endif
     return k;
 }
@@ -219,7 +217,7 @@ static void ctrl_read(arc_ctx *ctx) {
     const int count = (int)arg(ctx, 2) > 0 ? (int)arg(ctx, 2) : 1;
     const hostin::State pad = hostin::poll(); // XInput, DualShock 4 e DualSense
     const KbmInput kbm = keyboard_mouse();
-    uint32_t buttons = kbm.buttons | scripted_buttons() | pad.buttons;
+    uint32_t buttons = kbm.buttons | scripted_buttons() | inmap::controle(pad.buttons);
     uint8_t lx = pad.lx, ly = pad.ly, rx = pad.rx, ry = pad.ry;
     if (kbm.mx || kbm.my) { // teclas: inclinação total, inclusive na diagonal (canto do quadrado, como o analógico
         // do Vita chega: com raio 90 o jogo lia meia inclinação e o Kratos andava devagar no W+D)

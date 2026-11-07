@@ -2,6 +2,7 @@
 #include "game.h"
 
 #include <windows.h>
+#include <string>
 
 namespace vt {
 
@@ -34,6 +35,35 @@ uint32_t game_keyboard_buttons(KeyDown down) {
         if (down(m.vk)) b |= m.bit;
     if (down(VK_MBUTTON)) b |= down(VK_SHIFT) ? 0x6u : 0x2000u; // com Shift vira fúria
     return b;
+}
+
+// o mesmo esquema de cima no formato do controles_<jogo>.ini (o Settings mostra e edita; tools/vitart_ponte.py tem a
+// mesma lista para a tela). E/R trocam entre os jogos (magia/Rage), C só existe no GoW2 (Amuleto).
+const char *game_default_controls() {
+    static const char *comum =
+        "[teclado]\n"
+        "cruz = SPACE\n"
+        "quadrado = LBUTTON\n"
+        "triangulo = RBUTTON\n"
+        "circulo = F, MBUTTON\n"
+        "l1 = Q\n"
+        "l2 = LCTRL\n"
+        "furia = V, SHIFT+MBUTTON\n"
+        "cima = 1, UP\n"
+        "direita = 2, RIGHT\n"
+        "baixo = 3, DOWN\n"
+        "esquerda = 4, LEFT\n"
+        "select = ESCAPE, BACKSPACE\n"
+        "start = I, K, TAB, ENTER\n"
+        "andar_cima = W\n"
+        "andar_baixo = S\n"
+        "andar_esquerda = A\n"
+        "andar_direita = D\n"
+        "analogico_direito = SHIFT\n";
+    // GoW1: E = R2 (magia), R = R1; GoW2: E = R1, R = R2, C = L1+R1 (Amuleto)
+    static const std::string g1 = std::string(comum) + "r1 = R\nr2 = E\namuleto =\n";
+    static const std::string g2 = std::string(comum) + "r1 = E\nr2 = R\namuleto = C\n";
+    return game_id() == 2 ? g2.c_str() : g1.c_str();
 }
 
 // nos WADs, a tag 24 nunca tem corpo; no GoW2 também não as 0, 2 e 3 (o "tamanho" ali é um valor)

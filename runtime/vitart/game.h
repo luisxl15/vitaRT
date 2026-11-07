@@ -17,6 +17,8 @@ const wchar_t *game_window_title();
 // teclado: o jogo diz que botão do Vita cada tecla aperta. WASD e Shift ficam com o runtime
 using KeyDown = bool (*)(int vk);
 uint32_t game_keyboard_buttons(KeyDown down);
+// mapeamento padrão no formato do controles_<jogo>.ini (input_map.cpp): o jogador sobrescreve pelo Settings
+const char *game_default_controls();
 
 // formato dos WADs pro compositor de mods: esse registro tem corpo depois do cabeçalho?
 bool game_wad_has_body(uint16_t tag, const std::string &psarc_name);

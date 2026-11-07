@@ -414,6 +414,73 @@ def m_salvar_opcao(a):
     return _flags()
 
 
+# Controles: <dados>/controles_<jogo>.ini (runtime/vitart/input_map.cpp lê, inclusive com o jogo aberto). O padrão é
+# o mesmo de games/gow/gow_profile.cpp (game_default_controls): mudou lá, muda aqui.
+CTL_PADRAO = {
+    'cruz': 'SPACE', 'quadrado': 'LBUTTON', 'triangulo': 'RBUTTON', 'circulo': 'F, MBUTTON', 'l1': 'Q', 'l2': 'LCTRL',
+    'furia': 'V, SHIFT+MBUTTON', 'cima': '1, UP', 'direita': '2, RIGHT', 'baixo': '3, DOWN', 'esquerda': '4, LEFT',
+    'select': 'ESCAPE, BACKSPACE', 'start': 'I, K, TAB, ENTER', 'andar_cima': 'W', 'andar_baixo': 'S',
+    'andar_esquerda': 'A', 'andar_direita': 'D', 'analogico_direito': 'SHIFT',
+}
+CTL_PADRAO_JOGO = {'gow1': {'r1': 'R', 'r2': 'E', 'amuleto': ''}, 'gow2': {'r1': 'E', 'r2': 'R', 'amuleto': 'C'}}
+# controle: ação do Vita -> botão físico (de fábrica, cada um é ele mesmo)
+CTL_FISICOS = ['CRUZ', 'CIRCULO', 'QUADRADO', 'TRIANGULO', 'L1', 'R1', 'L2', 'R2', 'L3', 'R3', 'SELECT', 'START',
+               'CIMA', 'DIREITA', 'BAIXO', 'ESQUERDA']
+CTL_ACOES_CONTROLE = ['cruz', 'circulo', 'quadrado', 'triangulo', 'l1', 'r1', 'l2', 'r2', 'l3', 'r3', 'select', 'start',
+                      'cima', 'direita', 'baixo', 'esquerda']
+
+
+def _ctl_ini(jogo):
+    if jogo not in CTL_PADRAO_JOGO:
+        raise ValueError('jogo desconhecido: %s' % jogo)
+    return os.path.join(cfg['data'], 'controles_%s.ini' % jogo)
+
+
+def _ctl_padrao(jogo):
+    tec = dict(CTL_PADRAO, **CTL_PADRAO_JOGO[jogo])
+    return {'teclado': {k: [c.strip() for c in v.split(',') if c.strip()] for k, v in tec.items()},
+            'controle': {a: a.upper().replace('CIRCULO', 'CIRCULO') for a in CTL_ACOES_CONTROLE}}
+
+
+def m_controles(a):
+    """O mapa em uso (arquivo por cima do padrão) e o padrão, para a tela."""
+    jogo = a['jogo']
+    padrao = _ctl_padrao(jogo)
+    atual = {'teclado': dict(padrao['teclado']), 'controle': dict(padrao['controle'])}
+    p = _ctl_ini(jogo)
+    if os.path.exists(p):
+        secao = ''
+        for l in open(p, encoding='utf-8', errors='replace'):
+            l = l.strip()
+            if not l or l[0] in '#;':
+                continue
+            if l.startswith('['):
+                secao = l[1:l.find(']')]
+                continue
+            k, _, v = l.partition('=')
+            k, v = k.strip().lower(), v.strip()
+            if secao == 'teclado' and k in atual['teclado']:
+                atual['teclado'][k] = [c.strip().upper() for c in v.split(',') if c.strip()]
+            elif secao == 'controle' and k in atual['controle'] and v.upper() in CTL_FISICOS + ['NADA']:
+                atual['controle'][k] = v.upper()
+    return {'atual': atual, 'padrao': padrao, 'arquivo': p, 'fisicos': CTL_FISICOS}
+
+
+def m_salvar_controles(a):
+    jogo, tec, ctl = a['jogo'], a.get('teclado') or {}, a.get('controle') or {}
+    padrao = _ctl_padrao(jogo)
+    linhas = ['# feito pelo vitart Settings; apagar o arquivo volta ao padrão', '[teclado]']
+    for k in padrao['teclado']:
+        v = tec.get(k, padrao['teclado'][k])
+        linhas.append('%s = %s' % (k, ', '.join(str(x).upper() for x in v)))
+    linhas.append('[controle]')
+    for k in CTL_ACOES_CONTROLE:  # a tabela inteira: o runtime tira a ação de onde estava antes de pôr
+        v = str(ctl.get(k, padrao['controle'][k])).upper()
+        linhas.append('%s = %s' % (k, v if v in CTL_FISICOS else 'NADA'))
+    open(_ctl_ini(jogo), 'w', encoding='utf-8', newline='\n').write('\n'.join(linhas) + '\n')
+    return m_controles({'jogo': jogo})
+
+
 def m_ajuda(a):
     p = os.path.join(K.REPO, 'docs', 'modding', 'README.md')
     return open(p, encoding='utf-8').read() if os.path.exists(p) else 'Guia não encontrado: %s' % p
