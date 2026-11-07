@@ -342,9 +342,56 @@ bool qte_na_tela(); // lá embaixo, junto das tabelas do QTE automático
 // Um QTE na tela (botão, girar, sacudir) ou um sumiu há menos de 2,5 s: o agarrão começa antes do ícone e a
 // animação sincronizada termina depois dele. Ícone fixo não conta: no GoW2 os "Static" (baú, inimigo que dá
 // para agarrar) ficam no HUD quase o tempo todo e prendiam o jogo em 60 FPS.
+// Kratos subindo ou descendo (pulo, queda, escalada, pendurado na borda, parede das lâminas do submundo). O jogo
+// original só roda com dt >= 1 quadro de 60 Hz; abaixo disso (FPS acima de 60) o agarrar na borda falhava (desafio
+// de Hades: ele caía direto), o pulo dava saltos e a escalada ficava lenta. Nesses momentos o ritmo volta a 60 com o
+// dt original, como nos QTEs; no chão o FPS máximo continua. Posição medida: GoW1 [[0x812a6fa4]+4] +0x78/+0x7c/+0x80,
+// GoW2 [[0x812cbae4]+4] +0x80/+0x84/+0x88 (y para cima).
+bool kratos_no_ar() {
+    using clk = std::chrono::steady_clock;
+    const bool g1 = game_id() == 1;
+    if (!g1 && game_id() != 2) return false;
+    const uint32_t kp = rd32(g1 ? 0x812a6fa4u : 0x812cbae4u);
+    static uint32_t obj_ok = 0; // objeto já conferido (a criatura muda ao carregar a fase)
+    static bool tem_y = false;
+    static float y0 = 0.f;
+    static clk::time_point t0{};
+    auto legivel = [](uint32_t a, uint32_t n) {
+        if (a < 0x81000000u || a > 0xC0000000u - n) return false;
+        MEMORY_BASIC_INFORMATION mi{};
+        if (!VirtualQuery(mem_base() + a, &mi, sizeof mi) || mi.State != MEM_COMMIT || (mi.Protect & (PAGE_NOACCESS | PAGE_GUARD)))
+            return false;
+        return (uint64_t)((uint8_t *)mi.BaseAddress - mem_base()) + mi.RegionSize >= (uint64_t)a + n;
+    };
+    if (!kp || !legivel(kp + 4, 4)) return tem_y = false;
+    const uint32_t obj = rd32(kp + 4);
+    if (obj != obj_ok) {
+        if (!legivel(obj, 0x100)) return tem_y = false;
+        obj_ok = obj, tem_y = false;
+    }
+    float y;
+    std::memcpy(&y, mem_base() + obj + (g1 ? 0x7c : 0x84), 4);
+    const auto t = clk::now();
+    bool mexeu = false;
+    if (tem_y && std::isfinite(y)) {
+        const double dt = std::chrono::duration<double>(t - t0).count();
+        // ~2 unidades/s (o Kratos tem ~45 de altura): pega a escalada lenta e ignora o chão parado
+        if (dt > 0 && std::fabs(y - y0) / dt > 2.0) mexeu = true;
+    }
+    tem_y = std::isfinite(y), y0 = y, t0 = t;
+    return mexeu;
+}
+
 bool prompt_sincronizado() {
     using clk = std::chrono::steady_clock;
     static clk::time_point ate{};
+    static clk::time_point ate_ar{};
+    if (kratos_no_ar()) ate_ar = clk::now() + std::chrono::milliseconds(1500);
+    if (clk::now() < ate_ar) {
+        static bool avisou = false;
+        if (!avisou && getenv("VITART_QTELOG")) avisou = true, logf("vitart: ritmo de 60 FPS travado (Kratos no ar/escalando)");
+        return true;
+    }
     const bool agora = qte_na_tela();
     const auto t = clk::now();
     if (agora) ate = t + std::chrono::milliseconds(2500);
