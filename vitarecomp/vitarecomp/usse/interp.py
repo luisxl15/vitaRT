@@ -16,6 +16,12 @@ from .disasm import lower
 _C = json.load(open(os.path.join(os.path.dirname(__file__), "constants.json")))
 FPC0 = [struct.unpack("<f", struct.pack("<I", v))[0] for v in _C["f32_constant_table_bank_0"]]
 FPC1 = [struct.unpack("<f", struct.pack("<I", v))[0] for v in _C["f32_constant_table_bank_1"]]
+# Operações de 16 bits leem outras tabelas, uma por canal do swizzle (x..w = bancos 0..3; Vita3K, usse_constant_table.h)
+FPC16 = [[struct.unpack("<f", struct.pack("<I", v))[0] for v in _C["f16_constant_table_bank_%d" % k]] for k in range(4)]
+
+
+def fpconst(num, ch, half):
+    return FPC16[ch][num] if half else (FPC1 if ch == O.Y else FPC0)[num]
 CONST_CH = {O.C0: 0.0, O.C1: 1.0, O.C2: 2.0, O.CH: 0.5}
 
 
@@ -45,7 +51,7 @@ class Machine:
             elif ch == O.UND:
                 v = 0.0
             elif op.bank == O.FPCONST:
-                v = (FPC1 if ch == O.Y else FPC0)[op.num]
+                v = fpconst(op.num, ch, half)
             elif op.bank == O.IMM:
                 v = float(op.num)
             else:

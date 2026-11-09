@@ -11,7 +11,7 @@ from . import operands as O
 from . import pbr as PBR
 from . import spirv as S
 from .disasm import lower
-from .interp import FPC0, FPC1
+from .interp import fpconst
 
 GLSL_PACKH, GLSL_UNPACKH, GLSL_PACKUNORM4X8, GLSL_UNPACKUNORM4X8 = 58, 62, 55, 64
 GLSL_FABS, GLSL_FMA, GLSL_INVSQRT, GLSL_LOG2, GLSL_EXP2, GLSL_FLOOR, GLSL_FMIN, GLSL_FMAX = 4, 50, 32, 30, 29, 8, 37, 40
@@ -103,7 +103,7 @@ class Translator:
             elif ch == O.UND:
                 v = self.const(0)
             elif op.bank == O.FPCONST:
-                v = self.const((FPC1 if ch == O.Y else FPC0)[op.num])
+                v = self.const(fpconst(op.num, ch, half))
             elif op.bank == O.IMM:
                 v = self.const(op.num)
             elif op.bank in BANK_VAR:
