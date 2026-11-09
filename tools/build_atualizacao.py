@@ -62,6 +62,11 @@ def main():
     vj = os.path.join(jogo, 'data', 'versao.txt')
     if not os.path.exists(vj):
         open(vj, 'w', encoding='utf-8', newline='\n').write(a.versao + '\n')
+    # traduções (Settings > Idioma do jogo): só as fontes e o idioma.ini. records/ fica de fora: é gerado em cada PC e,
+    # no francês e no espanhol do GoW2, traz o texto oficial do jogo
+    tdir = os.path.join(jogo, 'data', 'traducoes')
+    for c in sorted(os.listdir(tdir)) if os.path.isdir(tdir) else []:
+        ATUALIZA.extend(['data/traducoes/%s/fontes/' % c, 'data/traducoes/%s/idioma.ini' % c])
     print('== atualização', a.versao)
     empacotar(jogo, out, a.rif, a.sha, ATUALIZA, 'atualizacao', troca)
     if a.opcionais:
