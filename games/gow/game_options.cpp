@@ -842,8 +842,15 @@ uint32_t game_qte_auto(uint8_t &lx, uint8_t &ly) {
         if (!hud || rd32(hud) != kOptGow1.vtbl) return 0;
         const uint32_t idx = rd32(hud + 0x1570);
         const bool menu = rd32(0x812c2e04) != 0xb; // estado do jogo: 0xb = correndo (0xc pausa, outros = menus e cenas)
-        seen = menu ? 0xfffffffeu : idx;
-        if (!menu) q = qte_gow1(idx);
+        // de onde veio o ícone: sub_81062556(slot, índice) grava em 0x812c2eb0 + 4*slot e o HUD mostra o slot mais
+        // alto que não é -1 (sub_81060720). Slots 0..2 são interação com o cenário (baú, porta, objeto que se usa, a
+        // balista: "aperte E"), 3 é o minigame (sub_81089d..: botões e giros dos QTEs) e 4 os de apertar repetido.
+        // Apertar sozinho num ícone de interação liga e desliga o objeto (o Kratos subia e descia da balista).
+        int slot = -1;
+        for (int s = 7; s >= 0 && slot < 0; s--)
+            if (rd32(0x812c2eb0u + 4u * (uint32_t)s) != 0xffffffffu) slot = s;
+        seen = menu ? 0xfffffffeu : slot >= 0 && slot <= 2 ? 0xfffffffdu : idx;
+        if (!menu && !(slot >= 0 && slot <= 2)) q = qte_gow1(idx);
     } else {
         if (rd32(0x812ec498) != 0xc) return 0; // estado do jogo no GoW2: 0xc = correndo, 0xd = pausa (memória comparada)
         for (uint32_t s = 0; s < 8 && q.kind == QNone; s++) {
@@ -861,6 +868,8 @@ uint32_t game_qte_auto(uint8_t &lx, uint8_t &ly) {
     if (log && seen != last_seen) logf("vitart: QTE: %s 0x%08x -> tipo %d botões 0x%x", g == 1 ? "índice" : "hash", seen, (int)q.kind, q.buttons);
     last_seen = seen;
     if (q.kind == QNone) return 0;
+    // o analógico do jogador tem prioridade: com ele fora do centro o automático não o substitui
+    if (q.kind != QPress && q.kind != QHold && (std::abs((int)lx - 128) > 48 || std::abs((int)ly - 128) > 48)) return 0;
     const double t = std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count();
     switch (q.kind) {
     case QPress: return std::fmod(t, 0.07) < 0.035 ? q.buttons : 0; // ~14 toques por segundo (serve para os repetidos)

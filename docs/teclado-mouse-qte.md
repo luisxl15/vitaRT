@@ -66,6 +66,10 @@ O runtime lê o ícone que o HUD está mostrando e aperta o botão (ou gira o an
   horária/anti-horária, 10 X repetido, 11 R2 repetido, 12 sacudir, 13 vaivém, 14 R2 parado. O estado do
   jogo fica em `0x812c2e04`: 0xb é o jogo correndo e 0xc a pausa (medido comparando a memória com e sem
   pausa). Fora do 0xb nada é apertado.
+  O ícone vem de uma pilha de 8 pedidos: `sub_81062556(slot, índice)` grava em `0x812c2eb0 + 4*slot` e o HUD
+  mostra o slot mais alto diferente de -1 (`sub_81060720`). Slots 0..2 são interação com o cenário (baú,
+  porta, objeto que se usa, a balista) e ficam de fora: apertar sozinho ligava e desligava o objeto. O 3 é o
+  minigame (`sub_81089d..`, botões e giros) e o 4 os QTEs de apertar repetido.
 - **GoW2:** `sub_81070b60(slot, valor)` grava em `0x812ec588 + 4*slot` o hash do nome do clipe
   (`h = h*127 + maiúscula`, `sub_811346de`): `PB_XBtn`, `PB_360CW`, `PB_CircleBtnSmash`, `PB_R1BtnHold`...
   Os ícones "Static" (baú, inimigo para agarrar) ficam de fora.
