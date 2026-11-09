@@ -776,6 +776,7 @@ VT_HLE(sceIoRead) {
     const int n = _read(fd, ptr<void>(arg(ctx, 1)), arg(ctx, 2));
     ret(ctx, n < 0 ? SCE_ERROR_ERRNO_EBADF : (uint32_t)n);
 }
+void ngs_voice_pressure(); // hle_ngs.cpp: vozes do NGS presas
 VT_HLE(sceIoWrite) {
     const int fd = host_fd(arg(ctx, 0));
     if (fd < 0) return ret(ctx, SCE_ERROR_ERRNO_EBADF);
@@ -783,6 +784,7 @@ VT_HLE(sceIoWrite) {
         std::string s(ptr<char>(arg(ctx, 1)), arg(ctx, 2));
         while (!s.empty() && s.back() == '\n') s.pop_back();
         logf("[jogo] %s", s.c_str());
+        if (s.find("Could not allocate voice") != std::string::npos) ngs_voice_pressure(); // hle_ngs.cpp
         return ret(ctx, arg(ctx, 2));
     }
     commit_range(arg(ctx, 1), arg(ctx, 2));
@@ -989,6 +991,7 @@ VT_HLE(sceClibPrintf) {
     std::string s = guest_format(ctx, 0);
     while (!s.empty() && s.back() == '\n') s.pop_back();
     logf("[jogo] %s", s.c_str());
+    if (s.find("Could not allocate voice") != std::string::npos) ngs_voice_pressure(); // hle_ngs.cpp
     ret(ctx, (uint32_t)s.size());
 }
 VT_HLE(sceClibSnprintf) {

@@ -39,6 +39,7 @@ constexpr uint32_t kParamBytes = 0x200; // buffer de parâmetros por módulo
 
 // SceNgsVoiceState
 constexpr uint32_t ST_ACTIVE = 1, ST_FINALIZE = 4, ST_PAUSED = 0x20, ST_KEY_OFF = 0x40;
+uint64_t g_n_update = 0; // updates do NGS (vozes presas, ngs_voice_pressure)
 
 enum Kind { K_SCREAM = 0, K_SCREAM_AT9, K_MASTER, K_REVERB, K_COMPRESSOR, K_SIDECHAIN, K_COUNT };
 constexpr uint32_t kModules[K_COUNT] = {6, 6, 2, 2, 2, 3};
@@ -83,6 +84,10 @@ struct Voice {
     int channels = 2; // canais por voz do rack
     uint32_t state = 0, updates = 0;
     bool key_off = false;
+    // vozes presas (ngs_voice_pressure): o último update em que a fonte avançou e o pedido de terminar à força
+    uint64_t progresso = 0;
+    int32_t samples_vistos = 0;
+    bool forcar_fim = false;
     uint32_t params[8] = {}; // buffer de parâmetros de cada módulo (guest)
     uint32_t mod_cb[8] = {}, mod_ud[8] = {};
     uint32_t fin_cb = 0, fin_ud = 0;
@@ -997,6 +1002,32 @@ VT_HLE(sceNgsVoiceSetFinishedCallback) {
     v->fin_cb = arg(ctx, 1), v->fin_ud = arg(ctx, 2);
     ret(ctx, SCE_OK);
 }
+// O Scream do jogo reclamou que não achou voz livre ("Could not allocate voice", hle_io.cpp): grava a tabela das vozes
+// ocupadas (para achar a que vaza) e libera as presas de vez: KeyOff numa voz pausada (o update pula as pausadas, ela
+// nunca termina) e ativa sem avançar uma amostra há mais de 20 s. No máximo a cada 15 s.
+void ngs_voice_pressure() {
+    std::lock_guard<std::mutex> g(g_mutex);
+    static auto ultima = std::chrono::steady_clock::now() - std::chrono::seconds(60);
+    const auto agora = std::chrono::steady_clock::now();
+    if (agora - ultima < std::chrono::seconds(15)) return;
+    ultima = agora;
+    const uint64_t por_s = (uint64_t)std::max(1, g_rate / std::max(1, g_granularity));
+    int ocupadas = 0, liberadas = 0;
+    std::string t;
+    for (auto &[h, v] : g_voices) {
+        if (!is_source(*v) || !v->state) continue;
+        ocupadas++;
+        const double parado = (double)(g_n_update - v->progresso) / (double)por_s;
+        const bool presa = ((v->state & ST_PAUSED) && v->key_off) || (!(v->state & ST_PAUSED) && parado > 20.0);
+        char b[160];
+        std::snprintf(b, sizeof b, " [%08x %s st %x%s parada %.0fs ps2 %d]", v->handle, v->kind == K_SCREAM_AT9 ? "at9" : "player",
+                      v->state, v->key_off ? " keyoff" : "", parado, v->ps2_file);
+        t += b;
+        if (presa) v->forcar_fim = true, liberadas++;
+    }
+    logf("vitart: NGS sem voz livre para o jogo: %d vozes fonte ocupadas, %d presas liberadas;%s", ocupadas, liberadas, t.c_str());
+}
+
 VT_HLE(sceNgsVoicePlay) {
     std::lock_guard<std::mutex> g(g_mutex);
     auto v = voice_of(arg(ctx, 0));
@@ -1163,7 +1194,15 @@ VT_HLE(sceNgsSystemUpdate) {
         voices.push_back(v);
     }
     // 1. Fontes ativas: decodificam um grão (callbacks com o mutex solto).
+    static uint64_t n_update = 0;
+    n_update++;
     for (auto &v : voices) {
+        if (is_source(*v) && v->forcar_fim && v->state) { // liberada por ngs_voice_pressure: o jogo recebe o fim normal
+            v->forcar_fim = false, v->state = 0, v->key_off = false;
+            reset_source(*v);
+            invoke(ctx, lock, *v, v->fin_cb, v->fin_ud, v->kind == K_SCREAM_AT9 ? kAt9Id : kPlayerId, 0, 0, 0);
+            continue;
+        }
         if (!is_source(*v) || !(v->state & ST_ACTIVE) || (v->state & ST_PAUSED)) continue;
         bool finished = false, cut = false;
         if (v->key_off && !v->releasing) {
@@ -1172,6 +1211,8 @@ VT_HLE(sceNgsSystemUpdate) {
             if (release_ms(*v) == 0) cut = true;
         }
         finished = render_source(ctx, lock, *v) || v->env_done || cut;
+        if (v->samples_total != v->samples_vistos) v->samples_vistos = v->samples_total, v->progresso = n_update;
+        g_n_update = n_update;
         if (cut && v->has_out) // corte sem soltura: esmaece ao longo deste grão em vez de parar numa amostra
             for (int k = 0; k < G; k++) v->out[2 * k] *= 1.f - (k + 1.f) / G, v->out[2 * k + 1] *= 1.f - (k + 1.f) / G;
         v->updates++;
