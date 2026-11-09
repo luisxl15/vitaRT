@@ -1,0 +1,21 @@
+// Mensagens que o texto oficial do GoW2 (r_plocs/r_plocf do jogo) não tem; o resto vem do próprio jogo
+*36*
+¡Sigue así!
+*37*
+¡Más, más, más!
+*38*
+¡Nada mal para un mortal!
+*39*
+¡El misterio se desvela!
+*40*
+¡Más golpes, más pistas!
+*41*
+¡Tu destino te espera!
+*42*
+¡Tu sino se está desvelando!
+*43*
+¡Ya casi está!
+*44*
+¡El secreto está cerca!
+*45*
+WWW.ISLANDOFRHODES.ORG

@@ -1,0 +1,1624 @@
+*1*
+[R2Button]
+*2*
+Vacío
+*3*
+Mortal (Fácil)
+*4*
+Héroe (Normal)
+*5*
+Espartano (Difícil)
+*6*
+Dios (Muy difícil)
+*7*
+Ene,Feb,Mar,Abr,May,Jun,Jul,Ago,Sep,Oct,Nov,Dic
+*10*
+¡Cruel!
+*11*
+¡Sangriento!
+*12*
+¡Salvaje!
+*13*
+¡Inhumano!
+*14*
+¡Sanguinario!
+*15*
+¡Implacable!
+*16*
+¡Despiadado!
+*17*
+¡Sin piedad!
+*18*
+¡Monstruoso!
+*19*
+¡Tiránico!
+*20*
+¡Inmortal!
+*21*
+¡Feroz!
+*22*
+¡Divino!
+*23*
+¡Omnipotente!
+*24*
+¡Olímpico!
+*25*
+¡Todopoderoso!
+*26*
+¡Hercúleo!
+*27*
+¡Supremo!
+*28*
+¡Sobrenatural!
+*29*
+¡Imposible!
+*30*
+¡Muerte despiadada!
+*31*
+¡Muerte brutal!
+*32*
+¡Mutilación!
+*33*
+¡Aplastado!
+*34*
+¡Destrozado!
+*100*
+Pulsa [XButton], [XButton] para hacer un salto doble.
+*101*
+Ve con los Dioses, Kratos. Parte en nombre
+del Olimpo.
+*103*
+Hay una imagen tallada en la puerta:
+dos soldados griegos luchan por
+la Caja de Pandora.
+----
+A los dos les faltan los escudos.
+*104*
+Es una imagen de soldados despedazados
+por los rayos del señor Zeus.
+*105*
+Es una antigua estatua de Atlas,
+el Titán deshonrado, condenado para siempre
+a sostener la Tierra sobre su cabeza.
+*106*
+A la manivela le falta el mango...
+*110*
+Es un monumento extraño. No sabes muy bien
+cuál es su significado o su propósito...
+*111*
+Has obtenido
+[*1] la Furia de Poseidón
+*112*
+Esta puerta está cerrada y hay que abrirla
+desde otro sitio.
+*113*
+Zeus te concede el don de la salud.
+Que tus enemigos tiemblen ante tu
+fuerza recién adquirida.
+*114*
+Zeus te concede el don de la magia.
+Que tus enemigos se acobarden ante tu
+poder recién adquirido.
+*115*
+Zeus te concede el don de la experiencia.
+Que tus facultades crezcan más allá del alcance
+de cualquier mortal o bestia.
+*121*
+Es una puerta con una talla del señor Poseidón.
+En la base pone:
+[*1]Ofréceme un sacrificio para poder pasar.
+*123*
+La puerta parece cerrada.
+Tiene un hueco con forma de calavera.
+*124*
+Estatuas de los tres Dioses, los tres hermanos:
+el señor Hades, el señor Zeus y el señor Poseidón.
+*125*
+Coges la llave
+*126*
+El libro dice:
+----
+[*1]Este templo se erigió en honor y
+[*1]por orden del poderoso SEÑOR ZEUS.
+----
+[*1]Solo el héroe más valiente resolverá sus enigmas
+[*1]y sobrevivirá a sus peligros. Un solo hombre
+[*1]recibirá el poder supremo.
+----
+[*1]Todos los demás hallarán su perdición.
+[*1]...Pathos Verdes III
+[*1]Arquitecto jefe y fiel servidor de los Dioses.
+*127*
+Tallas de las Musas, hijas del señor
+Zeus. Son de oro macizo. Faltan
+dos de las tallas.
+*130*
+¡Bah! ¡Otro joven necio que quiere conquistar
+el templo de los Dioses! ¿¡No ves que lo
+construyeron para que nadie pudiera resolverlo!?
+----
+¿Por qué siguen viniendo? ¿Por qué tengo que
+llevar siempre a la juventud de nuestra gran
+nación a la muerte? Aun así, se lo debo a los Dioses...
+----
+No tengo elección.
+Toma esta llave y colócala en el suelo junto
+a la entrada del templo. Que el propio Zeus
+----
+vele por tu alma. Ya no hay vuelta
+atrás.
+Has recibido la llave de la entrada del templo.
+*131*
+La trampilla está cerrada.
+*132*
+La mujer está muerta.
+*133*
+Hay una imagen tallada en la puerta.
+Dos soldados griegos luchan por
+la Caja de Pandora.
+----
+Falta uno de los escudos.
+*136*
+Una enorme puerta de piedra, con una grieta
+en el centro. No ves ninguna cerradura ni
+ningún tirador.
+*137*
+Ante ti están los Riscos de la Locura. En mi
+dolor, temo haber diseñado un laberinto
+sin salida verdadera. Si tengo razón,
+----
+que los Dioses crueles te muestren el camino.
+[*1]...Pathos Verdes III,
+[*1]...antaño fiel servidor de los Dioses
+*138*
+No puedes seguir avanzando,
+está demasiado oscuro para ver.
+*139*
+Es una talla de la diosa Atenea.
+*140*
+Mantén pulsado [R1Button] para usar el
+impulso submarino y ganar velocidad, o
+para romper objetos bajo el agua.
+*141*
+Has obtenido la Mirada de Medusa.
+*142*
+Sube estas escaleras, Kratos. Te llevan a tu
+recompensa final.
+*144*
+Es una estatua del señor Poseidón,
+soberano de los mares.
+*146*
+Es una talla del arquitecto que
+construyó este laberinto.
+*148*
+Hades exige que mates a todos los que
+hay en el laberinto antes de salir
+*150*
+Has obtenido el Ejército de Hades
+*152*
+Pulsa el botón de dirección arriba [UpButton]
+para elegir el Ejército de Hades. Luego pulsa
+[L2Button] para activarlo.
+*153*
+[*1]Mi segundo hijo, el último, ha seguido a su
+[*1]hermano a los Campos Elíseos. En mi corazón
+[*1]sé que debo continuar la obra de los Dioses.
+----
+[*1]Pero se llevan tanto que al fin mi alma
+[*1]empieza a dudar.
+[*1]...Pathos Verdes III
+*154*
+Has cogido una llave de las Musas
+*155*
+Has obtenido el Tridente de Poseidón. Con
+él puedes explorar las profundidades del
+dominio del señor Poseidón.
+*163*
+Para bucear, pulsa [SquareButton]
+Para salir a la superficie, pulsa [TriangleButton]
+*164*
+Aunque los Dioses han escondido bien la Caja
+de Pandora, no carecen de piedad. Usa estas
+arenas mágicas, regalos de los Olímpicos, para
+----
+aumentar tus posibilidades de lograr tu objetivo.
+...Pathos Verdes III
+...Arquitecto jefe y fiel servidor de los Dioses
+*165*
+Metes la llave de la calavera en la cerradura
+*166*
+Aquí el suelo está agrietado. Se ve
+una pequeña sala ahí abajo.
+*169*
+La mayor obra arquitectónica que el mundo
+ha visto: el poderoso Cronos, el Titán,
+encadenado con el Templo de Pandora
+----
+atado a su espalda.
+*170*
+Los Dioses se aparecen ante Pathos Verdes III
+y le ordenan construir un Templo que guarde
+el arma más poderosa de la Tierra o del
+----
+Olimpo.
+*173*
+El suelo es demasiado duro para romperlo así.
+Si tuvieras algo muy pesado...
+*174*
+Colócate junto al borde de la
+pared y pulsa [XButton] para saltar.
+*175*
+[*1]Mi hijo menor ya no volverá a reír.
+[*1]Murió al servicio de su padre.
+----
+[*1]Murió al servicio de los Dioses.
+[*1]La construcción de este templo le costó
+[*1]la vida.
+----
+[*1]Ojalá tengas la suerte de que no te cueste
+[*1]la tuya
+----
+[*1]-Pathos Verdes III,
+[*1]Arquitecto jefe y fiel servidor de los Dioses
+*177*
+Pulsa [CircleButton] para agarrar enemigos.
+*180*
+La puerta tiene una cerradura con el símbolo del
+Oráculo tallado. Solo el Oráculo de Atenas
+puede abrir esta puerta.
+*181*
+Es Cronos, el Titán, condenado por el señor Zeus
+a vagar por el desierto toda la eternidad
+*182*
+Es una manivela sumergida. No puedes accionarla.
+*183*
+[*1]Patada
+mantén [R2Button] y carga [XButton].
+*184*
+El tridente de Poseidón permite a su portador
+respirar bajo el agua indefinidamente.
+*186*
+Mantén pulsado [TriangleButton] para lanzar a un
+enemigo por los aires.
+*192*
+Joystick izquierdo [Joystick] + [CircleButton] para
+agarrar enemigos mientras escalas.
+*198*
+El cadáver ya podrido del minotauro
+del templo cuelga sobre ti.
+*209*
+Es una puerta enorme, con el símbolo del
+oráculo de la ciudad. Está bien cerrada
+y no se puede abrir desde aquí.
+*211*
+Siempre es lo mismo. Locos y necios en busca de
+gloria. Lo sé. Como ves por mi... aspecto algo
+desaliñado, fui el primero en intentar superar el
+----
+templo y el primero en morir. Los Dioses me
+castigaron por mi fracaso y ahora debo atender a
+todos los que me siguieron y murieron.
+*212*
+El Arquitecto que construyó este templo era un
+fanático. Vivía solo para servir a los Dioses,
+pero enloqueció en el intento.
+----
+Dicen que sigue vivo, que sigue dentro...
+que sigue intentando aplacar a los Dioses que
+lo abandonaron hace años...
+*213*
+Tras la verja ves un puente que lleva a
+Atenas. Pero la verja está tan dañada que no
+tiene arreglo. Nunca volverá a funcionar.
+----
+Tiene que haber otra forma de rodearla y llegar
+al puente.
+*215*
+Es una estatua del señor Hades, soberano del
+Inframundo.
+*216*
+Es tu diario. La entrada de hoy dice:
+----
+[*1]No importa cuántas mujeres encuentre, todas
+[*1]me recuerdan a ella. Escucha mis plegarias,
+[*1]Atenea. ¿Cuándo acabarán estas visiones?
+*217*
+[*1]Ilumíname para ascender a los cielos.
+*218*
+Destruye a Ares... y los dioses te perdonarán
+tu pasado.
+*219*
+Es una enorme puerta de madera. Tiene una
+cerradura tallada con la forma de un
+Minotauro.
+*220*
+Tallas de las Musas, hijas del señor
+Zeus. Son de oro macizo. Falta
+una de las tallas.
+*225*
+[*1]Ocho callejones sin salida. Una salida.
+[*1]¿La encontrarás antes de que las
+[*1]llamas del Hades te consuman?
+----
+[*1]-Pathos Verdes III,
+[*1]Arquitecto jefe y fiel servidor de los Dioses
+*228*
+Destruye a los centauros de los círculos del
+Hades para avanzar.
+*229*
+[*1]Igual que mi alma se ha hecho pedazos, tu
+[*1]camino está fragmentado. Reconstruye mi alma
+[*1]y abre el camino.
+----
+[*1]-Pathos Verdes III
+*230*
+Has obtenido
+[*1] el Collar de Afrodita.
+*231*
+Has obtenido
+[*1] el Collar de Hera.
+*234*
+Es la puerta del camarote del Capitán.
+Está bien cerrada.
+----
+Por lo que se oye, es aquí donde las mujeres
+intentan esconderse de la matanza.
+*240*
+Has obtenido la llave del capitán.
+*241*
+Esta verja solo se puede levantar desde
+el otro lado.
+*244*
+Para agarrar enemigos, pulsa [CircleButton].
+*247*
+Usa el joystick derecho [Joystick] para esquivar.
+*250*
+Es una talla del señor Poseidón,
+soberano de los Mares.
+*252*
+Es una estatua del señor Poseidón,
+soberano de los Mares.
+*253*
+Es una estatua de Afrodita. Parece que
+antes llevaba un collar.
+*254*
+Es una estatua de Hera. Parece que
+antes llevaba un collar.
+*256*
+Bocetos de las muchas trampas que llenan
+el Templo de Pandora. Al pie de cada
+boceto está el nombre: Pathos Verdes III.
+*257*
+Has obtenido
+[*1] la cabeza del hijo del Arquitecto.
+*258*
+Has obtenido
+[*1] el Mango de Atlas.
+*259*
+Has obtenido
+[*1] el Escudo de Zeus.
+*260*
+Has obtenido
+[*1] el Escudo de Hades.
+*265*
+La puerta está reforzada. No puedes destruirla.
+Tiene que haber otra forma de
+derribarla.
+*266*
+Hay algo tras la puerta, pero parece
+reforzada. Tiene que haber otra forma
+de derribarla.
+*267*
+Has obtenido
+[*1] la Espada de Artemisa.
+*268*
+Has obtenido
+[*1] la FURIA DE ZEUS.
+*269*
+[SquareButton] ataque rápido.
+[TriangleButton] ataque fuerte.
+*271*
+[*1]Patada
+mantén [R2Button] y carga [XButton].
+*272*
+Joystick izquierdo [Joystick] + [SquareButton]: golpe rápido.
+Joystick izquierdo [Joystick] + [TriangleButton]: tajo largo.
+*274*
+Hay una palanca para subir la verja, pero
+está al otro lado.
+*276*
+Pulsa [CircleButton] en el aire para agarrar
+enemigos.
+*277*
+[SquareButton] golpe rápido
+[TriangleButton] tajo largo
+[CircleButton] agarre en la cuerda
+*280*
+Es una estatua de Afrodita, con un collar.
+*281*
+Es una estatua de Hera, con un collar.
+*282*
+Los escombros te cierran el paso.
+*315*
+Estar aquí te da un mal presentimiento.
+Es como si tu destino final estuviera ligado
+a esta misma cornisa.
+*317*
+Vuelve a la cama, Kratos.
+*319*
+Quédate, Kratos, solo un poco más...
+*322*
+Encuentra al Oráculo. Ella te guiará en tu misión.
+*335*
+¡No me molestes ahora, hijo! ¡Yo tengo mi trabajo
+y tú el tuyo! ¡Y queda poquísimo tiempo para
+hacer cualquiera de los dos!
+*336*
+No me olvides, Kratos. Volveremos a vernos
+cuando más necesites mi ayuda.
+*342*
+Cruza las Puertas hacia el desierto, Kratos.
+Allí empieza el camino a la Caja de Pandora.
+Es la única forma de derrotar a Ares
+----
+y salvar Atenas.
+*343*
+Kratos... has vuelto, pero tarde... Ares ha tomado
+Atenas... ya no hay esperanza... ninguna...
+*344*
+Ares ha... vencido... hemos... fracasado...
+*345*
+Sigue el canto de las sirenas, Kratos. Encuéntralas
+y destrúyelas a todas, y se abrirá ante ti el
+camino a través de las arenas mortales
+*410*
+¡Sé quién eres, Espartano! Sé lo que has
+hecho. Prefiero morir antes que ser salvado por ti.
+*411*
+¡Tú! ¡El Fantasma de Esparta! ¡Aléjate! ¡Aléjate
+de mí!
+*413*
+La puerta tiene tallada una constelación. Hay
+tres muescas donde están las estrellas.
+*414*
+Tienes que encontrar y destruir las
+3 Sirenas que quedan para poder pasar.
+*415*
+Tienes que encontrar y destruir las
+2 Sirenas que quedan para poder pasar.
+*416*
+Tienes que encontrar y destruir la última
+Sirena para poder pasar.
+*417*
+Las sirenas del desierto han sido destruidas, Kratos.
+El camino ya está a la vista.
+*420*
+Pulsa [R2Button] para abrir la puerta con la
+llave del capitán.
+*421*
+[CircleButton] + joystick izquierdo [Joystick]
+para agarrarte a la pared.
+*422*
+Es una palanca rota. Antes abría la
+puerta del fondo de la sala. Ahora no sirve.
+*423*
+Mantén [L1Button] para bloquear.
+*425*
+Las arpías traen aquí a los muertos
+para quemarlos y reutilizarlos como
+enemigos dentro del templo.
+*427*
+Tus batallas han llegado a su Fin, Kratos. Tu viaje
+ha terminado. Sube estos escalones hasta el Olimpo
+y tu lugar entre los Dioses.
+*428*
+Abajo ves la espada ensangrentada con la que mataste
+a Ares, el Dios de la Guerra.
+*429*
+Has obtenido las Espadas de Atenea.
+*430*
+[*1]Lo que piden los Dioses no puedo hacerlo,
+[*1]ni siquiera por la Caja de Pandora.
+[*1]Ahora son Monstruos, pero antes fueron Hombres.
+----
+[*1]Sé que soy débil, pero no puedo ser parte de esto.
+[*1]Le he fallado a Atenas...
+*431*
+Hay un mango tirado en el suelo.
+Lo coges.
+*432*
+La nota dice:
+[*1]...intentó detenerme... dijo que los Dioses
+[*1]eran necios, que yo era un necio. Puede que
+----
+[*1]tenga razón... pero vinieron a MÍ, creyeron
+[*1]en mí... había que detenerla... pero ahora
+[*1]se han ido, toda mi familia. No puedo seguir.
+*433*
+Es una cerradura con forma de calavera...
+*435*
+Anfitrite, la fiel esposa de Poseidón, vigilará
+para siempre esta sala maldita. Solo ella
+conoce la salida secreta.
+*436*
+Una Náyade, hija de Poseidón. Muchos se
+han ahogado anhelando su abrazo.
+*437*
+Es una talla del señor Hades.
+Esta puerta no se puede abrir desde aquí.
+*438*
+Es una puerta reforzada. Sientes una presencia
+poderosa pero benévola que irradia desde el
+otro lado...
+*439*
+La batalla por Atenas está en su apogeo. Los
+esbirros de Ares diezman las tropas del Oráculo.
+Solo es cuestión de tiempo que caiga la ciudad.
+*440*
+Al otro lado del campo de batalla ves a Ares. Su
+grande y terrible ejército avanza hacia Atenas.
+*441*
+Mantén pulsado [R2Button] para abrir cofres.
+*442*
+Una estatua de Atenea. No responde a tus
+plegarias.
+*444*
+Es una talla de dos Náyades, hijas del
+señor Poseidón y protectoras del mar.
+*445*
+Se dice que complacer a las Náyades
+trae regalos mágicos...
+*446*
+La inscripción de la estatua ha cambiado.
+Ahora dice:
+----
+[*1]Más cerca de los Dioses, más cerca del premio.
+[*1]Busca en cada camino para escapar de los riscos...
+*447*
+Es la imagen de un hombre luchando contra el
+mismísimo Zeus. Es una imagen del futuro...
+*448*
+El templo de Pandora ha sido resuelto. La puerta
+no volverá a abrirse en otros 2.500 años...
+*450*
+Aunque tus demonios aún te atormentan, los Dioses
+han decretado que hoy no morirás.
+*452*
+Es una imagen del señor Zeus lanzando sus
+rayos contra la Tierra.
+*453*
+Es la imagen de una musa, una de las nueve
+hijas del señor Zeus.
+*454*
+Mantén pulsado [CircleButton] para abrazar a tu familia.
+Al abrazarla, le transfieres tu vida.
+*455*
+Pulsa [CircleButton] cuando aparezca el icono
+del círculo sobre la cabeza de un enemigo. Así
+empezará un minijuego de ejecución.
+----
+[*1]Esta Hidra solo puede ser derrotada
+[*1]ganando el minijuego de ejecución.
+*456*
+Tu indicador de salud está al máximo. Esta Náyade
+no tiene nada que darte a cambio de tu beso.
+*457*
+Tu indicador de magia está al máximo. Esta Náyade
+no tiene nada que darte a cambio de tu beso.
+*458*
+[*1]Esta Hidra solo puede ser derrotada
+[*1]ganando el minijuego de ejecución.
+*501*
+Decapitar a Medusa siempre da orbes de magia.
+*507*
+Pulsa [CircleButton] rápidamente para matar al Minotauro.
+Matar al minotauro así siempre da
+salud.
+*509*
+Mantén pulsado [L2Button] para apuntar la Furia de Zeus,
+mientras pulsas [SquareButton] para disparar.
+*510*
+Pulsa [XButton] para volver rápido a la cornisa.
+*512*
+Pulsa el joystick izquierdo y el derecho
+[Joystick] (botones L3 y R3) para activar
+¡la Furia de los Dioses!
+*518*
+Has reunido suficientes orbes para potenciar
+tus armas. Pulsa [StartButton] para abrir el
+menú de Power Up.
+*519*
+Destruye los escudos mágicos con la
+Pluma de Prometeo [SquareButton] [SquareButton] [TriangleButton].
+*520*
+Gira el joystick izquierdo [Joystick] siguiendo
+el patrón que aparece sobre la cabeza de Medusa.
+*521*
+La mirada de Medusa no afecta a las gorgonas.
+*522*
+Pulsa [CircleButton] para empezar el minijuego
+cuando aparezca sobre la cabeza de un enemigo.
+*523*
+Colócate junto al borde de la
+pared y pulsa [XButton] para saltar.
+*524*
+Mantén pulsado [CircleButton] para abrazar a tu familia.
+Al abrazarla, le transfieres vida.
+*525*
+Mantén pulsado [R1Button] para usar el
+impulso submarino y ganar velocidad, o
+para romper objetos bajo el agua.
+*526*
+[*1]Nadar
+Pulsa [SquareButton] para bucear.
+Pulsa [XButton] o [TriangleButton] para salir a la superficie.
+*589*
+Gira el joystick izquierdo [Joystick] siguiendo
+las indicaciones de la pantalla.
+Una vuelta por indicación
+*590*
+Entra en la luz brillante y pulsa
+[R2Button] para guardar la partida.
+*591*
+Mantén pulsado [CircleButton] para balancearte en la cuerda.
+*592*
+Colócate junto al borde de la
+pared y pulsa [XButton] para saltar.
+*593*
+Activa o desactiva la Espada de Artemisa
+manteniendo pulsados [L1Button] + [R1Button].
+*594*
+Destruye a todos los enemigos con la Furia de Zeus.
+Para elegirla, pulsa el botón de dirección
+abajo[DownButton]. Pulsa [L2Button] para disparar.
+*595*
+Mantén pulsado [L2Button] para apuntar la Mirada de Medusa,
+mientras pulsas [SquareButton] para disparar. Congela
+y destroza a todos los minotauros para avanzar.
+*596*
+[*1]Patada
+mantén [R2Button] y carga [XButton].
+*597*
+Elige la FURIA DE POSEIDÓN pulsando el botón
+de dirección derecha [RightButton].
+Pulsa [L2Button] para activar el ataque.
+*598*
+Elige la FURIA DE ZEUS pulsando el botón
+de dirección abajo [DownButton].
+Pulsa [L2Button] para activar el ataque.
+*599*
+Tira hacia atrás del joystick izquierdo [Joystick]
+y pulsa [XButton], [XButton] para un salto doble hacia atrás.
+*601*
+BARCO NAUFRAGADO
+*602*
+EL ATAQUE DE LA HIDRA
+*603*
+MUELLES DE ATENAS
+*604*
+FORTALEZA DE ATENAS
+*605*
+CAMPO DE BATALLA DE ATENAS
+*606*
+PLAZA DE ATENAS
+*607*
+PASO DEL TÚNEL
+*608*
+SALA DEL TESORO
+*609*
+VUELTA A LA PLAZA
+*610*
+TEMPLO DEL ORÁCULO
+*611*
+EL CAMINO AL ORÁCULO
+*612*
+RISCO DEL SUICIDIO
+*613*
+CAMPO DE BATALLA DE ATENAS
+*614*
+DESIERTO DE LAS ALMAS PERDIDAS
+*615*
+PUENTE DE PANDORA
+*616*
+TEMPLO DEL OJO DE CRISTAL
+*617*
+DESAFÍO DE ATLAS
+*618*
+EL CAMINO A ATLAS
+*619*
+LOS RISCOS DE ATLAS
+*620*
+DESAFÍO DE POSEIDÓN
+*621*
+SACRIFICIO DE POSEIDÓN
+*622*
+CÁMARA DE POSEIDÓN
+*623*
+PASO INUNDADO
+*624*
+TEMPLO DE ANFITRITE
+*625*
+CÁMARA DE LOS DIOSES
+*626*
+LA SALA DE HADES
+*627*
+LA CÁMARA DE HADES
+*628*
+ESPADAS DE HADES
+*629*
+NIDO DEL MINOTAURO
+*630*
+LOS RISCOS DE LA LOCURA
+*631*
+LOS ACANTILADOS DE LA LOCURA
+*632*
+LAS TRAMPAS DE LA LOCURA
+*633*
+LA CUEVA DE LA LOCURA
+*634*
+LA TUMBA DEL ARQUITECTO
+*635*
+MONTAÑA DE ZEUS
+*636*
+EL CAMINO DE HADES
+*637*
+EL ESTIGIA ALLÍ ABAJO
+*638*
+PUENTE DE HADES
+*639*
+TEMPLO DEL ORÁCULO (DESTRUIDO)
+*640*
+BATALLA FINAL
+*641*
+OLIMPO
+*700*
+[*1] [IconBlade] ESPADAS DEL CAOS
+[*1]
+W1H
+espadas mágicas forjadas en las profundidades del Hades
+*701*
+Subida de Ícaro
+[XButton], [XButton]
+W1
+salto doble
+*702*
+Ascensión
+Mantén [TriangleButton]
+W1
+mantén [TriangleButton] para lanzar a los enemigos
+y a Kratos por los aires
+*703*
+Arpón de Orión
+Pulsa [CircleButton]
+W1
+lanza al enemigo y pulsa [CircleButton] para
+estamparlo contra el suelo
+*704*
+Reverso de Hades
+Pulsa [L1Button]
+W1
+pulsa [L1Button] justo antes de que te alcance
+el ataque enemigo para pararlo
+*705*
+Pluma de Prometeo
+[SquareButton], [SquareButton], [TriangleButton]
+W1
+combo rápido y potente
+*706*
+Ascensión de Apolo
+Mantén [L1Button] + [XButton]
+W2
+lanza a la vez a los enemigos
+y a Kratos por los aires
+*707*
+Ofensiva de Apolo (aire)
+Mantén [L1Button] + [XButton]
+W2
+estampa a los enemigos contra el suelo
+con este potente ataque
+*708*
+Embestida de Hermes
+[R1Button]
+W2
+ataque de embestida en el suelo
+*709*
+Pisotón de Hermes (aire)
+[R1Button]
+W2
+ataque aéreo que lleva a Kratos
+rápidamente al suelo
+*710*
+Ciclón del Caos
+Mantén [L1Button] + [SquareButton]
+W3
+ataque giratorio de 360 grados
+*711*
+Ciclón del Caos (aire)
+Mantén [L1Button] + [SquareButton]
+W3
+ataque giratorio de 360 grados en el aire
+*712*
+Espíritu de Hércules
+[TriangleButton], [TriangleButton], [TriangleButton]
+W3
+combo potente pero lento
+*713*
+Valor de Hércules
+[TriangleButton], [TriangleButton], [SquareButton]
+W3
+combo potente pero lento
+*714*
+Venganza de Hades
+[SquareButton] o [TriangleButton] o [R1Button]
+W3
+usa este ataque después de parar a tu enemigo
+*715*
+Helios naciente
+Mantén [L1Button] + [TriangleButton]
+W4
+varios golpes contra un solo enemigo
+*716*
+Helios poniente (aire)
+Mantén [L1Button] + [TriangleButton]
+W4
+varios golpes aéreos contra un solo enemigo
+*717*
+Furia de Hermes
+[R1Button], [R1Button], [R1Button]
+W4
+embestida de varios golpes
+*718*
+Voltereta de Aquiles
+Joystick derecho + [XButton]
+W4
+mientras esquivas, pulsa [XButton] para atacar
+*719*
+Lanza de las Furias
+Mantén [L1Button] + [CircleButton]
+W5
+sigue manteniendo [CircleButton] para
+un ataque aún mayor
+*720*
+Lanza de las Furias (aire)
+Mantén [L1Button] + [CircleButton]
+W5
+en el aire, sigue manteniendo [CircleButton]
+para un ataque aún mayor
+*721*
+Fuerza de Hércules
+[SquareButton], mantén [SquareButton]
+W5
+mantén [SquareButton] durante el combo para
+desatar un ataque potente
+*722*
+[*1] [IconHelmet] FURIA DE LOS DIOSES
+[*1]
+W2
+invoca el poder de los dioses
+para derrotar a tus enemigos
+*723*
+Activar Modo Dios
+[L3] + [R3]
+W2
+pulsa el joystick izquierdo y el derecho
+([L3] y [R3]) para activar la furia de los dioses
+*724*
+Tempestad de los Hados
+[SquareButton], [SquareButton], [SquareButton] mantén
+W4
+ataque potente que despeja la zona
+*725*
+[*1] [IconTrident] TRIDENTE DE POSEIDÓN
+[*1]
+S1H
+respira bajo el agua indefinidamente con este
+regalo del señor Poseidón
+*726*
+Nadar abajo
+Mantén [SquareButton]
+S1
+bajo el agua, mantén [SquareButton] para bucear
+*727*
+Nadar arriba
+Mantén [TriangleButton] o [XButton]
+S1
+bajo el agua, mantén [TriangleButton] o [XButton] para subir
+*728*
+Esprintar nadando
+mantén [R1Button]
+S1
+mantén [R1Button] y suelta para impulsarte
+rompe barreras bajo el agua
+*729*
+[*1] [IconLightning] FURIA DE POSEIDÓN
+[*1]
+L1H
+ataca a varios enemigos a la vez con este
+potente regalo del señor Poseidón
+*730*
+Furia de Poseidón
+[L2Button]
+L1
+activa el ataque pulsando [L2Button]
+*731*
+Furia de Poseidón (aire)
+[L2Button]
+L1
+en el aire, activa el ataque
+pulsando [L2Button]
+*732*
+Ira de Poseidón
+[L2Button], [CircleButton]
+L2
+pulsa [L2Button] y luego [CircleButton] rápidamente
+para activar este potente ataque
+*733*
+[*1] [IconMedusa] MIRADA DE MEDUSA
+[*1]
+M1H
+convierte a los enemigos en piedra con
+esta potente arma
+*734*
+Torrente de Gorgona
+Mantén [L2Button] + mantén [SquareButton]
+M1
+convierte a los enemigos en piedra
+*735*
+Luz de Gorgona
+Mantén [L2Button] + [TriangleButton]
+M2
+congela rápidamente a los enemigos
+*736*
+Luz de Gorgona (aire)
+Mantén [L2Button]
+M2
+congela a los enemigos en el aire
+*737*
+Furia de Gorgona
+Mantén [L2Button] + mantén [CircleButton]
+M3
+congela a todos los enemigos a la vez
+*738*
+[*1] [IconThunderbolt] FURIA DE ZEUS
+[*1]
+T1H
+ataca a los enemigos a distancia
+con los potentes rayos de Zeus
+*739*
+Furia de Zeus
+Mantén [L2Button] + [SquareButton]
+T1
+lanza potentes rayos a los enemigos
+*740*
+Furia de Zeus (aire)
+[L2Button]
+T1
+lanza rayos en el aire
+*741*
+Poder de Zeus
+Mantén [L2Button] + mantén [TriangleButton]
+T2
+carga los rayos para un ataque devastador
+*742*
+[*1] [IconBerserk] ESPADA DE ARTEMISA
+[*1]
+B1H
+usa esta antigua espada para desmembrar
+a tus enemigos de cerca
+*743*
+Invocar espada
+Mantén [L1Button] + [R1Button]
+B1
+invoca la Espada de Artemisa
+*744*
+Invocar espada (aire)
+Mantén [L1Button] + [R1Button]
+B1
+invoca la Espada de Artemisa en el aire
+*745*
+Envainar espada
+Mantén [L1Button] + [R1Button]
+B1
+vuelve a las Espadas del Caos
+*746*
+Ira de Artemisa
+Mantén [L1Button] + [XButton]
+B1
+ataque lento y potente de varios golpes
+*747*
+Venganza de Artemisa
+Mantén [L1Button] + [SquareButton]
+B1
+giro de espada de varios golpes
+*748*
+Ascensión de Artemisa
+Mantén [L1Button] + mantén [TriangleButton]
+B1
+lanza a los enemigos y a Kratos por los aires
+*749*
+Castigo de Artemisa
+Mantén [L1Button] + [CircleButton]
+B1
+el más potente de todos los ataques de espada
+*750*
+[*1] [IconRaiseDead] EJÉRCITO DE HADES
+[*1]
+R1H
+invoca las almas de los
+muertos para que luchen a tu lado
+*751*
+Ejército de Hades
+[L2Button]
+R1
+pulsa [L2Button] para invocar las almas de los muertos
+*752*
+Ejército de Hades (aire)
+[L2Button]
+R1
+pulsa [L2Button] para invocar las almas
+de los muertos en el aire
+*780*
+[*1] [IconSword] ESPADA DE LOS DIOSES
+[*1]
+W1H
+una espada mágica enviada por los dioses
+del Olimpo
+*781*
+Don de Zeus
+Mantén [L1Button] + [XButton]
+W1
+*782*
+Don de Poseidón
+Mantén [L1Button] + [SquareButton]
+W1
+*783*
+Don de Atenea
+Mantén [L1Button] + [TriangleButton]
+W1
+*784*
+Don de Hades
+Mantén [L1Button] + [CircleButton]
+W1
+*797*
+[*1] [IconAthena] ESPADAS DE ATENEA
+[*1]
+W1H
+Atenea ha cambiado las espadas del caos
+por su propia arma mágica
+*798*
+[*1]    [IconQuestionMark]    [IconQuestionMark]    [IconQuestionMark]    [IconQuestionMark]
+[*1]
+X
+Bloqueado
+*799*
+?  ?  ?  ?
+[*1]
+X
+Bloqueado
+*801*
+El mar Egeo*
+0
+*802*
+Las Puertas de Atenas
+0
+*803*
+El camino a Atenas
+0
+*804*
+Plaza de Atenas
+0
+*805*
+Tejados de Atenas
+0
+*806*
+Templo del Oráculo
+0
+*807*
+Las cloacas de Atenas
+0
+*808*
+Desierto de las Almas Perdidas
+0
+*809*
+Templo de Pandora
+0
+*810*
+Los Anillos de Pandora
+0
+*811*
+El desafío de Atlas
+0
+*812*
+El Desafío de Poseidón
+0
+*813*
+El Desafío de Hades
+0
+*814*
+La subida a los Riscos
+0
+*815*
+Los Riscos de la Locura
+0
+*816*
+La Tumba del Arquitecto
+0
+*817*
+El Camino de Hades
+0
+*818*
+Monte Olimpo
+0
+*900*
+Créditos
+EM20
+El equipo creativo de God of War.
+[*1]
+Pulsa [XButton] para reproducir.
+El equipo creativo de God of War.
+Termina el juego para desbloquearlo.
+*901*
+El nacimiento de la bestia
+EM16
+Descubre un secreto del pasado de Kratos.
+¿Será esta su próxima aventura?
+Pulsa [XButton] para reproducir.
+Descubre un secreto del pasado de Kratos.
+¿Será esta su próxima aventura?
+Termina el juego para desbloquearlo.
+*902*
+Modo Dios
+E
+La versión más difícil de God of War.
+Solo para jugadores avanzados.
+Elígelo en el menú Nueva partida.
+La versión más difícil de God of War.
+Solo para jugadores avanzados.
+Termina el juego para desbloquearlo
+*903*
+Cementerio de personajes
+EG
+Visita el Cementerio de personajes y mira modelos
+3D que no llegaron a entrar en el juego.
+Pulsa [XButton] para empezar.
+Visita el Cementerio de personajes y mira modelos
+3D que no llegaron a entrar en el juego.
+Termina el juego para desbloquearlo.
+*904*
+Desafío de los Dioses
+EA
+10 salas, 10 desafíos.
+¿Llegarás hasta el final?
+Pulsa [XButton] para jugar.
+10 salas, 10 desafíos.
+¿Llegarás hasta el final?
+Termina el juego para desbloquearlo.
+*905*
+Películas del juego
+ES
+Mira todas las películas del juego.
+[*1]
+Pulsa [XButton] para reproducir.
+Mira todas las películas del juego.
+Termina el juego para desbloquearlo.
+*906*
+Un secreto revelado
+HM17
+Descubre el secreto de la familia de Kratos.
+¿Adónde llevará este descubrimiento?
+Pulsa [XButton] para reproducir.
+Descubre el secreto de la familia de Kratos.
+¿Adónde llevará este descubrimiento?
+Termina el Modo Dios para desbloquearlo.
+*907*
+El destino del Titán
+HM18
+¿Qué ha sido de Cronos, el Titán?
+[*1]
+Pulsa [XButton] para reproducir.
+¿Qué ha sido de Cronos, el Titán?
+Termina el Modo Dios para desbloquearlo.
+*908*
+Trajes adicionales
+A
+Nuevos trajes para Kratos.
+[*1]
+Elige un traje en el menú Nueva partida.
+Nuevos trajes para Kratos.
+Supera el Desafío de los Dioses para desbloquearlo.
+*909*
+Mensaje secreto #1
+GM24
+Mensaje del final del Modo Dios.
+[*1]
+Pulsa [XButton] para reproducir.
+[*1]
+??????
+*910*
+Mensaje secreto #2
+FM19
+Mensaje del huevo de Pascua.
+[*1]
+Pulsa [XButton] para reproducir.
+[*1]
+??????
+*1001*
+Hay un mango en el altar.
+¿Lo coges?
+----
+*Sí
+No
+*1002*
+¿Colocas el escudo en la talla?
+----
+*Sí
+No
+*1003*
+¿Quieres usar la llave de las Musas?
+----
+*Sí
+No
+*1004*
+¿Quieres usar las llaves de las Musas?
+----
+*Sí
+No
+*1005*
+¿Pones el mango en la manivela?
+----
+*Sí
+No
+*1006*
+¿Quieres colocar el Ojo del Cíclope en el
+hueco?
+----
+*Sí
+No
+*1007*
+¿Usas la llave?
+----
+*Sí
+No
+*1008*
+Hay un escudo de oro sobre el altar. Tiene
+una imagen de Zeus tallada. ¿Lo
+coges?
+----
+*Sí
+No
+*1009*
+Hay un escudo de plata sobre el altar. Tiene
+una imagen de Hades tallada. ¿Lo
+coges?
+----
+*Sí
+No
+*1010*
+Hay un mango tirado a los pies del soldado
+muerto. ¿Lo coges?
+----
+*Sí
+No
+*1011*
+Hades te desafía a hacer sacrificios de sangre
+en sus altares antes de poder pasar.
+¿Aceptas?
+----
+*Sí
+No
+*1012*
+¿Quieres usar la llave de la calavera en la
+cerradura de la puerta?
+----
+*Sí
+No
+*1013*
+¿Quieres usar la llave del Capitán?
+----
+*Sí
+No
+*1014*
+Tiene una llave en el bolsillo. ¿La coges?
+----
+*Sí
+No
+*1015*
+Contemplas un mapa del mundo antiguo.
+¿Quieres mirarlo?
+----
+*Sí
+No
+*1016*
+¿Quieres poner el collar de Afrodita
+en su estatua?
+----
+*Sí
+No
+*1017*
+¿Quieres poner el collar de Hera
+en su estatua?
+----
+*Sí
+No
+*1018*
+¿Quieres coger el collar?
+----
+*Sí
+No
+*1019*
+¿Quieres coger el mango?
+----
+*Sí
+No
+*2005*
+Has fallado. Inténtalo de nuevo.
+*2008*
+Lo has conseguido. Te espera el siguiente desafío.
+*2009*
+Lo has conseguido. Te espera el siguiente desafío.
+*2014*
+Desafío de los Dioses (9 de 10)
+Mata a 4 cíclopes antes de que se acabe el tiempo.
+*2015*
+Desafío de los Dioses (2 de 10)
+Mata a todos los ARQUEROS y SOLDADOS NO MUERTOS
+antes de que se acabe el tiempo.
+*2016*
+Desafío de los Dioses (6 de 10)
+Llega al centro de la plataforma final
+antes de que se acabe el tiempo.
+*2025*
+Desafío de los Dioses (10 de 10)
+Mata enemigos para que suba la plataforma. Llega
+a la plataforma superior para superar el desafío.
+*2028*
+Desafíos de los Dioses
+Los golpes y la magia se han adaptado a
+cada desafío.
+----
+Desafío de los Dioses (1 de 10)
+Tira a 8 enemigos de la plataforma antes
+de que se acabe el tiempo.
+----
+Si matas a un enemigo, fallarás el desafío.
+*2044*
+Desafío de los Dioses (5 de 10)
+¡Dispara a todos los soldados no muertos!
+¡No dispares a los soldados humanos!
+*2048*
+Desafío de los Dioses (7 de 10)
+Regla #1: Mata a todos los enemigos.
+Regla #2: Que no te den
+*2049*
+Desafío de los Dioses (4 de 10)
+Mata a 4 minotauros, pero a ninguno de
+los soldados no muertos.
+*2050*
+¡Enhorabuena! Has superado todos
+los Desafíos de los Dioses.
+*2052*
+Desafío de los Dioses (8 de 10)
+Mata a todos los enemigos.
+*2053*
+Desafío de los Dioses (3 de 10)
+Rompe todas las vasijas antes de que
+se acabe el tiempo.
+*3000*
+Contemplas los huesos de
+tu enemigo derrotado.
+*3001*
+Por fin te has librado de tu
+servidumbre a este demente dios de la guerra.
+*3002*
+Este es el trono del Dios de la Guerra.
+Ocupa el lugar que te corresponde.
+*3003*
+Un trofeo de tus muchas victorias
+adorna tu trono.
+*3024*
+Este mapa tiene un detalle increíble...
+Es casi como si estuviera vivo.
+*3026*
+[*1] DISEÑO ORIGINAL DEL CENTAURO
+Al principio quería que el centauro fuera
+una criatura infernal, de pesadilla.
+----
+En este primer diseño puedes ver que
+lleva una máscara de guerra tribal.
+----
+Además, no tiene piel, así que solo
+se le ven los tendones, la carne y las venas.
+----
+Pero, como puedes ver, no teníamos
+resolución de texturas suficiente para
+llevar a cabo la idea.
+----
+En vez de resultar inquietante y asqueroso,
+parecía sucio y sin terminar. Así que
+acabamos descartando la idea.
+*3027*
+[*1] CÍCLOPE VERSIÓN 1 - HOMBRE RANA
+Este fue nuestro primer intento de Cíclope.
+----
+Lo descartamos porque, como puedes ver,
+parecía una especie de rana.
+----
+No daba ningún miedo
+y me alegro de que lo elimináramos.
+*3028*
+[*1] CÍCLOPE VERSIÓN 2 - OJO ROJO
+Nos costaba que se notara el ojo único
+de los modelos de Cíclope.
+----
+A los jugadores les costaba mucho ver
+que el modelo solo tenía un ojo. Así que
+este modelo fue un intento de llamar
+----
+la atención de los jugadores sobre el ojo
+único. Pero el intento se quedó corto.
+Parecía ridículo.
+----
+Es una pena que ni siquiera nuestro Cíclope
+FINAL, el que está ahora en el juego, parezca
+de verdad que tiene un solo ojo.
+----
+En fin, quizá la próxima vez.
+*3029*
+[*1] CÍCLOPE VERSIÓN 3 - CARA HUMANA
+Este me gusta mucho. Me da escalofríos
+porque parece una cara humana pegada
+----
+a este cuerpo de bestia.
+El caso es que no encajaba con el
+ambiente del juego.
+----
+En cambio, este Cíclope parecía triste
+y humano. De hecho, me daba pena.
+*3030*
+[*1] CÍCLOPE VERSIÓN 4 - CÍCLOPE DE DIBUJOS
+Este resultaba demasiado caricaturesco para el juego.
+----
+Esta versión se parece más a un personaje
+de un juego de plataformas para adolescentes.
+*3031*
+[*1] CÍCLOPE VERSIÓN 5 - FIGURA DE ACCIÓN
+Esta versión estaba bastante bien, pero era
+demasiado caricaturesca. Parecía un juguete.
+----
+Las calaveras del pecho lo hacían parecer
+uno de esos accesorios que vienen al
+comprar una figura de acción.
+*3032*
+[*1] CÍCLOPE VERSIÓN 6 - CÍCLOPE REMENDADO
+Este sí que era asqueroso.
+Sigo pensando que estaba muy bien.
+----
+Al verlo ahora, me pregunto POR QUÉ
+no lo usamos. Seguro que había un
+buen motivo, pero no lo recuerdo.
+----
+Vale, el ojo está mal, pero eso se
+podría haber arreglado. Y la textura del
+cuerpo es genial.
+----
+Mejor tenerlo en cuenta para
+futuros proyectos. Es fantástico.
+*3033*
+[*1] KRATOS VERSIÓN 1 - GIGANTE EN PAÑALES
+Este era un modelo provisional del héroe.
+----
+Necesitábamos algo que poner en el juego
+mientras cerrábamos el diseño
+de Kratos.
+----
+El modelo siempre fue de usar y tirar,
+pero aun así no tengo ni idea de por qué
+los artistas modelaron a un gordo en pañales.
+----
+Vaya, si Kratos supiera qué aspecto
+tenía en sus inicios...
+*3034*
+[*1] KRATOS VERSIÓN 2 - GUERRERO MEDIEVAL
+Este modelo parecía demasiado medieval para la
+Grecia antigua. Aun así, me gusta.
+----
+Creo que está bastante bien. Tiene algo muy
+heroico que a mí me funciona.
+*3035*
+[*1] KRATOS VERSIÓN 3 - RASTAS
+Nuestro primer director artístico quería que este
+fuera el héroe. Se notaba que le encantaba
+----
+este diseño, así que intenté apoyarlo.
+Pero a mí no me convencía.
+Este modelo no es lo bastante brutal,
+----
+ni lo bastante despiadado, para ser la estrella de
+GOD OF WAR. Me alegro de que lo cambiáramos,
+aunque creo que el director artístico se enfadó.
+*3036*
+[*1] KRATOS VERSIÓN 4 - KRATOS CON ARMADURA
+Este es mi diseño favorito de Kratos.
+Pero no pudimos usarlo porque había
+----
+demasiado detalle en la armadura.
+Al ponerlo en el juego, entre los
+escenarios detallados, el héroe no quedaba bien.
+----
+Quizá si hacemos otro juego de Kratos,
+en un hardware más potente, podamos usar
+este traje y se vea mejor con la nueva tecnología.
+*3037*
+[*1] KRATOS VERSIÓN 5 - TATUAJE AZUL
+Este fue casi el diseño final de Kratos.
+----
+Yo quería tatuajes rojos con la piel
+blanca, pero nos pareció una combinación
+demasiado típica. Así que elegimos el azul.
+----
+Fue azul durante un tiempo, pero yo
+no podía soportarlo. Mi instinto
+me decía que lo suyo eran los tatuajes rojos.
+----
+Ahora que lo veo, me alegro de que lo
+cambiáramos, porque los tatuajes rojos me
+gustan mucho más.
+*3038*
+[*1] MEDUSA VERSIÓN 1 - CINCO PIES
+Lo principal aquí son sus pies.
+----
+En el juego final no tiene pies, solo cola.
+Animar cinco pies reptando por todas partes
+resultó ser demasiado.
+----
+Fíjate también en que este personaje tiene pezones.
+Se creó al principio del proyecto
+y todos los monstruos femeninos tenían pezones.
+----
+¡Y el Cíclope hasta tenía pene!
+Quería que los monstruos parecieran
+animales salvajes, como los que verías
+----
+en el zoo. Pensé que esos detalles ayudaban.
+Al final nos quedamos con los pezones,
+pero el Cíclope perdió el pene.
+----
+Pobre Cíclope.
+*3039*
+[*1] ESQUELETO VERSIÓN 1 - DE LA VIEJA ESCUELA
+Inspirado en las películas de acción y aventuras
+con las que muchos crecimos, este fue
+----
+nuestro primer esqueleto/zombi/no muerto.
+Al final, nos pareció un diseño demasiado
+simple para el público de hoy.
+----
+Fue una decisión difícil, porque este diseño
+sencillo gustaba mucho a quienes crecieron
+con las películas de aventuras de los 70...
+----
+Pero queríamos que los personajes de GOD OF WAR
+fueran más originales. Así que descartamos la idea.
+*3040*
+[*1] ESQUELETO VERSIÓN 2 - CABEZA DE CASCO
+Un diseño estupendo.
+----
+Me encanta la calavera y que el propio hueso
+tenga forma de casco romano/griego.
+----
+Al final, por muy bueno que fuera el diseño,
+no quedaba tan bien cuando teníamos
+de 5 a 8 en pantalla.
+----
+Así que optamos por algo más sencillo.
+*3041*
+Bienvenido al [*1] CEMENTERIO DE PERSONAJES.
+Aquí es donde vienen a morir todos los
+personajes rechazados de God of War.
+----
+Pulsa [R2Button] en cada personaje
+para saber más sobre él.
+----
+Pulsa el botón Select ([SelectButton]) y elige
+Volver a Tesoros para salir del Cementerio.
+[*1]- David Jaffe, director de GOD OF WAR

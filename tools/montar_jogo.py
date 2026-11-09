@@ -246,6 +246,10 @@ def main():
     print('== shaders')
     print('  ', espelhar(os.path.join(rt, 'spv'), os.path.join(dst, 'shaders')))
 
+    print('== traduções (Settings > Idioma do jogo)')
+    # só as fontes e o idioma.ini; o Settings gera records/ ao escolher (o francês e o espanhol do GoW2 saem do jogo)
+    shutil.copytree(os.path.join(REPO, 'games', 'gow', 'traducoes'), os.path.join(dst, 'data', 'traducoes'), dirs_exist_ok=True)
+
     print('== exe do jogo')
     tmp = tempfile.mkdtemp(prefix='vitart_ico_')
     ico = os.path.join(tmp, 'jogo.ico')

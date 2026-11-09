@@ -1,0 +1,21 @@
+// Mensagens que o texto oficial do GoW2 (r_plocs/r_plocf do jogo) não tem; o resto vem do próprio jogo
+*36*
+Continuez !
+*37*
+Encore, encore, encore !
+*38*
+Pas mal pour un mortel !
+*39*
+Le mystère se dévoile !
+*40*
+Plus de coups, plus d'indices !
+*41*
+Votre destin vous attend !
+*42*
+Votre sort se dévoile !
+*43*
+Vous y êtes presque !
+*44*
+Le secret est proche !
+*45*
+WWW.ISLANDOFRHODES.ORG

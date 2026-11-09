@@ -2,6 +2,7 @@
 // (controles_<jogo>.ini, que o runtime lê em input_map.cpp) e as opções de diagnóstico.
 const NAV_ICO = {
   video: '<rect x="1.5" y="3" width="13" height="8.5"/><path d="M5.5 14h5M8 11.5V14"/>',
+  idioma: '<circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c2 2 2.6 4.2 2.6 6.5S10 12.5 8 14.5M8 1.5C6 3.5 5.4 5.7 5.4 8S6 12.5 8 14.5"/>',
   ctl: '<rect x="1.5" y="4.5" width="13" height="7.5" rx="1"/><path d="M4 7h1M6.5 7h1M9 7h1M11.5 7h1M4.5 9.5h7"/>',
   atual: '<path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M2.5 13.5h11"/>',
   avan: '<path d="M2 4h7M12 4h2M2 8h2M7 8h7M2 12h9M14 12h0"/><circle cx="10.5" cy="4" r="1.5"/><circle cx="5.5" cy="8" r="1.5"/><circle cx="12.5" cy="12" r="1.5"/>',
@@ -9,6 +10,8 @@ const NAV_ICO = {
 const SECOES = [
   { id: 'video', nome: 'Gráficos', sobre: 'API de vídeo', titulo: 'Gráficos', arte: 'rocha',
     sub: 'Escolha com que API o jogo desenha. A troca vale na próxima vez que o jogo abrir.' },
+  { id: 'idioma', nome: 'Idioma', sobre: 'Tradução dos jogos', titulo: 'Idioma do jogo', arte: 'rocha',
+    sub: 'Os textos do God of War I e II (menus, dicas, tutoriais). Só um idioma fica ligado; vale na próxima vez que o jogo abrir.' },
   { id: 'ctl', nome: 'Controles', sobre: 'Teclado, mouse e controle', titulo: 'Controles', arte: 'chave',
     sub: 'O esquema do God of War (2018) de PC, com cada tecla e botão trocável.' },
   { id: 'atual', nome: 'Atualizações', sobre: 'Correções e pacotes', titulo: 'Atualizações', arte: 'rocha',
@@ -109,6 +112,55 @@ async function escolherApi(id) {
     pintarApis();
     cascata($$('.api.sel'), [{ transform: 'scale(.985)' }, { transform: 'none' }], 0, 260);
     avisar('Salvo', st.opcoes.jogo_aberto ? 'Vale quando o jogo abrir de novo.' : 'Vale na próxima vez que o jogo abrir.');
+  } catch (e) { avisar('Não deu', e.message, 'erro'); }
+}
+
+// ------------------------------------------------------------------ Idioma do jogo
+// As traduções de <dados>/traducoes (tools/vitart_modkit.py): uma por idioma, com os dois jogos; language= no ini.
+// Escolher gera a tradução (o francês e o espanhol do GoW II vêm do próprio jogo) e desliga a anterior.
+const NOME_JOGO = { gow1: 'God of War I', gow2: 'God of War II' };
+
+function montarIdioma(sec) {
+  sec.append(
+    el('div', { class: 'nota oculto', id: 'aviso-jogo-idioma' }, 'O jogo está aberto: o idioma novo vale quando ele abrir de novo.'),
+    el('div', { class: 'apis idiomas', id: 'idiomas', role: 'radiogroup', 'aria-label': 'Idioma do jogo' }),
+    el('div', { class: 'mudo legenda idioma-nota' }, 'A fonte do jogo não tem algumas letras (ã, õ e as maiúsculas acentuadas, que no Vita são os ícones dos botões): elas viram a letra mais próxima.'));
+  carregarIdiomas();
+}
+
+async function carregarIdiomas() {
+  try { st.idiomas = await vt.rpc('idiomas'); } catch (e) { avisar('Não deu', e.message, 'erro'); return; }
+  pintarIdiomas();
+}
+
+function pintarIdiomas() {
+  const d = st.idiomas;
+  if (!d) return;
+  const itens = [{ codigo: '', nome: 'Original', jogos: ['gow1', 'gow2'], autores: {}, original: true }, ...d.lista];
+  $('#idiomas').replaceChildren(...itens.map(t => {
+    const sel = (d.atual || '') === t.codigo;
+    const creditos = t.original ? [] : t.jogos.map(g => el('span', { class: 'idioma-jogo' },
+      el('span', { class: 'caixa', 'data-no-i18n': '' }, NOME_JOGO[g]),
+      t.autores[g] ? el('span', { 'data-no-i18n': '' }, t.autores[g]) : el('span', {}, 'Tradução do vitart')));
+    const falta = t.original ? [] : ['gow1', 'gow2'].filter(g => !t.jogos.includes(g));
+    return el('button', { class: 'api' + (sel ? ' sel' : ''), role: 'radio', 'aria-checked': String(sel), onclick: () => escolherIdioma(t.codigo) },
+      el('span', { class: 'api-marca', html: icone('check') }),
+      t.original ? el('span', { class: 'api-nome' }, t.nome) : el('span', { class: 'api-nome', 'data-no-i18n': '' }, t.nome),
+      t.original ? el('span', { class: 'api-texto' }, 'O texto em inglês do jogo, sem tradução.') : el('span', { class: 'idioma-creditos' }, ...creditos),
+      falta.length ? el('span', { class: 'api-alerta' }, tr('{a} continua em inglês', { a: falta.map(g => NOME_JOGO[g]).join(', ') })) : null,
+      sel ? el('span', { class: 'api-uso' }, 'Ligado') : null);
+  }));
+  $('#aviso-jogo-idioma').classList.toggle('oculto', !(st.opcoes && st.opcoes.jogo_aberto));
+}
+
+async function escolherIdioma(codigo) {
+  if (!st.idiomas || (st.idiomas.atual || '') === codigo) return;
+  try {
+    const r = await vt.rpc('salvar_idioma', { codigo });
+    st.idiomas.atual = r.atual;
+    pintarIdiomas();
+    cascata($$('#idiomas .api.sel'), [{ transform: 'scale(.985)' }, { transform: 'none' }], 0, 260);
+    avisar('Salvo', st.opcoes && st.opcoes.jogo_aberto ? 'Vale quando o jogo abrir de novo.' : 'Vale na próxima vez que o jogo abrir.');
   } catch (e) { avisar('Não deu', e.message, 'erro'); }
 }
 
@@ -482,7 +534,7 @@ vt.aoEvento(m => {
   $('#atu-txt').textContent = tr(nome) + ' ' + Math.round(100 * f) + '%' + (m.etapa === 'baixando' ? ' · ' + gb(m.feito) + ' / ' + gb(m.total) : '');
 });
 
-const MONTAR = { video: montarVideo, ctl: montarCtl, atual: montarAtual, avan: montarAvan };
+const MONTAR = { video: montarVideo, idioma: montarIdioma, ctl: montarCtl, atual: montarAtual, avan: montarAvan };
 
 // ------------------------------------------------------------------ início
 vt.aoEvento(m => {

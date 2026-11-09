@@ -425,12 +425,12 @@ function montarTxt(sec) {
     el('div', { class: 'nota', style: { marginBottom: '20px', maxWidth: '980px' } },
       el('div', {}, 'Exporte os textos (MSGS_TXT, os do modo PS TV que o vitart mostra), traduza o .txt mantendo as linhas ',
         el('code', {}, '*N*'), ' e as marcas como ', el('code', {}, '[XButton]'),
-        ', e instale. A fonte do jogo não tem maiúsculas acentuadas nem ã/õ: o kit troca por A, E, U e ä/ö. Vale ao abrir o jogo.')),
+        ', e instale. A tradução entra no Settings › Idioma do jogo, onde só uma fica ligada (não é mais um mod). As letras que a fonte do jogo não tem viram a mais próxima.')),
     el('div', { class: 'form' },
       campo('Jogo', el('select', { class: 'entrada', id: 'x-jogo' }, el('option', { value: 'gow2' }, 'God of War II'), el('option', { value: 'gow1' }, 'God of War'))),
       el('div', { class: 'campo', style: { alignSelf: 'end' } }, el('button', { class: 'btn', html: icone('exportar') + 'Exportar os textos originais', onclick: exportarTextos })),
       campo('Arquivo .txt traduzido', entradaArquivo('x-arq', [{ name: 'Texto', extensions: ['txt'] }]), null, true),
-      campo('Nome no menu', el('input', { class: 'entrada', id: 'x-nome', value: 'Tradução', maxlength: 24 })),
+      campo('Nome do idioma', el('input', { class: 'entrada', id: 'x-nome', value: 'Tradução', maxlength: 24 })),
       campo('Id (pasta)', el('input', { class: 'entrada', id: 'x-id', spellcheck: 'false' })),
       campo('Autor(es)', el('input', { class: 'entrada', id: 'x-autor' }))),
     el('div', { class: 'linha-acao' }, el('button', { class: 'btn forte', onclick: instalarTextos }, 'Instalar tradução')),
@@ -445,10 +445,10 @@ async function exportarTextos() {
 }
 function instalarTextos() {
   const v = id => $('#' + id).value.trim();
-  if (!v('x-arq') || !v('x-nome')) { avisar('Faltam dados', 'Escolha o .txt traduzido e dê um nome ao mod.', 'erro'); return; }
+  if (!v('x-arq') || !v('x-nome')) { avisar('Faltam dados', 'Escolha o .txt traduzido e dê um nome ao idioma.', 'erro'); return; }
   tarefa('txt', 'instalar_textos', { jogo: v('x-jogo'), arquivo: v('x-arq'), nome: v('x-nome'), id: v('x-id'), autor: v('x-autor') }, async ok => {
     await carregarMods();
-    avisar(ok ? 'Tradução instalada' : 'Falhou', ok ? 'Ligue na aba Mods e abra o jogo de novo.' : 'Veja o registro.', ok ? '' : 'erro');
+    avisar(ok ? 'Tradução instalada' : 'Falhou', ok ? 'Escolha no Settings › Idioma do jogo e abra o jogo de novo.' : 'Veja o registro.', ok ? '' : 'erro');
   });
 }
 

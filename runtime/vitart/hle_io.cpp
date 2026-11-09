@@ -107,6 +107,19 @@ static std::vector<std::string> ini_mods_on() {
     }
     return on;
 }
+// Tradução escolhida no Settings (language=<código> no vitart_options.ini; vazio = o texto original). Fica fora dos
+// mods para nunca haver duas ligadas: <data>/traducoes/<código>/records.tsv, no formato dos mods de registro, com os
+// textos dos dois jogos (tools/vitart_modkit.py build_translation).
+static std::string ini_language() {
+    std::string code;
+    if (FILE *f = fopen((data_path() + "/vitart_options.ini").c_str(), "r")) {
+        char line[512], v[64];
+        while (fgets(line, sizeof line, f))
+            if (sscanf(line, "language=%63[A-Za-z_-]", v) == 1) code = v;
+        fclose(f);
+    }
+    return code;
+}
 // Mods instalados, na ordem de modlist.tsv ("<jogo>\t<índice no menu>\t<id>\t<nome>").
 static std::vector<std::string> modlist_ids() {
     std::vector<std::string> out;
@@ -363,8 +376,19 @@ static std::shared_ptr<PsarcPatch> psarc_patch(const std::string &hp) {
     std::vector<uint8_t> boot_toc = pt->toc;
     for (const ModFile &mf : pt->files)
         if (std::find(on.begin(), on.end(), mf.mod) != on.end()) point_entry(boot_toc, mf);
-    for (const std::string &id : on) {
-        FILE *t = fopen((dir + "/" + id + "/records.tsv").c_str(), "r");
+    // a tradução primeiro: um mod que também troque o texto ganha dela
+    std::vector<std::pair<std::string, std::string>> fontes; // (pasta base, id)
+    if (const std::string lang = ini_language(); !lang.empty()) {
+        if (fs::exists(data_path() + "/traducoes/" + lang + "/records.tsv")) {
+            fontes.push_back({data_path() + "/traducoes", lang});
+            logf("vitart: tradução %s em %s", lang.c_str(), name.c_str());
+        } else {
+            logf("vitart: tradução %s não instalada (abra o Settings para gerá-la)", lang.c_str());
+        }
+    }
+    for (const std::string &id : on) fontes.push_back({dir, id});
+    for (const auto &[base, id] : fontes) {
+        FILE *t = fopen((base + "/" + id + "/records.tsv").c_str(), "r");
         if (!t) continue;
         char line[2048];
         while (fgets(line, sizeof line, t)) {
@@ -380,7 +404,7 @@ static std::shared_ptr<PsarcPatch> psarc_patch(const std::string &hp) {
             for (WadRec &r : it->second) {
                 if (r.tag != tag || strncmp(r.name, rname, 24) != 0 || seen++ != occ) continue;
                 if (src[0] == '=') r.size = (uint32_t)strtoul(src + 1, nullptr, 0); // parâmetro: o "tamanho" é o valor
-                else r.body = read_file_bytes(dir + "/" + id + "/" + src);
+                else r.body = read_file_bytes(base + "/" + id + "/" + src);
                 done = true, nrec++;
                 break;
             }

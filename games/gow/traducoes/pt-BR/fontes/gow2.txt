@@ -1,0 +1,2816 @@
+*1*
+[R2Button]
+*2*
+Vazio
+*3*
+Mortal (Fácil)
+*4*
+Espartano (Normal)
+*5*
+Deus (Difícil)
+*6*
+Titä (Muito Difícil)
+*7*
+Jan,Fev,Mar,Abr,Mai,Jun,Jul,Ago,Set,Out,Nov,Dez
+*8*
+Mortal,Espartano,Deus,Titä
+*9*
+[IconCyclopsEye] [PS2_CyclopsEye_Count] / 20
+*10*
+Cruel!
+*11*
+Sádico!
+*12*
+Selvagem!
+*13*
+Desumano!
+*14*
+Sanguinário!
+*15*
+Implacável!
+*16*
+Sem Misericórdia!
+*17*
+Impiedoso!
+*18*
+Monstruoso!
+*19*
+Tirânico!
+*20*
+Imortal!
+*21*
+Feroz!
+*22*
+Sagrado!
+*23*
+Onipotente!
+*24*
+Olímpico!
+*25*
+Todo Poderoso!
+*26*
+Hercúleo!
+*27*
+Supremo!
+*28*
+Extraordinário!
+*29*
+Impossível!
+*30*
+Feroz!
+*31*
+Morte Brutal!
+*32*
+Eliminaçäo Implacável!
+*33*
+Mutilaçäo!
+*34*
+Esmagado!
+*35*
+Destruído!
+*36*
+Siga em frente!
+*37*
+Mais, mais, mais!
+*38*
+Not Bad For A Mortal!
+*39*
+Nada mal para um mortal!
+*40*
+Mais golpes, mais dicas!
+*41*
+Seu destino aguarda você!
+*42*
+Seu destino está se revelando!
+*43*
+Quase lá!
+*44*
+O segredo está próximo!
+*45*
+WWW.ISLANDOFRHODES.ORG
+*100*T
+Pressione [SquareButton] para [*1]Ataque Leve.
+Pressione [TriangleButton] para [*1]Ataque Forte.
+Pressione [CircleButton] para [*1]Agarrar.
+*101*T
+Ative a magia pressionando [L2Button].
+Pressione rapidamente [CircleButton] para aumentar o dano.
+*102*T
+Segure [R1Button] em frente a um baú para abri-lo.
+*103*T
+[*1]Bloquear
+Pressione [L1Button] para bloquear ataques.
+*105*T
+[*1]Pular
+Pressione [XButton] para pular.
+Pressione [XButton], [XButton] para saltar duas vezes.
+*106*T
+[*1]Lançar
+Mantenha [TriangleButton] pressionado para lançar
+um inimigo no ar.
+*107*
+O cadáver de um espartano caído.
+*108*
+Este soldado está morto.
+*109*
+Mais uma vida encurtada por Zeus.
+*110*
+Estas mortes näo devem ficar impunes.
+*111*T
+Fique em frente à mäo de Colosso
+e pressione [CircleButton] para agarrar seu braço.
+*112*T
+[*1]Mensagem de Tutorial
+Você recebeu uma mensagem de tutorial.
+Elas explicam as habilidades de Kratos.
+---
+Podem ser desativadas no Menu de Opçöes.
+Pressione o Botäo Select para acessá-lo.
+*113*T
+Pressione rap. [CircleButton] para abrir portöes de levantar.
+*114*H
+Kratos drenou a energia vital de
+Colosso para a Lâmina do Olimpo.
+*118*H
+E preciso refletir os raios de ambos os olhos.
+*120*
+Você adquiriu o Amuleto das Moiras.
+*121*T
+[*1]Amuleto das Moiras
+Para usar o amuleto e desacelerar o tempo,
+Segure [L1Button] e pressione [R1Button].
+----
+A Estátua das Moiras irradiará
+luz quando você estiver ao alcance.
+----
+O medidor amarelo mostra a
+quantidade de carga restante.
+*122*
+Você adquiriu o escudo de Perseu.
+*132*
+Você precisa da Chave do Guardiäo dos Cavalos.
+*133*T
+[*1]Raiva de Cronos
+Pressione [L2Button] para posicionar orbes de raios.
+Pressione [LeftButton] para selecioná-la.
+----
+Use-a para castigar seus inimigos.
+Até 3 orbes por vez podem ser posicionadas.
+*134*
+Você adquiriu a chave do Guardiäo dos Cavalos.
+*135*
+Você usou a chave do Guardiäo dos Cavalos
+para soltar os antolhos.
+*136*
+A trava está presa no lugar
+e ainda näo pode ser solta.
+*138*
+A estátua parece estar sem o escudo.
+*141*T
+Use o [DpadButton] para alternar entre os
+diferentes ataques de magia.
+*147*T
+[*1]Escalar Beirada
+Pressione [XButton] para subir na beirada.
+Pressione [R1Button] para se pendurar em uma beirada.
+*151*H
+Para ativar o Modo Titä, pressione [L3] e [R3] ao mesmo tempo.
+*152*H
+Você näo tem poder suficiente para destruir a porta.
+*153*T
+[*1]Objetos Brilhantes
+Você pode quebrar ou interagir
+com objetos que brilham.
+*154*H
+[*1]Chute
+Segure [R1Button] e [XButton] para carregar um chute.
+Solte quando estiver pronto para chutar.
+*155*T
+[*1]Lançar
+Pressione [XButton] para se lançar até o Corvo.
+*156*T
+[*1]Destruiçäo de Tifäo
+Segure [L2Button] para ativar a Destruiçäo de Tifäo.
+Pressione [SquareButton] para disparar.
+*157*T
+Pressione [SquareButton] para [*1]chute rápido.
+Pressione [TriangleButton] para [*1]ataque amplo.
+Pressione [CircleButton] para [*1]agarrar na corda.
+*167*
+Você adquiriu o Tremor de Atlas.
+*168*T
+[*1]Tremor de Atlas
+Pressione rap. [L2Button] para executar a Terra Destrutiva.
+Pressione [DownButton] para selecioná-lo.
+----
+Use-o para criar ondas de choque sísmicas.
+*172*T
+Use [JoystickL] para se mover na corda.
+Pressione [XButton] para se mover rapidamente ao longo dela.
+*180*T
+Mova [JoystickL] para cima para subir.
+Mova [JoystickL] para baixo para descer.
+Mova [JoystickL] para os lados para girar na corda.
+*181*T
+[*1]Asas de Ícaro
+Pule e segure [XButton] para ativar as Asas de Ícaro.
+---------
+Continue segurando [XButton] para planar no ar.
+Quando o [XButton] for solto, Kratos cairá.
+*182*T
+Mova [JoystickL] na direçäo que você deseja pular.
+Pressione [XButton] para saltar da corda.
+*183*T
+Pressione [R1Button] para se soltar da corda.
+*184*
+Você adquiriu as Asas de Ícaro.
+*198*T
+[*1]Deslizar pela Parede
+Segure [R1Button] para descer rapidamente.
+Solte [R1Button] para parar de descer.
+*200*
+Você adquiriu a Raiva de Cronos.
+*201*
+Cronos ofereceu os Corcéis do Tempo às
+Irmäs em uma tentativa inútil de mudar seu destino.
+*203*
+Está escrito em um idioma que você näo consegue ler.
+*204*T
+Para usar o Amuleto e parar o tempo,
+segure [L1Button] e pressione [R1Button].
+*205*T
+Mantenha [R1Button] press. para se prender a uma manivela.
+Gire [JoystickL] para girar a manivela.
+-----
+Näo é necessário girar na mesma velocidade
+do ícone no canto da tela.
+*208*
+Você adquiriu a Saudaçäo de Bóreas.
+*211*T
+Pressione [SquareButton], [TriangleButton], ou [CircleButton] para atacar Ícaro.
+*212*
+Você adquiriu o Velo de Ouro.
+*216*
+Um entalhe de Bóreas,
+o Deus do Vento Polar.
+*217*
+Você adquiriu a Chave de Carneiro.
+*218*
+Você precisa do Crânio de Guerreiro
+para destrancar esta porta.
+*219*
+Você adquiriu o Crânio de Guerreiro.
+*220*
+Você precisa da Chave de Carneiro
+para destrancar esta porta.
+*221*
+A porta está trancada.
+*222*H
+[*1]Investida Submersa
+Segure e solte [R1Button] para um rápido impulso
+ou para romper barreiras embaixo d'água.
+*224*
+A porta está trancada.
+*225*
+As Irmäs do Destino exigem um sacrifício de fogo.
+*231*
+[*1]Sou tudo o que resta. . .Agora sei
+[*1]que nunca chegarei até as Irmäs . . .
+*236*T
+[*1]Cabeça de Euríale
+Segure [L2Button] para ativar a Cabeça de Euríale.
+Pressione [UpButton] para selecioná-la.
+-----
+Segure [L2Button] e [SquareButton]
+para petrificar seu inimigo com a Encarada da Górgona.
+*237*
+Sacrifique 5 inimigos para apaziguar as Irmäs.
+Petrifique-os com a Encarada da Górgona.
+Estilhace-os para finalizá-los.
+*240*T
+[*1]Raiva dos Titäs
+Pressione [L3] e [R3] ao mesmo tempo para ativar
+a Raiva dos Titäs.
+---
+Durante a Raiva dos Titäs, todos os ataques 
+têm mais [*1]Poder.
+*243*T
+Segure [L1Button] e pressione [SquareButton], [TriangleButton], ou [CircleButton]
+para ativar golpes especiais.
+*246*
+O portäo está trancado.
+*247*T
+Mantenha [R1Button] press. para se prender a uma manivela.
+Gire [JoystickL] para virar a manivela.
+------
+Näo é necessário virar na mesma velocidade
+do ícone no canto da tela.
+*251*T
+[*1]Destruiçäo de Tifäo
+Segure [L2Button] para ativar a Destruiçäo de Tifäo.
+Pressione [RightButton] para selecioná-la.
+----
+Use para mirar e disparar em
+inimigos ou objetos à distância.
+*252*
+Este portäo está trancado.
+Você precisa da Chave de Euríale.
+*253*T
+Enquanto a Raiva dos Titäs estiver ativada,
+pressione [L3] e [R3] ao mesmo tempo para desativá-la.
+*254*H
+Você näo tem poder suficiente para levantar os dedos.
+*255*T
+Pressione [R1Button] para se soltar do teto.
+*256*
+Você encontrou a Chave de Euríale.
+*257*
+Você usou a Chave de Euríale.
+*258*T
+Use as Asas de Ícaro enquanto estiver em uma
+corrente de ar para ganhar altura e distância.
+*259*
+Você adquiriu a Cabeça de Euríale.
+*260*T
+[*1]Pena de Prometeu
+Destrua armaduras mágicas com a
+Pena de Prometeu [SquareButton] [SquareButton] [TriangleButton].
+*261*
+Você adquiriu a Destruiçäo de Tifäo.
+*262*
+Você adquiriu a Raiva dos Titäs.
+*263*T
+[*1]Agarrar
+Segure [R1Button] para continuar balançando.
+---
+Pressione [XButton] enquanto está balançando para se soltar.
+Pressione [XButton], [XButton] para saltar duas vezes.
+*266*
+Você adquiriu um cabo manivela.
+*267*
+A manivela está sem um cabo.
+*268*
+Você colocou o cabo na manivela.
+*269*T
+Use [JoystickL] para controlar o Pégaso.
+-----
+Pressione [SquareButton] para [*1]Ataque Leve.
+Pressione [TriangleButton] para [*1]Ataque Forte.
+-----
+Pressione [L1Button] para [*1]Investida Lateral Esquerda.
+Pressione [R1Button] para [*1]Investida Lateral Direita.
+Pressione [XButton] para [*1]Investida Frontal.
+*270*T
+[*1]Investida Frontal[*0] esvaziará o medidor azul.
+*271*T
+Pressione [XButton] para a [*1]Investida Frontal.
+*272*T
+Pressione [SquareButton] para [*1]Ataque Leve.
+Pressione [TriangleButton] para [*1]Ataque Forte.
+*277*
+Você adquiriu a Lança do Destino.
+*278*
+Você adquiriu o Martelo Bárbaro.
+*280*T
+Pressione [XButton] para pular na escada.
+Segure [JoystickL] para baixo para deslizar.
+*282*
+Você adquiriu a Lâmina do Olimpo.
+*283*
+Mais uma vida encurtada por Zeus.
+*286*
+Você usou a chave do Guardiäo dos Cavalos.
+*287*T
+Pressione [R1Button] para se soltar
+e se pendurar em uma beirada.
+*288*T
+Pressione [XButton] para subir.
+*291*T
+[*1]Invocaçäo de Alma
+Use [JoystickR] para enviar Almas para atacar os inimigos.
+*292*T
+Pressione [R2Button] para alternar entre as Lâminas
+de Atena e sua Arma Secundária selecionada.
+*293*
+Você deve proteger o Tradutor.
+*294*T
+Pressione o Botäo Start e use [CircleButton]
+para alterar a Arma Secundária selecionada.
+-----
+Você só pode equipar uma Arma Secundária
+por vez.
+*295*T
+Use o Velo de Ouro para desviar
+projéteis e raios dos inimigos,
+pressionando [L1Button] rapidamente no momento
+anterior ao impacto.
+*296*T
+Fique em frente à chama e pressione [L1Button]
+no momento anterior ao impacto para desviá-la.
+*297*
+Para mudar o destino do Olimpo,
+Zeus apela às Moiras.
+*298*
+Os restos desfigurados de seu rosto ainda trazem
+de volta memórias horríveis do passado.
+*360*T
+Mova [JoystickL] para baixo e press. [XButton] para saltar da parede.
+*390*
+Você destrancou a porta com
+o Crânio de Guerreiro.
+*391*
+Você destrancou a porta com
+a Chave de Carneiro.
+*392*
+Você deve colocar as cinzas no fogo
+para ressuscitar a Fênix.
+*393*
+[*1]Upgrade da Raiva dos Titäs
+*394*
+Gaia concede a você o dom da Energia.
+Que seus inimigos tremam diante de sua 
+força recém-adquirida.
+*395*
+Gaia concede a você o dom da Magia.
+Que seus inimigos fujam diante de seu
+poder recém-adquirido.
+*396*
+Você destrancou a porta com
+a Saudaçäo de Bóreas.
+*440*
+Três Viajantes rumo a
+um destino desconhecido.
+*441*
+A luta desgastante entre os
+Titäs e os Olímpicos continua.
+*442*
+Uma alma solitária contempla o rastro
+da matança ao seu redor.
+*443*
+Agora a Raiva dos Titäs causa mais dano, e
+você sofre menos dano de ataques inimigos,
+e o medidor Titä esvazia mais lentamente.
+*444*
+[*1] Ares
+O Deus da Guerra Caído
+*445*
+[*1] Zeus
+Rei dos Deuses
+*446*
+[*1] Poseidon
+Deus do Mar
+*447*
+[*1] Hélios
+Deus do Sol
+*448*
+[*1] Hades
+Deus do Mundo dos Mortos
+*470*
+[*1]Sobrevivência do Mais Forte
+Os deuses o amaldiçoaram e estäo tomando
+sua energia. Elimine todos os inimigos para sobreviver.
+--------
+Adquira bônus de pontos por näo usar a raiva dos titäs.
+*471*
+Você sobreviveu e derrotou seus inimigos.
+*472*
+[*1]Proteja o Fraco
+Evite que o Tradutor
+seja morto.
+--------
+A energia do Tradutor irá
+diminuir fora do anel.
+--------
+Adquira bônus de pontos por manter a
+energia do Tradutor acima de 50 por cento.
+*473*
+Você salvou o Tradutor.
+*474*
+[*1]Colher os Frutos
+Acumule grandes combos e colete no
+mínimo 500 orbes antes que o tempo acabe.
+-------
+Adquira bônus de pontos ao coletar no
+mínimo 600 orbes antes que o tempo acabe.
+*475*
+Você coletou Orbes Vermelhas o suficiente.
+Você está fortalecido!
+*476*
+[*1]Morte de Cima
+Elimine no mínimo 10 inimigos no ar
+antes que o tempo acabe.
+---------
+Adquira bônus de pontos ao matar
+no mínimo 15 inimigos no ar.
+*477*
+Você dominou o combate aéreo.
+*478*
+[*1]A Perfeiçäo é Divina
+Elimine todos os inimigos sem ser atingido.
+------
+Adquira bônus de pontos por
+näo usar a magia.
+*479*
+Você dominou e provou
+suas habilidades de combate.
+*480*
+[*1]Cemitério da Górgona
+Petrifique e estilhace no mínimo 25 inimigos
+antes que o tempo acabe.
+------
+Adquira bônus de pontos estilhaçando
+no mínimo 35 inimigos.
+*481*
+Você destruiu seus inimigos.
+*482*
+[*1] Fúria Cega
+Arranque o olho do Ciclope
+antes que o tempo acabe.
+-------
+Adquira bônus de pontos estilhaçando
+no mínimo 2 inimigos petrificados.
+*483*
+Você arrancou o olho a tempo.
+*484*
+Você salvou o Tradutor e
+adquiriu o bônus.
+*485*
+Você sobreviveu, derrotou seus inimigos e
+adquiriu o bônus.
+*500*T
+Mantenha [R1Button] press. para se prender a uma manivela.
+Mantenha [JoystickL] para cima para mover a manivela.
+*501*T
+Decapitar Medusa sempre dará orbes de magia.
+*502*T
+[*1]Orbes Vermelhas
+Use Orbes Vermelhas para Fortalecer suas 
+Armas e sua Magia.
+*503*T
+Segure [R1Button] enquanto empurra [JoystickL] na direçäo
+para a qual deseja mover o objeto.
+----
+[*1]Chutar
+Segure [R1Button] e [XButton] para carregar um chute.
+Solte quando estiver pronto para chutar.
+*504*T
+Agite [JoystickL] de um lado para o outro rápido para escapar!
+*505*T
+[*1]Escalar Parede
+Use [JoystickL] para se mover ao longo de paredes.
+----
+Mova [JoystickL] para a esquerda, direita, ou para cima
+e [XButton] para pular rapidamente ao longo da parede.
+----
+Mova [JoystickL] para baixo e pressione [XButton] para pular.
+*506*T
+[*1]Nadar
+Use [JoystickL] para nadar.
+Segure [SquareButton] para mergulhar. Segure [TriangleButton] ou [XButton] para subir.
+*507*T
+Pressione [CircleButton] rapidamente para eliminar o Minotauro.
+Eliminar a criatura dessa maneira
+sempre dará Energia a você.
+*508*T
+[*1]Encarada da Górgona
+Segure [L2Button] e [SquareButton] para congelar inimigos.
+Use [JoystickR] para alternar alvos.
+*509*T
+[*1]Destruiçäo de Tifäo
+Segure [L2Button] e pressione [SquareButton] para disparar.
+Use [JoystickR] para alternar alvos.
+*510*T
+Pressione [XButton] para agarrar a beirada.
+Pressione [XButton] novamente para saltar para a beirada.
+*511*T
+Agite [JoystickL] de um lado para o outro rápido para escapar.
+*512*T
+Pressione [L3] e [R3] para ativar a Raiva dos Titäs!
+*513*T
+Agite [JoystickL] de um lado para o outro rápido para escapar.
+*515*T
+[*1]Bloquear
+Pressione [L1Button] para bloquear.
+*516*
+[*1]Mensagem de Dicas
+Você recebeu uma mensagem de dicas.
+Elas däo dicas de como resolver enigmas.
+---
+Elas podem ser desativadas no Menu de Opçöes.
+Pressione o Botäo Select para acessá-lo.
+*517*T
+[*1]Orbes Verdes
+Orbes Verdes recarregam sua Energia.
+*518*T
+Você coletou Orbes Vermelhas o bastante para
+fortalecer suas Armas. Pressione o Botäo Start
+para acessar o [*1]Menu Fortalecer.
+*519*T
+Destrua escudos mágicos com a
+Pena de Prometeu [SquareButton] [SquareButton] [TriangleButton].
+*520*T
+[*1]Orbes Azuis
+Orbes Azuis recarregam sua Magia.
+*521*T
+A Encarada da Górgona näo tem efeito em Górgonas.
+*522*T
+[*1]Orbes da Raiva dos Titäs
+Orbes Douradas recarregam a Raiva dos Titäs.
+*523*T
+[*1]Escada
+Pressione [XButton] para pular.
+Segure [JoystickL] para baixo para deslizar.
+----
+Segure [JoystickL] para baixo e [XButton] para saltar.
+-----
+Você recebeu uma mensagem de tutorial.
+Elas explicam as habilidades de Kratos.
+----
+Elas podem ser desativadas no Menu de Opçöes.
+Pressione o Botäo Select para acessá-lo.
+*527*T
+Alterne entre pressionar [L1Button] e [R1Button] repetidamente
+para escapar das mäos esmagadoras de Colosso.
+*528*T
+Pressione rap. [CircleButton] para abrir portöes de levantar.
+*529*T
+Pressione rapidamente [CircleButton] para carregar a balista.
+*530*T
+Pressione [R1Button] para pegar o corpo.
+Pressione [R1Button] para soltar o corpo.
+*531*T
+Use [SquareButton] para disparar.
+Use [JoystickR] para alternar alvos.
+*532*T
+Pressione [CircleButton] quando ele aparecer acima de um inimigo
+para iniciar o Minijogo.
+*533*T
+[*1]Pulo na Escalada
+Posicione-se próximo à
+borda da fenda.
+----
+Mova [JoystickL] na direçäo que você deseja pular
+e pressione [XButton] para atravessar a fenda.
+*535*T
+[*1]Investida Submersa
+Segure e solte [R1Button] para um rápido impulso
+ou para romper barreiras embaixo d'água.
+*536*T
+[*1]Pendurar-se no Teto
+Use [JoystickL] para se mover ao longo do teto.
+----
+Mova [JoystickL] em uma direçäo e [XButton]
+para se mover rapidamente ao longo do teto.
+*540*
+Você adquiriu o Olho de Ciclope.
+*542*T
+[*1]Esquiva
+Use [JoystickR] para se esquivar.
+*564*T
+[*1]Agarrar
+Pressione [R1Button] para se prender a um Ponto de Ancoragem.
+P. de Ancoragem irradiam luz quando estäo ao alcance.
+---
+Segure [R1Button] para continuar balançando.
+---
+Pressione [XButton] enquanto está balançando para se soltar.
+Pressione [XButton], [XButton] para saltar duas vezes.
+*589*T
+Gire [JoystickL] de acordo com os comandos na tela.
+Um giro por comando.
+*590*
+Fique sob a luz brilhante e pressione
+[R1Button] para salvar seu progresso.
+*601*
+Casa de Banho de Rodes
+*602*
+Palácio de Rodes
+*603*
+Retorno de Hades
+*604*
+A Caverna de Mäo
+*605*
+Fogo do Olimpo
+*606*
+Prisäo Cavernosa de Tifäo
+*607*
+Os Penhascos de Láquesis
+*608*
+O Jardim de Láquesis
+*609*
+Caminho até os Corcéis
+*610*
+Os Corcéis do Tempo
+*611*
+Atrio do Destino
+*612*
+O Templo de Euríale
+*613*
+Rio dos Esquecidos
+*614*
+Vista das Planícies
+*615*
+Derrota de Euríale
+*616*
+Pátio de Atropos 
+*617*
+Travessia das Planícies
+*618*
+Dentro do Poderoso Titä
+*619*
+Ascensäo de Atlas
+*620*
+O Grande Abismo
+*621*
+Libertando a Fênix
+*622*
+O Auditório Leste
+*623*
+Sacrifício das Moiras
+*624*
+O Auditório Oeste
+*625*
+A Câmara da Fênix
+*626*
+Templo das Moiras
+*627*
+O Santuário Interno
+*628*
+A Câmara do Tear
+*629*
+As Poças Divinas
+*630*
+Catacumbas dos Caídos
+*631*
+A Borda da Criaçäo
+*632*
+O Grande Abismo
+*633*
+O Rosto de Atlas
+*634*
+Muralhas do Leste
+*635*
+Diante do Tear
+*636*
+Entrada para o Subsolo
+*700*
+ARMAS
+[*1]
+S
+Use essas ferramentas de guerra
+para executar ataques corpo a corpo fatais.
+*701*
+[*1] [IconBlade] LAMINAS DE ATENA
+[*1]
+B1H
+Lâminas poderosas dadas a você
+pela Deusa Atena.
+*702*
+Elevaçäo de Ícaro (Ar)
+[XButton]
+B1
+Enquanto estiver no ar, pressione [XButton]
+para ganhar altura.
+*703*
+Ascensäo Olímpica
+Segure [TriangleButton]
+B1
+Segure [TriangleButton] para lançar inimigos
+e saltar no ar.
+*704*
+Arpäo de Orion
+[CircleButton]
+B1
+Pressione [CircleButton] enquanto os inimigos estiverem no
+ar para mandá-los de volta ao solo.
+*705*
+Reversäo de Atena
+Pressione [L1Button] rap.
+B1
+Pressione [L1Button] antes de ser atingido
+por um ataque inimigo para bloquear.
+*706*
+Pena de Prometeu
+[SquareButton], [SquareButton], [TriangleButton]
+B1
+Um combo rápido e poderoso
+culminando em uma finalizaçäo feroz.
+*707*
+Ferocidade das Fúrias
+[L1Button] + [CircleButton]
+B2
+Concentre sua raiva em um inimigo
+com este ataque múltiplo.
+*708*
+Ferocidade das Fúrias (Ar)
+[L1Button] + [CircleButton]
+B2
+Balance rapidamente as Lâminas neste
+ataque múltiplo aéreo.
+*709*
+Ciclone de Caos
+[L1Button] + [SquareButton]
+B3
+Balance rapidamente as Lâminas,
+atingindo todos os inimigos ao
+redor múltiplas vezes.
+*710*
+Ciclone de Caos (Ar)
+[L1Button] + [SquareButton]
+B3
+Enquanto estiver no ar, balance rapidamente
+as Lâminas, acertando todos os
+inimigos múltiplas vezes.
+*711*
+Espírito de Hércules
+[TriangleButton], [TriangleButton], [TriangleButton]
+B3
+Um poderoso, mas lento, combo múltiplo
+com uma finalizaçäo explosiva que
+lança os inimigos no ar.
+*712*
+Heroísmo de Hércules
+[TriangleButton], [TriangleButton], [SquareButton]
+B3
+Um poderoso, mas lento, combo múltiplo
+que manda os inimigos para o ar.
+*713*
+Propulsäo de Hipérion (Correr)
+Seg. [SquareButton]
+B4
+Segure [SquareButton] para fazer um arco com suas lâminas,
+continue segurando [SquareButton] para iniciar
+uma investida.
+*714*
+Assalto de Hipérion (Corrida)
+[SquareButton]
+B4
+Durante uma Propulsäo de Hipérion,
+pressione [SquareButton] para chocar-se
+contra o inimigo.
+*715*
+Ascensäo de Hipérion (Corrida)
+[TriangleButton]
+B4
+Durante uma Propulsäo de Hipérion,
+pressione [TriangleButton] para dar
+um gancho que lançará os inimigos no ar.
+*716*
+Ira de Atena (Esquivando-se)
+[JoystickR], [TriangleButton]
+B4
+Enquanto estiver se esquivando ([JoystickR]), pressione [TriangleButton]
+para criar uma onda explosiva no chäo,
+lançando no ar os inimigos à sua frente.
+*717*
+Raiva do Tártaro
+[L1Button] + [TriangleButton]
+B5
+Balance as Lâminas em
+vários inimigos, lançando-os
+no ar.
+*718*
+Raiva do Tártaro (Ar)
+[L1Button] + [TriangleButton]
+B5
+Enquanto estiver no ar, mergulhe executando vários
+ataques e aterrisse com uma finalizaçäo explosiva,
+lançando os inimigos no ar.
+*719*
+[*1] [IconHammer] MARTELO BARBARO
+[*1]
+H1H
+Martelo manchado com o
+sangue do Rei Bárbaro.
+*720*
+Derrota Esmagadora
+[L1Button] + [SquareButton]
+H1
+Um lento ataque giratório que
+rapidamente ganha velocidade.
+*721*
+Poder do Rei
+[L1Button] + [TriangleButton]
+H1
+Um poderoso ataque que cria
+uma onda poderosa na sua frente,
+lançando os inimigos no ar.
+*722*
+Poder do Rei (Ar)
+[L1Button]
+H1
+Um poderoso ataque aéreo que cria
+uma onda poderosa na sua frente,
+lançando os inimigos no ar.
+*723*
+Invocaçäo de Alma
+Mova [JoystickR]
+H2
+Mova o direcional analógico direito ([JoystickR])
+para invocar uma Alma Amaldiçoada
+para seguir suas ordens.
+*724*
+Legiäo de Almas
+[L1Button] + [CircleButton]
+H3
+Convoque uma Legiäo de Almas Amaldiçoadas 
+para atacar inimigos desprevenidos.
+*725*
+[*1] [IconStaff] LANCA DO DESTINO
+[*1]
+C1H
+Arma do Cavaleiro das Trevas,
+arrancada do cadáver do Grifo.
+*726*
+Corte Mortal
+[L1Button] + [SquareButton]
+C1
+Faça um arco amplo com a Lança
+atingindo vários inimigos.
+*727*
+Fragmentos Perfurantes
+[L1Button] + [TriangleButton]
+C1
+Dispare vários
+projéteis afiados como lâminas.
+*728*
+Fragmentos Perfurantes (Ar)
+[L1Button]
+C1
+Dispare vários projéteis afiados
+como lâminas enquanto estiver no ar.
+*729*
+Restos Infelizes
+[L1Button] + [CircleButton]
+C2
+Use a lança para criar obstáculos mortais
+que explodiräo ao encostarem no inimigo.
+*730*
+Golpe Mutável
+[L1Button] + [SquareButton]
+C3
+Faça um arco amplo com a lança.
+Todos os inimigos atingidos
+explodiräo após um curto período.
+*731*
+[*1] [IconOlympus] LAMINA DO OLIMPO
+[*1]
+O1H
+Esta lâmina pôs fim à Grande Guerra de Titäs,
+e agora contém todo o seu poder divino.
+*732*
+Absolviçäo Divina
+[L1Button] + [SquareButton]
+O1
+Perfure o inimigo várias
+vezes com a lâmina.
+*733*
+Retribuiçäo Divina
+[L1Button] + [TriangleButton]
+O1
+Libere uma explosäo de
+Poder Divino.
+*734*
+Retribuiçäo Divina (Ar)
+[L1Button]
+O1
+Enquanto estiver no ar, libere
+uma explosäo de Poder Divino.
+*735*
+Sacrifício Divino
+[L1Button] + [CircleButton]
+O2
+Drena orbes de todos os inimigos
+que encostarem na
+esfera de poder sagrado.
+*736*
+Ira dos Deuses
+[SquareButton] ou [TriangleButton]
+O3
+Agora todos os ataques lançam
+potentes explosöes de Poder Divino.
+*737*
+MAGIA
+[*1]
+S
+Um poderoso complemento
+ao seu arsenal letal.
+*738*
+[*1] [IconLightning] RAIVA DE POSEIDON
+[*1]
+L1H
+Ataque vários inimigos de uma vez com este
+poderoso dom de Lorde Poseidon.
+*739*
+Ira de Poseidon
+[L2Button], Pressione [CircleButton] rap.
+L1
+Pressione [L2Button] para ativar este poderoso ataque de energia.
+E pressione rapidamente [CircleButton] para aumentar
+o dano e o raio do ataque.
+*740*
+[*1] [IconWind] DESTRUICAO DE TIFAO
+[*1]
+W1H
+Ataque os inimigos à distância
+com esta arma arrancada do
+olho de Tifäo.
+*741*
+Rajada de Vento
+[L2Button] + [SquareButton]
+W1
+Segure [L2Button], e pressione [SquareButton]
+para disparar uma rajada de vento em seu inimigo.
+*742*
+Rajada de Vento (Ar)
+[L2Button] + [SquareButton]
+W1
+Enquanto estiver no ar, segure [L2Button], e pressione [SquareButton]
+para disparar uma rajada de vento em seu inimigo.
+*743*
+Vórtex Letal
+[L2Button] + [TriangleButton]
+W2
+Segure [L2Button], e pressione [TriangleButton]
+para liberar um redemoinho
+que lança os inimigos no ar.
+*744*
+Rajada de Vento (Carregado)
+[L2Button] + Seg. [SquareButton]
+W3
+Enquanto segura [L2Button], segure [SquareButton] e solte
+para disparar várias rajadas de vento guiadas.
+*745*
+Tempestade Titânica
+[L2Button] + [CircleButton]
+W3
+Segure [L2Button], e pressione [CircleButton]
+para comandar uma tempestade raivosa
+com uma ampla área de dano.
+*746*
+[*1] [IconElectric] RAIVA DE CRONOS
+[*1]
+T1H
+A ira do Grande Lorde Titä
+flui através de você.
+*747*
+Raiva de Cronos
+[L2Button]
+T1
+Pressione [L2Button] para criar uma
+orbe de raios que atingirá vários inimigos.
+Até 3 orbes podem ser posicionadas.
+*748*
+Raiva de Cronos (Ar)
+[L2Button]
+T1
+Enquanto estiver no ar, pressione [L2Button] para
+criar uma orbe de raios que atingirá vários inimigos.
+Até 3 orbes podem ser posicionadas.
+*749*
+[*1] [IconMedusa] CABECA DE EURÍALE
+[*1]
+M1H
+O olhar desta criatura maligna
+transforma os inimigos em pedra.
+*750*
+Encarada da Górgona
+[L2Button] + [SquareButton]
+M1
+Segure [L2Button] e segure [SquareButton]
+até que o inimigo em seu campo de visäo
+se transforme em pedra.
+*751*
+Encarada da Górgona (Ar)
+[L2Button] + [SquareButton]
+M1
+Enquanto estiver no ar, segure [L2Button] e segure [SquareButton]
+até que o inimigo em seu campo de visäo
+se transforme em pedra.
+*752*
+Claräo da Górgona
+[L2Button] + [TriangleButton]
+M2
+Segure [L2Button] e pressione [TriangleButton]
+para transformar os inimigos em pedra
+com um único olhar.
+*753*
+Claräo da Górgona (Ar)
+[L2Button] + [TriangleButton]
+M2
+Enquanto estiver no ar, segure [L2Button] e pressione [TriangleButton]
+para transformar os inimigos em pedra
+com um único olhar.
+*754*
+Explosäo da Górgona
+[L2Button] + [CircleButton]
+M3
+Segure [L2Button] e pressione [CircleButton]
+para liberar um surto de magia de Euríale
+capaz de petrificar vários inimigos.
+*755*
+Explosäo da Górgona (Ar)
+[L2Button] + [CircleButton]
+M3
+Enquanto estiver no ar, segure [L2Button] e pressione [CircleButton]
+para liberar um surto de magia de Euríale
+capaz de petrificar vários inimigos.
+*756*
+Raiva da Górgona
+[L2Button] + Segure [CircleButton]
+M3
+Enquanto segura [L2Button], segure [CircleButton] e solte
+para transformar todos os inimigos ao redor em pedra.
+*757*
+[*1] [IconEarth] TREMOR DE ATLAS
+[*1]
+E1H
+Um presente do poderoso Atlas,
+o poder da terra está ao seu dispor
+para destruir seus inimigos.
+*758*
+Terra Estremecente
+[L2Button]
+E1
+Bata no chäo com seus punhos,
+lançando destroços contra os inimigos
+e causando dano em um amplo raio.
+*759*
+Terra Estremecente (Ar)
+[L2Button]
+E1
+Esmurre o chäo do ar,
+criando destroços e
+causando dano em um raio amplo.
+*760*
+Terra Destrutiva
+[L2Button], Pressione [CircleButton] rap.
+E3
+Pressione [L2Button] para causar um terremoto,
+e pressione rapidamente [CircleButton] para criar
+mais destroços e causar mais dano.
+*761*
+Terra Destrutiva (Ar)
+[L2Button], Press. [CircleButton] rap.
+E3
+Enquanto estiver no ar, pressione [L2Button] para causar um
+terremoto, e pressione rapidamente [CircleButton] para criar
+mais destroços e causar mais dano.
+*762*
+RELÍQUIAS
+[*1]
+S
+Itens míticos para ajudá-lo
+em sua jornada até as Irmäs do Destino.
+*763*
+[*1] [IconLightning] TRIDENTE DE POSEIDON
+[*1]
+P1H
+Este símbolo do poder de Poseidon
+faz com que você respire embaixo d'água.
+*764*
+Emergir
+[TriangleButton] ou [XButton]
+P1
+Para nadar para cima, segure [TriangleButton] ou
+segure [XButton].
+*765*
+Mergulhar
+[SquareButton]
+P1
+Para mergulhar, segure [SquareButton].
+*766*
+Investida Submersa
+Segure [R1Button]
+P1
+Segure e solte [R1Button]
+para dar uma investida embaixo d'água
+e destruir objetos que bloqueiam seu caminho.
+*767*
+[*1] [IconHelmet] RAIVA DOS TITAS
+[*1]
+R1H
+Deixe que a Raiva dos Titäs
+guie as suas lâminas!
+*768*
+Ativar a Raiva dos Titäs
+[L3] + [R3]
+R1
+Pressione [L3] e [R3] simultaneamente
+para invocar
+a Raiva do Titäs.
+*769*
+Labareda de Prometeu
+[L1Button]
+R1
+Pressione [L1Button] para lançar uma explosäo de fogo
+que derrubará os inimigos próximos.
+*770*
+Tormento de Prometeu
+[SquareButton], Segure [SquareButton]
+B4
+Pressione [SquareButton] e mantenha pressionado
+para executar um ataque radial ardente contínuo.
+*771*
+Inferno de Prometeu
+Segure [L1Button]
+B5
+Quando o medidor de combo estiver em 25 ou mais,
+segure [L1Button] para liberar uma torrente ardente de dor
+que causará dano nos inimigos ao redor.
+*772*
+[*1] [IconAmuletFates] AMULETO DAS MOIRAS
+[*1]
+A1H
+Use o poder do tempo para
+obter sua vingança.
+*773*
+Ativar Amuleto
+[L1Button] + [R1Button]
+A1
+Segure [L1Button] e [R1Button] para desacelerar temporariamente o
+tempo ao se aproximar de uma Estátua das Moiras ativa.
+Näo pode ser ativado junto com a Raiva dos Titäs.
+*774*
+[*1] [IconGoldenFleece] VELO DE OURO
+[*1]
+G1H
+Permite refletir ataques,
+projéteis e raios dos inimigos.
+*775*
+Retorno de Argo
+[L1Button]
+G1
+Pressione [L1Button] antes de ser atingido
+para rebater um ataque, projétil ou raio.
+*776*
+Vingança de Argo
+[L1Button], [SquareButton]
+G1
+Após bloquear um golpe, pressione [SquareButton]
+para realizar um poderoso contra-ataque
+causando danos nos inimigos próximos.
+*777*
+[*1] [IconIcarus] ASAS DE ÍCARO
+[*1]
+I1H
+Asas arrancadas de Ícaro,
+que concedem um breve voo.
+*778*
+Planar de Ícaro (Ar)
+Segure [XButton]
+I1
+Enquanto estiver no ar, pressione [XButton] e mantenha-o
+pressionado para planar por um breve período.
+*779*
+Ascensäo de Ícaro
+[L1Button] + [XButton]
+I1
+Use as asas para
+lançar inimigos próximos
+e saltar no ar.
+*780*
+Ataque de Ícaro (Ar)
+[L1Button] + [XButton]
+I1
+Enquanto estiver no ar, execute
+um rápido ataque com as asas.
+*799*
+[*1] [IconQuestionMark]      ? ? ? ? ? ?
+Bloqueado
+[*2]  -  novo
+[TriangleButton] = Voltar
+[XButton] = Fechar grupo
+[XButton] = Abrir grupo
+*801*
+Rodes
+0
+*802*
+Os Céus da Grécia
+0
+*803*
+Gruta de Titä
+0
+*804*
+Caverna de Tifäo
+0
+*805*
+Os Confins do Mundo
+0
+*806*
+O Templo de Láquesis
+0
+*807*
+Os Corcéis do Tempo
+0
+*808*
+O Saläo de Láquesis
+0
+*809*
+Atrio do Destino
+0
+*810*
+O Pântano dos Esquecidos
+0
+*811*
+O Templo de Euríale
+0
+*812*
+As Ruínas dos Esquecidos
+0
+*813*
+O Saläo de Atropos 
+0
+*814*
+Travessia das Planícies
+0
+*815*
+Ponte de Ancoragem do Destino
+0
+*816*
+O Grande Abismo
+0
+*817*
+Atlas
+0
+*818*
+O Palácio das Moiras
+0
+*819*
+Auditório de Láquesis
+0
+*820*
+O Jardim dos Deuses
+0
+*821*
+Auditório de Atropos
+0
+*822*
+A Câmara da Fênix
+0
+*823*
+O Templo das Moiras
+0
+*824*
+O Trono de Láquesis
+0
+*825*
+O Templo do Oráculo
+0
+*826*
+A Câmara do Tear
+0
+*827*
+O Cume do Sacrifício
+0
+*828*
+Bônus Concluído
+0
+*829*
+Bônus Fracassado
+0
+*898*
+A Estrada para a E3 . . .
+AAP
+Voltando para a estrada.
+Pressione [XButton] para reproduzir.
+[*1]
+[*1]
+[*1]
+[*1]
+BonusRoadtoE3
+*899*
+Créditos
+AAP
+Assista o Filme dos Créditos.
+Pressione [XButton] para reproduzir.
+[*1]
+[*1]
+[*1]
+[*1]
+BonusCredits
+*900*
+Desafio dos Titäs
+G0C
+7 Areas, 7 Desafios.
+Consegue sobreviver a todos?
+Pressione [XButton] para reproduzir.
+7 Areas, 7 Desafios.
+Consegue sobreviver a todos?
+Termine o jogo para desbloquear.
+*901*
+Arena das Moiras
+C3F
+Controle seu próprio destino
+e combata segundo suas próprias regras . . .
+Pressione [XButton] para jogar.
+Controle seu próprio destino
+e combata segundo sua próprias regras . . .
+Vença o Modo Desafio com Classificaçäo de Titä.
+*902*
+Modo Titä
+G0
+A experiência definitiva de God of War® II.
+Somente para jogadores avançados.
+Selecione-o no menu de Novo Jogo.
+A experiência definitiva de God of War® II.
+Somente para jogadores avançados.
+Termine o jogo para desbloquear.
+*903*
+Urnas de Poder
+G0
+Durante uma Sessäo Bônus, você pode usar
+as Urnas em sua posse.
+Selecione no menu Status.
+Colete Urnas preciosas
+e empunhe o Poder supremo.
+Termine o jogo para desbloquear.
+*904*
+Traje Bônus 1
+G0
+Kratos usando um traje de peixe
+resulta no Bacalhau da Guerra!
+Selecione-o ao iniciar uma Sessäo Bônus.
+A vida de Kratos sempre foi
+uma batalha contra a correnteza . . .
+Termine o jogo para desbloquear.
+*905*
+Traje Bônus 2
+G0
+Armadura forjada com
+as Escamas da Mortal Hidra.
+Selecione-a ao iniciar uma Sessäo Bônus.
+Sempre quis saber o que
+fizeram com o corpo . . .
+Termine o jogo para desbloquear.
+*906*
+Traje Bônus 3
+G2
+Embarque em uma Odisseia Obscura
+com um guerreiro adequado para a tarefa.
+Selecione-o ao iniciar uma Sessäo Bônus.
+O caminho da vingança
+é um caminho obscuro . . .
+Termine o jogo no Modo Deus para desbloquear.
+*907*
+Traje Bônus 4
+G3
+Jogue o jogo como
+a nobre Deusa Atena.
+Selecione-a ao iniciar uma Sessäo Bônus.
+Por que ser um Deus da Guerra,
+quando se pode ser uma deusa?
+Termine o jogo no Modo Titä para desbloquear.
+*908*
+Traje Bônus 5
+G3
+Agora você pode ter a força
+e a aparência de Hércules.
+Selecione-o ao iniciar uma Sessäo Bônus.
+Os Clássicos
+nunca saem de moda . . .
+Termine o Jogo no Modo Titä para desbloquear.
+*909*
+Traje Bônus 6
+CE
+General Kratos retorna do passado,
+e está sob seu comando.
+Selecione-o ao iniciar uma Sessäo Bônus.
+A única coisa que assombra
+um fantasma é o seu passado . . .
+Colete 20 Olhos de Ciclope para desbloquear.
+*910*
+Traje Bônus 7
+C2
+Vista a armadura de Deus da Guerra
+para inspirar medo nos seus inimigos.
+Selecione-a ao iniciar uma Sessäo Bônus.
+Você se esforçou tanto para conquistá-la,
+Seria uma pena desperdiçá-la.
+Vença o Modo Desafio com Classificaçäo dos Deuses.
+*911*
+Filmes de Jogo - Alta Resoluçäo
+G0P
+Assista todos os filmes em Alta Resoluçäo.
+Pressione [XButton] para reproduzir.
+[XButton] pular, [TriangleButton] encerrar.
+Assista todos os filmes em Alta Resoluçäo.
+Termine o jogo para desbloquear.
+[*1]
+DeathKratos
+IsleKickDoor
+BKArenaFight
+AtlasTitanWar
+DeathAthena
+EndMovie
+*912*
+Filmes de Jogo - Formato de História
+G0P
+Assista os Filmes do Jogo em ordem.
+Pressione [XButton] para reproduzir.
+[XButton] pular, [TriangleButton] encerrar.
+Assista os Filmes do Jogo em ordem.
+Termine o jogo para desbloquear.
+[*1]
+IntroHUD
+ColossusEye
+ColossusHand
+BladeOffer
+DeathColossus
+ZeusIntoEagle
+DeathKratos
+IntroPegasus
+IntroPrometheus
+ItemTitanRage
+PegaRevealIsle
+IsleKickDoor
+IntroTheseus
+ItemLightning
+IsleHorsePull
+IsleLahkesisStatue
+Dock1EyeExplode
+BKDragIntro
+BKArenaFight
+Bog20TempleSlide
+IntroPerseus
+Dock2EyeExplode
+IntroIcarus
+DeathIcarus
+AtlasHand
+AtlasTitanWar
+ItemEarthquake
+Translator1Death
+Translator2Death
+SummonLavaGeyser
+SeparatePhoenix
+DeathLastSpartan
+GaiaPepTalk
+DeathKraken
+PhoenixFlight
+IntroLahkesis
+IntroAtropos
+MirrorDestroy
+MirrorProtect
+RhodesReturn
+DeathAthena
+EndMovie
+*913*
+Créditos
+AAP
+Assista o Filme dos Créditos.
+Pressione [XButton] para reproduzir.
+[*1]
+[*1]
+[*1]
+[*1]
+BonusCredits
+*1025*T
+Pressione [CircleButton] para desmontar o Cavaleiro.
+*1026*
+Pressione [XButton] para subir na beirada.
+Pressione [CircleButton] para se pendurar em uma beirada.
+*1101*
+[*1]Urna de Gaia
+Ative durante uma Sessäo Bônus
+para adquirir uma habilidade especial.
+*1102*
+[*1]Urna das Górgonas
+Ative durante uma Sessäo Bônus
+para adquirir uma habilidade especial.
+*1103*
+[*1]Urna do Olimpo
+Ative durante uma Sessäo Bônus
+para adquirir uma habilidade especial.
+*1104*
+[*1]Urna de Prometeu
+Ative durante uma Sessäo Bônus
+para adquirir uma habilidade especial.
+*1111*
+[*1]Urna de Gaia
+Ative a habilidade especial
+da Urna no menu Status.
+*1112*
+[*1]Urna das Górgonas
+Ative a habilidade especial
+da Urna no menu Status.
+*1113*
+[*1]Urna do Olimpo
+Ative a habilidade especial
+da Urna no menu Status.
+*1114*
+[*1]Urna de Prometeu
+Ative a habilidade especial
+da Urna no menu Status.
+*1500*
+Javali Selvagem
+Boar00
+*1501*
+Cäo Raivoso
+Rabdog00
+*1502*
+Semente de Cérbero
+Cerpup00
+*1503*
+Harpia
+Harpy00
+*1504*
+Harpia de Hades
+Harpy20
+*1505*
+Harpia Amaldiçoada
+Harpy30
+*1506*
+Ninfa
+Bug10
+*1507*
+Ninfa de Hades
+Bug20
+*1508*
+Mulher Grega
+Greekf00
+*1509*
+Cidadäo Grego
+Greekm00
+*1510*
+Restos Mortais Amaldiçoados
+Bones00
+*1511*
+Arqueiro de Rodes
+rharch00
+*1512*
+Arqueiro Morto-Vivo
+Archer00
+*1513*
+Arqueiro Amaldiçoado
+Archer10
+*1514*
+Soldado de Rodes
+rhsold00
+*1515*
+Mercenário Bárbaro
+bkarmy00
+*1516*
+Senhor das Bestas
+train00
+*1517*
+Legionário Morto-Vivo
+Skelly00
+*1518*
+Legionário Amaldiçoado
+Skelly10
+*1519*
+Espectro de Atenas
+Wraith00
+*1520*
+Espectro de Asfódelo
+Wraith10
+*1521*
+Monstro de Hades
+Orderp00
+*1522*
+Sentinela das Moiras
+Orders00
+*1523*
+Guardiäo das Moiras
+Orders10
+*1524*
+Gigante das Moiras
+Orderl00
+2
+*1525*
+Gigante de Hades
+Orderl10
+2
+*1526*
+Capitäo Legionário
+Captan00
+2
+*1527*
+Legionário de Hades
+Captan10
+2
+*1528*
+Sátiro
+Satyr00
+2
+*1529*
+Sátiro Campeäo
+Satyr10
+2
+*1530*
+Sirene
+Siren00
+2
+*1531*
+Sirene Viúva
+Siren10
+2
+*1532*
+Górgona
+Medusa00
+2
+*1533*
+Górgona Assassina
+Medusa10
+2
+*1534*
+Rainha Górgona
+Medusa20
+2
+*1535*
+Soldado Minotauro
+Mintar00
+2
+*1536*
+Minotauro de Hades
+Mintar30
+2
+*1537*
+Minotauro de Erebo
+Mintar40
+2
+*1538*
+Sumo Sacerdote das Moiras
+priest10
+1
+*1539*
+Ciclope Bruto
+Cyclop00
+1
+*1540*
+Ciclope Tirano
+Cyclop01
+1
+*1541*
+Ciclope Selvagem
+Cyclop30
+1
+*1542*
+Cérbero
+Cerbus10
+1
+*1543*
+Cérbero Patriarca
+Cerbus00
+1
+*1544*
+Titä Minotauro
+rock10
+1
+*3900*
+2750
+*3901*
+5250
+*3902*
+9500
+*3903*
+13500
+*3910*
+1650
+*3911*
+3500
+*3920*
+2500
+*3921*
+12500
+*3930*
+3350
+*3931*
+15000
+*3940*
+4500
+*3941*
+10000
+*3950*
+4000
+*3951*
+8000
+*3960*
+3750
+*3961*
+12500
+*3970*
+4500
+*3971*
+17500
+*3980*
+9000
+*3981*
+25000
+*4000*
+[XButton] = Continuar
+[XButton] = Selecionar
+[TriangleButton] = Cancelar
+[TriangleButton] = Voltar
+[XButton] = Fortalecer
+[XButton]
+[CircleButton] = Trocar de Arma
+Voltar = [TriangleButton]
+*4001*
+Ligado
+*4002*
+Desligado
+*4003*
+Sim
+*4004*
+Näo
+*4005*
+Pausa
+*4006*
+Opçöes
+*4007*
+Golpes
+*4008*
+Itens
+*4009*
+Fortalecer
+*4010*
+Continuar
+*4011*
+Reiniciar do Ultimo Checkpoint
+*4012*
+Sair do Jogo
+*4013*
+Voltar Para os Tesouros
+*4014*
+Voltar Para o Menu de Pausa
+*4015*
+Você deseja trocar para o Modo Fácil?
+(Só o combate será afetado por esta alteraçäo)
+*4016*
+Tem certeza de que deseja reiniciar?
+Tem certeza de que deseja sair do jogo?
+*4017*
+Tem certeza de que deseja
+voltar para os Tesouros?
+*4018*
+VOCE MORREU
+*4019*
+VOCE FRACASSOU
+*4020*
+Golpes
+*4021*
+Carregando . . .
+*4022*
+BLOQUEADO
+*4023*
+Reiniciar Desafio
+*4024*
+Voltar às Opçöes de Arena
+*4025*
+Reiniciar Arena de Combate
+*4026*
+Voltar para a Seleçäo de Desafio
+*4027*
+Tem certeza de que deseja
+voltar para a Seleçäo de Desafio?
+*4028*
+Tem certeza de que deseja
+voltar para as Opçöes de Arena?
+*4029*
+Segurar
+*4030*
+Tem certeza de que deseja
+trocar para o Modo Fácil?
+(Após trocar, näo poderá voltar atrás)
+*4031*
+Adquirido
+*4032*
+Eliminaçöes Aéreas:
+*4033*
+Aniquilados:
+*4100*
+Você adquiriu um Olho de Górgona.
+*4101*
+Pegue [/:HealthShardsNeeded] mais para aumentar
+sua Energia total.
+*4102*
+Você adquiriu uma Pena de Fênix.
+*4103*
+Pegue [/:MagicShardsNeeded] mais para aumentar
+sua Magia total.
+*4104*
+6 Olhos de Górgona adquiridos.
+*4105*
+Aumento do Medidor de Energia.
+*4106*
+Sacrifício aceito.
+*4107*
+6 Penas de Fênix adquiridas.
+*4108*
+Aumento do Medidor de Magia.
+*4110*
+Você adquiriu um Olho de Ciclope.
+*4111*
+Colete olhos o suficiente para
+desbloquear um Tesouro bônus.
+*4150*
+Controle de Jogo
+*4151*
+Modo de Som:
+*4152*
+Mono
+*4153*
+Estéreo
+*4154*
+Surround
+*4155*
+Volume dos Efeitos
+*4156*
+Volume da Música
+*4157*
+Suavizaçäo:
+*4158*
+Varredura Progressiva:
+*4159*
+Tela Cheia:
+*4160*
+Vibraçäo:
+*4161*
+Voltar para o Menu Principal
+*4162*
+Controle de Voo:
+*4163*
+Normal
+*4164*
+Invertido
+*4165*
+Dicas/Tutoriais:
+*4166*
+Nenhum
+Somente Dicas
+Somente Tutoriais
+Ambos
+*4200*
+Usar Magia
+*4201*
+Bloquear
+*4202*
+Menus
+*4203*
+Rolar/Esquiva
+*4204*
+Ataque Forte
+*4205*
+Pular
+*4206*
+Ataque Leve
+*4207*
+Açäo/Interagir
+*4208*
+Agarrar
+*4209*
+Caminhar/Correr
+*4210*
+Usar Arma Secundária
+*4211*
+Ativar
+Raiva dos Titäs
+*4250*
+Varredura Progressiva ativada.
+*4251*
+ATENCAO.
+*4252*
+Se a sua televisäo näo suportar o modo 
+de Varredura Progressiva, sua tela ficará
+preta. O menu reaparecerá após alguns
+segundos.
+*4253*
+Deseja continuar?
+*4254*
+Deseja manter esta configuraçäo?
+*4300*
+Olhos de Górgona
+*4301*
+Penas de Fênix
+*4302*
+Amuleto das Moiras
+*4303*
+Asas de Ícaro
+*4304*
+Velo de Ouro
+*4305*
+Crânio de Guerreiro
+*4306*
+Chave de Carneiro
+*4307*
+Escudo de Perseu
+*4308*
+Tridente de Poseidon
+*4309*
+Olho de Ciclope
+*4310*
+Você precisa de [/:HealthShardsNeeded] mais
+para expandir sua
+Barra de Energia em 1 Nível.
+*4311*
+Encontre 6 Olhos de
+Górgona para expandir
+sua Barra de Energia.
+*4312*
+Você coletou
+todos os
+Olhos de Górgona.
+*4315*
+Você precisa de [/:MagicShardsNeeded] mais
+para expandir sua
+Barra de Magia em 1 Nível.
+*4316*
+Encontre 6 Penas de
+Fênix para expandir
+sua Barra de Magia.
+*4317*
+Você coletou
+todas as
+Penas de Fênix.
+*4318*
+O Tridente de Poseidon
+faz com que você
+respire embaixo d'água.
+[LB]
+Emergir: Segure [TriangleButton] ou [XButton]
+Mergulhar: Segure [SquareButton]
+Investida Submersa: Segure [R1Button]
+*4320*
+Uma Relíquia Sagrada
+que permite Desacelerar
+Temporariamente o Tempo.
+[LB]
+Quando estiver ao alcance
+de uma Estátua das Moiras,
+Segure [L1Button] e Pressione [R1Button].
+*4321*
+[PS2_CyclopsEye_Count] / 20
+Mate o Ciclope
+E Colete o Olho
+para ganhar um Tesouro bônus.
+*4322*
+Você matou Ciclopes o suficiente.
+Traje Bônus Desbloqueado.
+*4325*
+Asas arrancadas de Ícaro.
+Concedem a
+habilidade de planar.
+[LB]
+Enquanto estiver no Ar,
+Mantenha [XButton] pressionado.
+*4327*
+O Mítico Velo permite
+Refletir Ataques,
+Projéteis e Raios.
+[LB]
+Antes de ser atingido,
+Pressione [L1Button] para Bloquear.
+*4330*
+O Crânio de um
+Guerreiro morto
+em batalha.
+*4331*
+O Chifre de Carneiro
+é um antigo símbolo 
+de grande poder.
+*4332*
+A superfície deste escudo
+Brilha como um Espelho.
+*4333*
+Urna de poder
+*4334*
+[/:UrnStatus] / 6
+Estas Urnas contêm
+um poder sem limites.
+[LB]
+Veja suas urnas
+coletadas no menu Status.
+*4335*
+[/:UrnStatus] / 6
+Você encontrou todas
+as Urnas de Poder.
+[LB]
+Ative-as durante
+uma Sessäo Bônus.
+*4339*
+Item Bloqueado
+*4341*
+Items desta tela näo
+podem ser fortalecidos.
+*4450*
+Insira o disco de God of War® II.
+*4451*
+Disco Incorreto.
+*4452*
+Reinsira para continuar.
+*4453*
+O Disco foi removido.
+*4454*
+Controle näo suportado.
+*4455*
+Conecte um controle.
+*4456*
+Conecte um controle
+para continuar.
+*4457*
+O controle foi
+desconectado.
+*4500*
+Entrada de
+MEMORY CARD 1
+*4501*
+Entrada de
+MEMORY CARD 2
+*4502*
+Selecione um arquivo para carregar.
+*4503*
+Selecione um arquivo para salvar.
+*4504*
+Salvando arquivo.
+*4505*
+Näo desligue o console.
+*4506*
+Criar novo arquivo de God of War® II?
+*4507*
+Substituir arquivo de God of War® II?
+*4508*
+Näo há dados salvos.
+*4509*
+Erro ao carregar arquivo.
+*4510*
+Erro ao salvar arquivo.
+*4511*
+Erro ao formatar
+o MEMORY CARD (PS2)
+na Entrada de MEMORY CARD [PS2_MemoryCard_CardSlot].
+*4512*
+Erro ao ler o jogo salvo.
+*4513*
+Carregando jogo salvo.
+*4514*
+Carregar jogo salvo de God of War® II?
+*4515*
+Espaço livre insuficiente
+para um novo arquivo salvo
+no MEMORY CARD (PS2)
+nas Entradas de MEMORY CARD 1 e 2.
+*4516*
+Formatando
+o MEMORY CARD (PS2)
+na Entrada de MEMORY CARD [PS2_MemoryCard_CardSlot].
+*4517*
+O MEMORY CARD (PS2)
+na Entrada de MEMORY CARD [PS2_MemoryCard_CardSlot] näo está formatado.
+*4518*
+Nenhum MEMORY CARD (PS2)
+foi encontrado nas Entradas de MEMORY CARD 1 ou 2.
+*4519*
+MEMORY CARD (PS2
+encontrado nas Entradas de MEMORY CARD [PS2_MemoryCard_CardSlot].
+*4520*
+Näo há espaço o suficiente para criar dados salvos.
+*4521*
+E necessário no mínimo 525KB de espaço 
+livre para os dados de God of War® II.
+*4522*
+Espaço livre insuficiente
+para um novo arquivo salvo
+no MEMORY CARD (PS2)
+na Entrada de MEMORY CARD [PS2_MemoryCard_CardSlot].
+*4523*
+Os Dados Salvos contém Tesouros 
+desbloqueados, mas nenhum Jogo Salvo.
+*4524*
+Carregamento Concluído.
+*4525*
+Salvamento Concluído.
+*4526*
+Formataçäo Concluída.
+*4527*
+Deseja formatar e criar um novo jogo salvo?
+*4528*
+Carregar Tesouros desbloqueados?
+*4529*
+Deseja iniciar o jogo?
+*4530*
+Gostaria de salvar o jogo?
+*4531*
+Gostaria de salvar seu progresso?
+*4532*
+Zeus lhe deu a oportunidade
+de salvar seu progresso.
+*4533*
+Nenhum MEMORY CARD (PS2)
+foi encontrado na Entrada de MEMORY CARD [PS2_MemoryCard_CardSlot].
+*4534*
+Salvar: [/:mcSave]/10
+*4535*
+Gaia lhe deu a oportunidade
+de salvar seu progresso.
+*4550*
+Você concluiu God of War® II.
+[LB]
+Tesouros foram desbloqueados.
+A Lâmina do Olimpo foi desbloqueada
+e pode receber upgrades na Sessäo Bônus.
+[LB]
+Classificaçäo: [PS2_PlayerGrade]
+*4552*
+Você concluiu God of War® II
+no Modo Deus.
+Tesouros foram desbloqueados.
+A Lâmina do Olimpo foi desbloqueada
+e pode receber upgrades na Sessäo Bônus.
+[LB]
+Classificaçäo: [PS2_PlayerGrade]
+*4553*
+Você concluiu God of War® II
+no Modo Titä.
+Tesouros foram desbloqueados.
+A Lâmina do Olimpo foi desbloqueada
+e pode receber upgrades na Sessäo Bônus.
+[LB]
+Classificaçäo: [PS2_PlayerGrade]
+*4556*
+Salvar seu progresso no
+Desafio dos Titäs?
+[LB]
+Isto salvará sua maior pontuaçäo
+nos desafios e qualquer 
+tesouro desbloqueado.
+*4557*
+Salvar seu progresso feito
+na Arena das Moiras?
+[LB]
+Isto salvará orbes, upgrades
+e qualquer tesouro desbloqueado.
+*4559*
+Você Coletou 20
+Olhos de Ciclope.
+Traje Bônus desbloqueado.
+*4600*
+Status
+*4601*
+Tempo Total de Jogo
+*4602*
+Total de Mortes
+*4603*
+Total de Jogos Salvos
+*4604*
+Combo Máximo
+*4605*
+Orbes Vermelhas Colet.
+*4606*
+Eliminaçöes
+*4607*
+Eliminaçöes Brutais
+*4608*
+Desmembramentos
+*4609*
+Dilaceraçöes
+*4630*
+Urnas de Poder
+*4631*
+Urna de Gaia:
+*4632*
+Urna das Górgonas:
+*4633*
+Urna do Olimpo:
+*4634*
+Urna de Prometeu:
+*4635*
+Urna das Moiras:
+*4636*
+Urna de Poseidon:
+*4640*
+Encontre esta urna
+oculta para desbloquear
+seu poder durante sua
+Sessäo Bônus.
+*4641*
+Ative a Urna de
+Gaia durante uma
+Sessäo Bônus
+para obter uma
+habilidade especial.
+*4642*
+Ative a Urna de Gaia
+para coletar 10x mais
+orbes vermelhas.
+*4643*
+Encontre esta urna
+oculta para desbloquear
+seu poder durante sua
+Sessäo Bônus.
+*4644*
+Ative a Urna das
+Górgonas durante
+uma Sessäo Bônus
+para obter uma
+habilidade especial.
+*4645*
+Ative a Urna das
+Górgonas para
+dar às suas armas
+a capacidade de 
+petrificar os inimigos.
+*4646*
+Encontre esta urna
+oculta para desbloquear
+seu poder durante sua
+Sessäo Bônus.
+*4647*
+Ative a Urna do
+Olimpo durante
+uma Sessäo Bônus
+para obter uma
+habilidade especial.
+*4648*
+Ative a Urna do
+Olimpo para ter
+magia infinita.
+*4649*
+Encontre esta urna
+oculta para desbloquear
+seu poder durante sua
+Sessäo Bônus.
+*4650*
+Ative a Urna de
+Prometeu durante
+uma Sessäo Bônus
+para obter uma
+habilidade especial.
+*4651*
+Ative a Urna de
+Prometeu para ter
+Raiva dos Titäs
+Infinita.
+*4652*
+Encontre esta urna
+oculta para desbloquear
+seu poder durante sua
+Sessäo Bônus.
+*4653*
+Ative a Urna das
+Moiras durante
+uma Sessäo Bônus
+para obter uma
+habilidade especial.
+*4654*
+Ative a Urna das
+Moiras para
+aumentar seu tempo
+para executar combos.
+*4655*
+Encontre esta urna
+oculta para desbloquear
+seu poder durante sua
+Sessäo Bônus.
+*4656*
+Ative a Urna de
+Poseidon durante
+uma Sessäo Bônus
+para obter uma
+habilidade especial.
+*4657*
+Ative a Urna de
+Poseidon para
+usar a Raiva de
+Poseidon ao invés da
+Raiva de Cronos.
+*4700*
+Próximo Upgrade:
+*4701*
+Você näo
+adquiriu este ataque.
+*4702*
+MAX
+*4703*
+Nível
+*4704*
+Magia Bloqueada
+*4705*
+Lâminas de Atena
+*4706*
+Raiva de Poseidon
+*4707*
+Lâmina do Olimpo
+*4708*
+Destruiçäo de Tifäo
+*4709*
+Raiva de Cronos
+*4710*
+Martelo Bárbaro
+*4711*
+Cabeça de Euríale
+*4712*
+Lança do Destino
+*4713*
+Tremor de Atlas
+*4714*
+NO MAXIMO
+*4715*
+Vazio
+*4716*
+Você precisa de [/:PausePowerUpOrbs][OrbIcon] Orbes
+para fortalecer o item.
+*4717*
+Informaçöes de Fortalecimentos:
+*4718*
+Pressione [XButton] para
+drenar Orbes Vermelhas
+em suas Lâminas e
+Magia.
+*4719*
+Magia
+Indisponível
+*4731*
+Desbloquear
+Aumento de Dano
+Ferocidade das Fúrias
+*4732*
+Desbloquear
+Novos Combos de Golpes
+Ciclone de Caos
+*4733*
+Desbloquear
+Propulsäo de Hipérion
+Tormento de Prometeu
+*4734*
+Desbloquear
+Raiva do Tártaro
+Inferno de Prometeu
+*4735*
+Desbloquear
+Dano máximo
+*4741*
+Desbloquear
+Rajada de Vento Veloz
+Vórtex Letal
+*4742*
+Desbloquear
+Rajada de Vento Carregada
+Tempestade Titânica
+*4751*
+*4752*
+*4761*
+Desbloquear
+Upgrade de Terra
+Estremecente
+*4762*
+Desbloquear
+Terra Destrutiva
+*4771*
+Desbloquear
+Upg. de Encarada da Górgona
+Claräo da Górgona
+*4772*
+Desbloquear
+Explosäo da Górgona
+Raiva da Górgona
+*4781*
+Desbloquear
+Aumento de Dano
+Invocaçäo de Alma
+*4782*
+Desbloquear
+Aumento de Dano
+Legiäo de Almas
+*4791*
+Desbloquear
+Aumento de Dano
+Restos Infelizes
+*4792*
+Desbloquear
+Aumento de Dano
+Golpe Mutável
+*4801*
+Desbloquear
+Aumento de Dano
+Sacrifício Divino
+*4802*
+Desbloquear
+Aumento de Dano
+Ira dos Deuses
+*4803*
+A Lâmina que pôs fim
+à Grande Guerra.
+*4811*
+Desbloquear
+Upgrade da Raiva de Cronos
+Ataca Mais inimigos
+*4812*
+Desbloquear
+Upgrade da Raiva de Cronos
+Ataca Mais inimigos
+*4850*
+[/:StaticTextLvl2] - Novos Golpes:
+[/:StaticTextLvl3] - Novos Golpes:
+[/:StaticTextLvl4] - Novos Golpes:
+[/:StaticTextLvl5] - Novos Golpes:
+*4851*
+Nova Habilidade:
+*4852*
+Novas Habilidades:
+*4860*
+Aumento de Dano
+Ferocidade das Fúrias:  [L1Button] + [CircleButton]
+Ferocidade das Fúrias (Ar):  [L1Button] + [CircleButton]
+*4861*
+Nova Habilidade:  - Raiva dos Titäs
+Quando o medidor estiver cheio,
+pressione ( [L3] + [R3] ) para ativar.
+*4862*
+Aumento de Dano
+Ciclone de Caos:  [L1Button] + [SquareButton]
+Ciclone de Caos (Ar): [L1Button] + [SquareButton]
+Espírito de Hércules:  [TriangleButton], [TriangleButton], [TriangleButton]
+Heroísmo de Hércules:  [TriangleButton], [TriangleButton], [SquareButton]
+*4863*
+Aumento de Dano
+Propulsäo de Hipérion: Segure [SquareButton] para Correr
+Assalto de Hipérion (Correr):  [SquareButton]
+Ascensäo de Hipérion (Corrida): [TriangleButton]
+Ira de Atena (Esquivando-se): [JoystickR],  [TriangleButton]
+[*1] Novo Golpe da Raiva dos Titäs
+Tormento de Prometeu: Segure [SquareButton]
+*4864*
+Aumento de Dano
+Raiva do Tártaro:  [L1Button] + [TriangleButton]
+Raiva do Tártaro (Ar):  [L1Button] + [TriangleButton]
+[*1] Novo Golpe da Raiva dos Titäs
+Inferno de Prometeu: Segure [L1Button]
+*4865*
+O Dano de suas Lâminas
+está no Máximo.
+*4871*
+Rajada de Vento Veloz:
+[L2Button] e Pressione [SquareButton] rapidamente
+Vórtex Letal: [L2Button] + [TriangleButton]
+*4872*
+Upgrade de Vórtex Letal
+Rajada de Vento (Carregado): [L2Button] + segure [SquareButton].
+Tempestade Titânica: [L2Button] + [CircleButton]
+*4881*
+*4882*
+*4891*
+Aumento de Dano
+Upg. de Terra Estremecente
+*4892*
+Aumento de Dano
+Terra Destrutiva:
+[L2Button], Pressione [CircleButton] rapidamente
+*4901*
+Upg. de Encarada da Górgona
+Claräo da Górgona: [L2Button] + [TriangleButton]
+Claräo da Górgona (Ar): [L2Button] + [TriangleButton]
+*4902*
+Upg. de Encarada da Górgona
+Explosäo da Górgona: [L2Button] + [CircleButton]
+Explosäo da Górgona (Ar): [L2Button] + [CircleButton]
+Raiva da Górgona: [L2Button] + Segure [CircleButton]
+*4911*
+Aumento de Dano
+Invocaçäo de Alma: Mova [JoystickR]
+*4912*
+Aumento de Dano
+Legiäo de Almas: [L1Button] + [CircleButton]
+Agora pode invocar 5 almas: Mova [JoystickR]
+*4921*
+Aumento de Dano
+Restos Infelizes: [L1Button] + [CircleButton]
+*4922*
+Aumento de Dano
+Golpe Mutável: [L1Button] + [SquareButton]
+*4931*
+Aumento de Dano
+Sacrifício Divino: [L1Button] + [CircleButton]
+*4932*
+Aumento de Dano
+Ira dos Deuses: [SquareButton] ou [TriangleButton]
+*4941*
+Aumento de Dano da Raiva de Cronos
+Raiva de Cronos Atinge Mais Inimigos
+*4942*
+Aumento de Dano da Raiva de Cronos
+Raiva de Cronos Atinge Mais Inimigos
+O Núcleo da Raiva de Cronos Explode
+*5001*
+Tesouros
+*5002*
+Carregar
+*5003*
+Novo Jogo
+*5004*
+Iniciar Demo
+*5050*
+God of War® II deve ser concluído
+nos modos Mortal, Espartano ou Deus
+para desbloquear o Modo Titä.
+*5051*
+Escolher Dificuldade:
+*5052*
+Mortal
+(Fácil)
+*5053*
+Espartano
+(Normal)
+*5054*
+Deus
+(Difícil)
+*5055*
+Titä
+(Muito Difícil)
+*5100*
+Escolha um Traje
+*5101*
+Bacalhau da Guerra
+(Habilidade Preferida: Magia e Energia)
+*5102*
+Armadura de Hidra
+(Habilidade Preferida: Energia)
+*5103*
+Odisseia Obscura
+(Habilidade Preferida: Raiva dos Titäs)
+*5104*
+Atena
+(Habilidade Preferida: Magia)
+*5105*
+Hércules
+(Habilidade Preferida: Força)
+*5106*
+General Kratos
+(Habilidade Preferida: Experiência)
+*5107*
+Armadura Divina
+(Habilidade Preferida: Armadura)
+*5120*
+Kratos
+*5121*
+Inacessível no Modo Titä.
+*5150*
+Sessäo Bônus
+*5151*
+Gostaria de jogar mantendo a
+a Lâmina do Olimpo,
+as Urnas de Poder e os
+níveis de Armas e Magia no novo jogo?
+Ao selecionar "näo", você dará início a um
+novo jogo sem esses recursos desbloqueados.
+*5175*
+Usar Configuraçöes de Tela Anteriores?
+*6000*
+Iniciar Novo Desafio
+*6001*
+Reiniciar Desafio Atual
+*6002*
+Salvar Progresso
+*6003*
+Voltar Para a Seleçäo de Desafio
+*6004*
+*6016*
+Desafio Concluído!
+*6017*
+Classificaçäo de Desafio
+*6020*
+Menu de Desafio
+*6021*
+Menu de Arena
+*6100*
+Tempo:
+*6101*
+Orbes Vermelhas:
+*6102*
+Dano Sofrido:
+*6103*
+Inimigos Mortos:
+*6104*
+Maior Combo:
+*6105*
+Bônus:
+*6106*
+Classificaçäo:
+*6108*
+Pontuaçäo Total:
+*6110*
+[*4]Fúria Cega
+Arranque o
+olho do Ciclope
+antes que o tempo acabe.
+*6111*
+[*4]Morte de Cima
+Elimine dez inimigos no
+ar antes que o tempo acabe.
+*6112*
+[*4]Cemitério da Górgona
+Petrifique 25 inimigos
+e os estilhace
+antes que o tempo acabe.
+*6113*
+[*4]Proteja o Fraco
+Proteja o tradutor
+a qualquer custo.
+*6114*
+[*4]Colher os Frutos
+Colete 500 Orbes
+Vermelhas antes
+que o tempo acabe.
+*6115*
+[*4]Sobrevivência do Mais Forte
+Destrua todos os inimigos
+antes que a sua energia acabe.
+*6116*
+[*4]A Perfeiçäo é Divina
+Elimine todos os inimigos
+sem ser atingido.
+*6120*
+Nenhum
+*6121*
+Concluído
+*6180*
+Conclua o desafio [/:ChallengePrevLock]
+para disponibilizar
+este desafio.
+*6198*
+Desafio
+*6199*
+Seleçäo de Desafio
+*6200*
+Recompensa de Desafio!
+*6201*
+Classificaçäo Mortal:
+Urna das Moiras
+*6202*
+Class. Espartana:
+Urna de Poseidon
+*6203*
+Classificaçäo dos Deuses:
+Um traje bônus
+*6204*
+Classificaçäo de Titä:
+Arena das Moiras
+*6205*
+????????
+*6206*
+Você Desbloqueou
+*6300*
+Arena das Moiras
+*6301*
+Aleatório
+*6302*
+Normal
+*6303*
+Infinito
+*6304*
+Nenhum
+*6305*
+Cume
+*6306*
+Dédalo
+*6307*
+Bárbaro
+*6320*
+Fácil
+*6321*
+Corpo a Corpo
+*6322*
+Normal
+*6323*
+Impiedoso
+*6325*
+Voltar ao Menu de Arena
+*6350*
+Kratos
+*6351*
+Arena
+*6352*
+Inimigos
+*6353*
+Energia:
+*6354*
+Magia:
+*6355*
+Raiva dos Titäs:
+*6356*
+Dificuldade:
+*6357*
+Cenário:
+*6358*
+Criatura 1:
+*6359*
+Criatura 2:
+*6360*
+Criatura 3:
+*6365*
+Entrar na Arena
+*6380*
+Nome:
+*6381*
+Contagem:
+*6382*
+Ataque:
+*6383*
+Renascer:
+*7000*
+Demo da E3 de 2006
+*7001*
+[XButton] = Iniciar
+*7100*
+Desativado
+na Demo

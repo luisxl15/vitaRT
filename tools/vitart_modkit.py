@@ -9,6 +9,7 @@ A interface gráfica é o tools/vitart_modstudio.py.
     python tools/vitart_modkit.py export-tex <jogo> <wad> <registro ~...> <saída.png>
     python tools/vitart_modkit.py texture-mod <jogo> <id> "<nome>" <wad>=<registro>=<png> [...]
     python tools/vitart_modkit.py text-mod <jogo> <id> "<nome>" <textos.txt> [--wad wad/_VitaTV/r_perma.wad_psp2]
+    python tools/vitart_modkit.py translations | build-translation <código> | language [<código>] | migrate-text-mods
 
 Um mod é uma pasta em <vitart-data>/mods/<id>/:
     mod.ini        name, game (gow1/gow2), author, version, description
@@ -436,10 +437,37 @@ def text_body(cfg, game, wad=TEXT_WAD):
     if rec is None:
         raise ValueError('%s não tem %s' % (wad, TEXT_REC[game]))
     return rec[3].split(b'\0')[0]
-# A fonte do GoW2 (a única do FLP_HUDA/FLP_ShellA, 132 glifos) usa os códigos das maiúsculas acentuadas para os
-# ícones dos botões (medido: Á Â Ä Ç É Ê Ó Ô Ú saem como ícones; Í e as minúsculas saem certas) e não tem ã/õ/Ã/Õ.
-FONT_FIX = {'gow2': str.maketrans({'Á': 'A', 'Â': 'A', 'Ä': 'A', 'Ã': 'A', 'À': 'A', 'Ç': 'C', 'É': 'E', 'Ê': 'E',
-                                   'Ó': 'O', 'Ô': 'O', 'Õ': 'O', 'Ö': 'O', 'Ú': 'U', 'ã': 'ä', 'õ': 'ö'})}
+# A fonte do HUD é a mesma nos dois jogos (FLP_HUD do GoW1, FLP_HUDA/HUDF/HUDS do GoW2: 132 glifos, o mesmo mapa
+# caractere -> glifo). Ela tem o latino da Europa Ocidental, mas os glifos 87..95 e 100..106 (À Á Â Ä Ç È É Ê Ë Ñ Ò
+# Ó Ô Ö Ù Ú) são os ícones dos botões no Vita (tools/kbm_atlas.py CELLS; medido: Á Â Ä Ç É Ê Ó Ô Ú saem ícones). Não
+# tem ã/õ/œ nem as aspas tipográficas. FONT_OK é o que sai como letra.
+FONT_OK = set(chr(c) for c in range(0x20, 0x7f)) | set('¡©®°¿ÌÍÎÏÛÜßàáâäçèéêëìíîïñòóôöùúûü')
+_FONT_FIX = {'À': 'A', 'Á': 'A', 'Â': 'A', 'Ä': 'A', 'Ã': 'A', 'Ç': 'C', 'È': 'E', 'É': 'E', 'Ê': 'E', 'Ë': 'E',
+             'Ñ': 'N', 'Ò': 'O', 'Ó': 'O', 'Ô': 'O', 'Ö': 'O', 'Õ': 'O', 'Ù': 'U', 'Ú': 'U', 'ã': 'ä', 'õ': 'ö',
+             'œ': 'oe', 'Œ': 'OE', '': 'oe', '': 'OE', 'æ': 'ae', 'Æ': 'AE', '«': '"', '»': '"', '“': '"', '”': '"', '„': '"', '‘': "'",
+             '’': "'", '‚': "'", '…': '...', '–': '-', '—': '-', ' ': ' ', ' ': ' ', '﻿': ''}
+# por idioma, quando a letra sem acento muda a palavra: alemão escreve Ä/Ö como Ae/Oe; o italiano "È" (é) vira "E'"
+_FONT_FIX_LANG = {'de': {'Ä': 'Ae', 'Ö': 'Oe'}, 'it': {'È': "E'"}}
+
+
+def font_fix(text, lang=''):
+    """Troca o que a fonte do jogo não mostra como letra (ver FONT_OK) pelo mais próximo; devolve (texto, trocas,
+    letras que sobraram sem glifo)."""
+    import unicodedata
+    tab = dict(_FONT_FIX, **_FONT_FIX_LANG.get(lang.split('-')[0], {}))
+    out, n, faltam = [], 0, set()
+    for ch in text:
+        if ch in '\r\n\t' or ch in FONT_OK:
+            out.append(ch)
+            continue
+        troca = tab.get(ch)
+        if troca is None:  # sem troca conhecida: a letra sem o acento (decomposição), ou some
+            base = ''.join(c for c in unicodedata.normalize('NFKD', ch) if not unicodedata.combining(c))
+            troca = base if base and all(c in FONT_OK for c in base) else ''
+            faltam.add(ch)
+        out.append(troca)
+        n += 1
+    return ''.join(out), n, faltam
 
 
 def msgs_need(text):
@@ -462,24 +490,18 @@ def msgs_need(text):
     return count, lines
 
 
-def make_text_mod(cfg, mid, name, game, txt_path, wad=TEXT_WAD, author='', description='', log=print):
-    """Mod de textos: o .txt (formato do MSGS_TXT: '*N*' e as linhas da mensagem, UTF-8) troca o registro MSGS_TXT
-    do WAD, e MSGS_COUNT/MSGS_LINES crescem se a tradução precisar. Vale ao abrir o jogo (o r_perma só é lido aí)."""
+def text_records(cfg, game, text, rel, wad=TEXT_WAD, lang='', log=print):
+    """(corpo do registro, linhas do records.tsv, mensagens, linhas) para trocar o texto de um jogo por `text`
+    (formato MSGS_TXT, str). `rel` é o caminho do corpo dentro da pasta de quem usa."""
     ps = psarc_path(cfg, game)
     names = manifest(ps)
     if wad not in names:
         raise ValueError('%s não existe no %s' % (wad, PSARC[game]))
-    raw = open(txt_path, 'rb').read()
-    if raw[:3] == b'\xef\xbb\xbf':
-        raw = raw[3:]
-    text = raw.decode('utf-8')  # o jogo lê UTF-8: falha cedo se o arquivo for outra codificação
-    if game in FONT_FIX:
-        fixed = text.translate(FONT_FIX[game])
-        if fixed != text:
-            log('%d letras trocadas por outras que a fonte do jogo tem (maiúsculas acentuadas, ã/õ)'
-                % sum(a != b for a, b in zip(text, fixed)))
-        raw = fixed.encode('utf-8')
-    body =re.sub(rb'\r?\n', b'\r\n', raw.rstrip(b'\0'))
+    fixed, n, faltam = font_fix(text.lstrip('﻿'), lang)
+    if n:
+        log('%s: %d letras trocadas por outras que a fonte do jogo tem%s' % (
+            game, n, (' (sem glifo: %s)' % ' '.join(sorted(faltam))) if faltam else ''))
+    body = re.sub(rb'\r?\n', b'\r\n', fixed.encode('utf-8').rstrip(b'\0'))
     if not body.endswith(b'\r\n'):
         body += b'\r\n'
     body += b'\0\0'  # o jogo percorre o texto com strtok: precisa do zero no fim
@@ -490,19 +512,178 @@ def make_text_mod(cfg, mid, name, game, txt_path, wad=TEXT_WAD, author='', descr
     count, lines = msgs_need(body)
     if 'MSGS_COUNT' in recs:
         count, lines = max(count, recs['MSGS_COUNT'][5]), max(lines, recs['MSGS_LINES'][5])
-    mid = install_mod(cfg, mid, name, game, {}, author=author, description=description, log=log)
-    d = os.path.join(mods_dir(cfg), mid)
-    os.makedirs(os.path.join(d, 'records'), exist_ok=True)
-    open(os.path.join(d, 'records', 'MSGS_TXT.txt'), 'wb').write(body)
     idx = names.index(wad) + 1
-    rows = ['%s\t%d\t%d\t%s\t0\trecords/MSGS_TXT.txt' % (PSARC[game], idx, recs[rec_txt][0], rec_txt)]
+    rows = ['%s\t%d\t%d\t%s\t0\t%s' % (PSARC[game], idx, recs[rec_txt][0], rec_txt, rel)]
     if 'MSGS_COUNT' in recs:  # o GoW2 dimensiona as tabelas por esses dois; o GoW1 não tem
         rows += ['%s\t%d\t%d\tMSGS_COUNT\t0\t=%d' % (PSARC[game], idx, recs['MSGS_COUNT'][0], count),
                  '%s\t%d\t%d\tMSGS_LINES\t0\t=%d' % (PSARC[game], idx, recs['MSGS_LINES'][0], lines)]
+    return body, rows, count, lines
+
+
+def make_text_mod(cfg, mid, name, game, txt_path, wad=TEXT_WAD, author='', description='', log=print):
+    """O .txt traduzido (formato do MSGS_TXT: '*N*' e as linhas da mensagem, UTF-8) vira uma tradução do Settings
+    (Idioma do jogo), não um mod: assim só uma fica ligada. Vale ao abrir o jogo (o r_perma só é lido aí)."""
+    code = safe_id(mid).replace('_', '-')
+    d = os.path.join(trad_dir(cfg), code)
+    os.makedirs(os.path.join(d, 'fontes'), exist_ok=True)
+    raw = open(txt_path, 'rb').read()
+    raw.decode('utf-8')  # o jogo lê UTF-8: falha cedo se o arquivo for outra codificação
+    open(os.path.join(d, 'fontes', '%s.txt' % game), 'wb').write(raw)
+    ini = _trad_ini(d)
+    ini['name'] = ini.get('name') or name
+    ini['author_' + game] = author
+    _trad_ini_write(d, ini)
+    build_translation(cfg, code, log)
+    log('tradução "%s" (%s) instalada: escolha em Settings > Idioma do jogo' % (name, code))
+    return code
+
+
+# ------------------------------------------------------------------ traduções (Settings > Idioma do jogo)
+# <data>/traducoes/<código>/: idioma.ini (name=, author_gow1=, author_gow2=), fontes/<jogo>.txt (o texto traduzido) ou,
+# para o texto oficial que o próprio jogo traz, fontes/<jogo>_extra.txt (só as mensagens que faltam nele). O
+# build_translation gera records/<jogo>.txt e records.tsv (formato dos mods de registro); o vitart aplica a de
+# language=<código> do vitart_options.ini (runtime/vitart/hle_io.cpp). Uma só: nunca duas traduções ligadas.
+IDIOMAS = [('pt-BR', 'Português (Brasil)'), ('es', 'Español'), ('fr', 'Français'), ('it', 'Italiano'),
+           ('de', 'Deutsch')]
+# o GoW2 americano traz o francês e o espanhol oficiais (r_plocf/r_plocs, os que o Vita usa nesses idiomas): são lidos
+# do jogo de quem joga, não vêm com o projeto
+OFICIAL = {('gow2', 'fr'): 'wad/_VitaTV/r_plocf.wad_psp2', ('gow2', 'es'): 'wad/_VitaTV/r_plocs.wad_psp2'}
+_MSG = re.compile(r'^\*(\d+)\*[HT]?\s*$')
+
+
+def trad_dir(cfg):
+    return os.path.join(cfg['data'], 'traducoes')
+
+
+def _trad_ini(d):
+    out = {}
+    p = os.path.join(d, 'idioma.ini')
+    if os.path.exists(p):
+        for line in open(p, encoding='utf-8'):
+            k, eq, v = line.rstrip('\r\n').partition('=')
+            if eq and not k.startswith('#'):
+                out[k.strip()] = v.strip()
+    return out
+
+
+def _trad_ini_write(d, ini):
+    lines = ['# Tradução do vitart (Settings > Idioma do jogo)'] + ['%s=%s' % kv for kv in ini.items()]
+    open(os.path.join(d, 'idioma.ini'), 'w', encoding='utf-8', newline='\n').write('\n'.join(lines) + '\n')
+
+
+def translation_source(cfg, code, game):
+    """O texto de um jogo nessa tradução (str) ou None. O oficial do jogo ganha as mensagens que faltam nele."""
+    d = os.path.join(trad_dir(cfg), code, 'fontes')
+    p = os.path.join(d, game + '.txt')
+    if os.path.exists(p):
+        return open(p, 'rb').read().decode('utf-8')
+    wad = OFICIAL.get((game, code))
+    if not wad or not os.path.exists(psarc_path(cfg, game)):
+        return None
+    recs = wad_records(read_psarc_file(psarc_path(cfg, game), wad), game)
+    rec = next((r for r in recs if r[2] == TEXT_REC[game]), None)
+    if rec is None:
+        return None
+    text = bytes(rec[3]).split(b'\0')[0].decode('utf-8').rstrip('\r\n') + '\r\n'
+    extra = os.path.join(d, game + '_extra.txt')
+    if os.path.exists(extra):  # só as mensagens que o oficial não tem (o número de cada uma não muda)
+        tem = {m.group(1) for m in map(_MSG.match, text.splitlines()) if m}
+        bloco, manter = [], False
+        for line in open(extra, 'rb').read().decode('utf-8').splitlines():
+            m = _MSG.match(line)
+            if m:
+                manter = m.group(1) not in tem
+            if manter:
+                bloco.append(line)
+        text += '\r\n'.join(bloco) + '\r\n'
+    return text
+
+
+def build_translation(cfg, code, log=print):
+    """Gera records/ e records.tsv de <data>/traducoes/<código> a partir das fontes (e do jogo, no oficial)."""
+    d = os.path.join(trad_dir(cfg), code)
+    if not os.path.isdir(d):
+        raise ValueError('tradução não encontrada: %s' % code)
+    rows, feitos = [], []
+    os.makedirs(os.path.join(d, 'records'), exist_ok=True)
+    for game in ('gow1', 'gow2'):
+        if not os.path.exists(psarc_path(cfg, game)):
+            continue
+        text = translation_source(cfg, code, game)
+        if text is None:
+            continue
+        rel = 'records/%s.txt' % game
+        body, r, count, lines = text_records(cfg, game, text, rel, lang=code, log=log)
+        open(os.path.join(d, rel), 'wb').write(body)
+        rows += r
+        feitos.append(game)
+        log('%s %s: %d mensagens, %d linhas' % (code, game, count, lines))
     open(os.path.join(d, 'records.tsv'), 'w', encoding='utf-8', newline='\n').write('\n'.join(rows) + '\n')
-    log('%s: %d mensagens, %d linhas em %s' % (mid, count, lines, wad))
-    rebuild(cfg, log)
-    return mid
+    return feitos
+
+
+def list_translations(cfg):
+    """[{codigo, nome, jogos, autores}] das traduções em <data>/traducoes, na ordem de IDIOMAS e depois as outras."""
+    root = trad_dir(cfg)
+    codes = [c for c in sorted(os.listdir(root)) if os.path.isdir(os.path.join(root, c))] if os.path.isdir(root) else []
+    ordem = [c for c, _ in IDIOMAS if c in codes] + [c for c in codes if c not in dict(IDIOMAS)]
+    out = []
+    for c in ordem:
+        d = os.path.join(root, c)
+        ini = _trad_ini(d)
+        jogos = [g for g in ('gow1', 'gow2') if os.path.exists(os.path.join(d, 'fontes', g + '.txt')) or (g, c) in OFICIAL]
+        if not jogos:
+            continue
+        out.append({'codigo': c, 'nome': ini.get('name') or dict(IDIOMAS).get(c, c), 'jogos': jogos,
+                    'autores': {g: ini.get('author_' + g, '') for g in jogos}})
+    return out
+
+
+def get_language(cfg):
+    if os.path.exists(ini_path(cfg)):
+        for line in open(ini_path(cfg), encoding='utf-8', errors='replace'):
+            if line.startswith('language='):
+                return line.strip().split('=', 1)[1]
+    return ''
+
+
+def set_language(cfg, code, log=print):
+    """language=<código> no vitart_options.ini (vazio = o texto original); gera a tradução antes de ligar."""
+    if code:
+        build_translation(cfg, code, log)
+    lines = open(ini_path(cfg), encoding='utf-8', errors='replace').read().splitlines() if os.path.exists(ini_path(cfg)) else []
+    lines = [l for l in lines if not l.startswith('language=')] + (['language=' + code] if code else [])
+    open(ini_path(cfg), 'w', encoding='utf-8', newline='\n').write('\n'.join(lines) + '\n')
+    return code
+
+
+def is_text_mod(m):
+    """Mod só de texto (tradução de antes do Idioma do jogo): records.tsv só com os registros de texto."""
+    p = os.path.join(m.dir, 'records.tsv')
+    if not os.path.exists(p) or m.files() or m.files('src'):
+        return False
+    nomes = [l.split('\t')[3] for l in open(p, encoding='utf-8').read().splitlines() if l.count('\t') >= 5]
+    return bool(nomes) and all(n.startswith('MSGS_') or n in TEXT_REC.values() for n in nomes)
+
+
+def migrate_text_mods(cfg, log=print):
+    """Tira as traduções da lista de mods (vão para mods_removidos, nada é apagado) e refaz o menu de mods do jogo."""
+    import time
+    movidos = []
+    for m in list_mods(cfg):
+        if not is_text_mod(m):
+            continue
+        dst = os.path.join(cfg['data'], 'mods_removidos', '%s_%s' % (m.id, time.strftime('%Y%m%d_%H%M%S')))
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        shutil.move(m.dir, dst)
+        lines = open(ini_path(cfg), encoding='utf-8', errors='replace').read().splitlines() if os.path.exists(ini_path(cfg)) else []
+        open(ini_path(cfg), 'w', encoding='utf-8', newline='\n').write(
+            '\n'.join(l for l in lines if not l.startswith('mod_%s=' % m.id)) + '\n')
+        movidos.append((m.id, m.name, m.game, dst))
+        log('tradução "%s" (%s) saiu dos mods: %s' % (m.name, m.game, dst))
+    if movidos:
+        rebuild(cfg, log)
+    return movidos
 
 
 # ------------------------------------------------------------------ linha de comando
@@ -537,6 +718,16 @@ def main():
             wad, rec, png = spec.split('=', 2)
             changes.append((wad, rec, np.array(Image.open(png).convert('RGBA'))))
         make_texture_mod(cfg, mid, name, game, changes)
+    elif a[0] == 'translations':
+        for t in list_translations(cfg):
+            print('%-8s %-22s %s' % (t['codigo'], t['nome'], ' '.join(t['jogos'])))
+        print('ligada:', get_language(cfg) or '(original)')
+    elif a[0] == 'build-translation':
+        build_translation(cfg, a[1])
+    elif a[0] == 'language':
+        set_language(cfg, a[1] if len(a) > 1 else '')
+    elif a[0] == 'migrate-text-mods':
+        migrate_text_mods(cfg)
     elif a[0] == 'text-mod':
         wad = a[a.index('--wad') + 1] if '--wad' in a else TEXT_WAD
         make_text_mod(cfg, a[2], a[3], a[1], a[4], wad=wad)

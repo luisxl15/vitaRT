@@ -435,6 +435,38 @@ def m_salvar_opcao(a):
     return _flags()
 
 
+# Idioma do jogo: as traduções de <dados>/traducoes (vitart_modkit.py, "traduções"); language= no ini, uma só. O
+# runtime aplica ao abrir o jogo (hle_io.cpp). O texto oficial (francês e espanhol do GoW2) sai do jogo instalado.
+def _trad_velha(code):
+    """records.tsv mais velho que as fontes (uma atualização trouxe texto novo): precisa gerar de novo."""
+    d = os.path.join(K.trad_dir(cfg), code)
+    rt = os.path.join(d, 'records.tsv')
+    if not os.path.exists(rt):
+        return True
+    fontes = [os.path.join(d, 'idioma.ini')] + [os.path.join(d, 'fontes', f) for f in os.listdir(os.path.join(d, 'fontes'))] \
+        if os.path.isdir(os.path.join(d, 'fontes')) else []
+    return any(os.path.getmtime(f) > os.path.getmtime(rt) for f in fontes if os.path.exists(f))
+
+
+def m_idiomas(a):
+    atual = K.get_language(cfg)
+    if atual and os.path.isdir(os.path.join(K.trad_dir(cfg), atual)) and _trad_velha(atual):
+        K.build_translation(cfg, atual, log=lambda *_: None)
+    lista = K.list_translations(cfg)
+    if atual and atual not in [t['codigo'] for t in lista]:
+        atual = ''  # a pasta sumiu: o jogo abre com o texto original
+    return {'lista': lista, 'atual': atual}
+
+
+def m_salvar_idioma(a):
+    code = a.get('codigo') or ''
+    if code and code not in [t['codigo'] for t in K.list_translations(cfg)]:
+        raise ValueError('tradução desconhecida: %s' % code)
+    registro = []
+    K.set_language(cfg, code, log=registro.append)
+    return {'atual': code, 'registro': registro}
+
+
 # Controles: <dados>/controles_<jogo>.ini (runtime/vitart/input_map.cpp lê, inclusive com o jogo aberto). O padrão é
 # o mesmo de games/gow/gow_profile.cpp (game_default_controls): mudou lá, muda aqui.
 CTL_PADRAO = {

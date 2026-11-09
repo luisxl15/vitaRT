@@ -31,6 +31,14 @@
 .video-info .valor { margin-top: 4px; font: 15px var(--f-titulo); color: var(--marfim); user-select: text; }
 .video-info .valor.fino { font: 12px/1.5 Consolas, monospace; color: var(--cinza); word-break: break-all; }
 
+/* ------------------------------------------------------------------ Idioma do jogo */
+.idiomas { grid-template-columns: repeat(3, 1fr); }
+.idiomas .api { min-height: 150px; }
+.idioma-creditos { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--cinza); }
+.idioma-jogo { display: flex; flex-direction: column; gap: 1px; }
+.idioma-jogo .caixa { font-size: 10px; }
+.idioma-nota { max-width: 1040px; margin-top: 16px; }
+
 /* ------------------------------------------------------------------ Controles */
 .jogos { display: inline-flex; border: 1px solid var(--filete-claro); border-radius: var(--raio); overflow: hidden; }
 .jogos button { border: 0; background: transparent; padding: 0 18px; height: 34px; cursor: pointer; color: var(--cinza);
