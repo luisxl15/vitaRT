@@ -902,12 +902,13 @@ static void squeeze_text(gvk::Draw &d, uint32_t prog, std::vector<uint8_t> &copy
 // x de g_Projection / g_ViewProjection dividida por W, numa cópia dos uniforms) e o HUD encolhe de volta, preso ao
 // lado em que está (squeeze_hud_x). O guest continua desenhando nos 720x408 dele; o host é W vezes mais largo.
 static uint64_t g_uw_proj = 0, g_uw_hud = 0;
+static HudGrupos g_hud2d, g_hud3d; // caixas do HUD por quadro: o lado é o da linha/painel, não o de cada desenho
 static bool alvo_de_tela_g(uint32_t w, uint32_t h) { return h && w * 100 >= h * 170 && w * 100 <= h * 182; }
 // HUD 3D (o do GoW1 é geometria com g_Projection presa à câmera, ~14 unidades à frente): os vértices vão para a tela
 // na CPU com g_Transforms[0] e a projeção original. Peça perto da câmera, sem gravar profundidade e que não cobre a tela
 // = HUD; devolve o lado (-1 borda esquerda, 1 direita, 0 centro) ou 2 se não é HUD.
 static int ancora_hud_3d(const gvk::Draw &d, uint32_t vprog, uint32_t vuniform, uint32_t words, const pbr::VertexInfo &vi,
-                         const float *P, const int *xr, const int *wr) {
+                         const float *P, const int *xr, const int *wr, const int *yr) {
     if (d.depth_write || !d.vertex_count || d.vertex_count > 4096) return 2;
     int loc = -1, k = 0;
     const uint32_t np = rd32(vprog + 0x24);
@@ -935,7 +936,7 @@ static int ancora_hud_3d(const gvk::Draw &d, uint32_t vprog, uint32_t vuniform, 
         const gvk::VertexStream &st = d.raw_streams[a->stream];
         base = st.data + a->offset, stride = st.stride, fmt = a->fmt;
     }
-    float x0 = 1e30f, x1 = -1e30f, z0 = 1e30f, z1 = -1e30f;
+    float x0 = 1e30f, x1 = -1e30f, y0 = 1e30f, y1 = -1e30f, z0 = 1e30f, z1 = -1e30f;
     static const uint32_t dq = getenv("VITART_UI_LOG_QUADRO") ? (uint32_t)atoi(getenv("VITART_UI_LOG_QUADRO")) : 0;
     const bool diag = dq && g_present_frame.load() + 1 >= dq && g_present_frame.load() <= dq + 1;
     for (uint32_t v = 0; v < d.vertex_count; v++) {
@@ -951,6 +952,8 @@ static int ancora_hud_3d(const gvk::Draw &d, uint32_t vprog, uint32_t vuniform, 
         const float cw = P[wr[0]] * e[0] + P[wr[1]] * e[1] + P[wr[2]] * e[2] + P[wr[3]];
         if (!(cw > 1e-4f)) { if (!diag) return 2; continue; }
         x0 = std::min(x0, cx / cw), x1 = std::max(x1, cx / cw);
+        const float cy = P[yr[0]] * e[0] + P[yr[1]] * e[1] + P[yr[2]] * e[2] + P[yr[3]];
+        y0 = std::min(y0, cy / cw), y1 = std::max(y1, cy / cw);
     }
     if (diag)
         if (FILE *lf = std::fopen("hud3d.log", "a"))
@@ -976,8 +979,14 @@ static int ancora_hud_3d(const gvk::Draw &d, uint32_t vprog, uint32_t vuniform, 
         hud_z = melhor >= 4.f ? z : NAN, quadro = f;
     }
     pontos[(int)std::lround(z0 * 10.f)] += 1.f;
-    const float c = 0.5f * (x0 + x1);
-    const int r = !(std::fabs(z0 - hud_z) < 1.f) ? 2 : c < -0.1f ? -1 : c > 0.1f ? 1 : 0;
+    if (!(std::fabs(z0 - hud_z) < 1.f)) return 2;
+    // lado pelo grupo (a linha de texto, o painel) que esta peça formava com as outras no quadro anterior: o GoW1 manda
+    // uma letra ou um trecho por desenho
+    g_hud3d.quadro(g_present_frame.load());
+    float gx0 = x0, gx1 = x1;
+    g_hud3d.expandir(gx0, gx1, y0, y1);
+    const float c = 0.5f * (gx0 + gx1);
+    const int r = (gx0 < -0.02f && gx1 > 0.02f) || std::fabs(c) <= 0.1f ? 0 : c < 0 ? -1 : 1;
     if (diag)
         if (FILE *lf = std::fopen("hud3d.log", "a")) std::fprintf(lf, "  plano z %.1f hud_z %.1f -> %d%c", z0, hud_z, r, 10), std::fclose(lf);
     return r;
@@ -1002,7 +1011,10 @@ static void ultrawide(gvk::Draw &d, uint32_t vprog, uint32_t vuniform, uint32_t 
     if (std::fabs(W - 1.f) < 0.002f || !alvo_de_tela_g(d.target_w, d.target_h)) return;
     const int pos = ui_pos_attr(vprog);
     if (pos >= 0) {
-        if (flash_ui(vprog) && squeeze_hud_x(d, pos, 1.f / W, pos_copy)) g_uw_hud++;
+        if (flash_ui(vprog)) {
+            g_hud2d.quadro(g_present_frame.load());
+            if (squeeze_hud_x(d, pos, 1.f / W, pos_copy, &g_hud2d)) g_uw_hud++;
+        }
         return;
     }
     if (!vuniform || !vsize) return;
@@ -1049,7 +1061,8 @@ static void ultrawide(gvk::Draw &d, uint32_t vprog, uint32_t vuniform, uint32_t 
     if (base == vi.proj) {
         const int wr_c[4] = {3, 7, 11, 15}, wr_l[4] = {12, 13, 14, 15};
         const int *wr = idx[1] == 4 ? wr_c : wr_l;
-        const int a = ancora_hud_3d(d, vprog, vuniform, words, vi, ptr<float>(vuniform) + base, idx, wr);
+        const int yr_c[4] = {1, 5, 9, 13}, yr_l[4] = {4, 5, 6, 7};
+        const int a = ancora_hud_3d(d, vprog, vuniform, words, vi, ptr<float>(vuniform) + base, idx, wr, idx[1] == 4 ? yr_c : yr_l);
         if (a != 2) anc = a, g_uw_hud3d++;
     }
     uni_copy.assign(ptr<uint8_t>(vuniform), ptr<uint8_t>(vuniform) + vsize);

@@ -117,12 +117,51 @@ bool squeeze_text_lines(gvk::Draw &d, int pos, float s, std::vector<uint8_t> &co
     return true;
 }
 
+// ---------------------------------------------------------------- grupos do HUD entre desenhos (gxm_texto.h)
+static bool encostadas(const HudGrupos::B &a, const HudGrupos::B &b, float folga) {
+    return a.x0 <= b.x1 + folga && b.x0 <= a.x1 + folga && a.y0 <= b.y1 && b.y0 <= a.y1;
+}
+void HudGrupos::quadro(uint32_t f) {
+    if (f == q) return;
+    q = f;
+    prev.swap(atual);
+    atual.clear();
+    const uint32_t n = (uint32_t)prev.size();
+    std::vector<uint32_t> g(n);
+    for (uint32_t i = 0; i < n; i++) g[i] = i;
+    auto raiz = [&](uint32_t i) {
+        while (g[i] != i) i = g[i] = g[g[i]];
+        return i;
+    };
+    // folga de 3% da largura (0,06 em -1..1): o espaço entre letras e entre palavras; entre os blocos do HUD é bem mais
+    for (uint32_t i = 0; i < n; i++)
+        for (uint32_t j = i + 1; j < n; j++)
+            if (encostadas(prev[i], prev[j], 0.06f)) g[raiz(j)] = raiz(i);
+    std::vector<B> ext(n, B{1e30f, -1e30f, 1e30f, -1e30f});
+    for (uint32_t i = 0; i < n; i++) {
+        B &e = ext[raiz(i)];
+        e.x0 = std::min(e.x0, prev[i].x0), e.x1 = std::max(e.x1, prev[i].x1);
+        e.y0 = std::min(e.y0, prev[i].y0), e.y1 = std::max(e.y1, prev[i].y1);
+    }
+    prev_g.resize(n);
+    for (uint32_t i = 0; i < n; i++) prev_g[i] = ext[raiz(i)];
+}
+void HudGrupos::expandir(float &x0, float &x1, float y0, float y1) {
+    if (!(x0 <= x1) || !(y0 <= y1)) return;
+    if (atual.size() < 1024) atual.push_back({x0, x1, y0, y1});
+    const B eu{x0, x1, y0, y1};
+    float a0 = x0, a1 = x1;
+    for (size_t i = 0; i < prev.size(); i++) // a mesma caixa no quadro anterior (ou quase: o menu anima)
+        if (encostadas(prev[i], eu, 0.005f)) a0 = std::min(a0, prev_g[i].x0), a1 = std::max(a1, prev_g[i].x1);
+    x0 = a0, x1 = a1;
+}
+
 // Ultrawide: o HUD (FlashUI) encolhe f vezes na largura, cada grupo preso ao lado em que está: todo à esquerda do
 // meio -> borda esquerda, todo à direita -> borda direita, cruzando o meio -> centro (menus, barra de chefe). Um
 // desenho do jogo junta pedaços de lugares diferentes (a barra de vida e o contador de orbes no mesmo), então o
 // lado é por grupo: triângulos ligados = pedaço; pedaços encostados (na mesma altura, ou um dentro do outro) = grupo.
 // Pedaço de tela cheia (fundo, fade) fica esticado. Devolve se mexeu.
-bool squeeze_hud_x(gvk::Draw &d, int pos, float f, std::vector<uint8_t> &copy) {
+bool squeeze_hud_x(gvk::Draw &d, int pos, float f, std::vector<uint8_t> &copy, HudGrupos *hg) {
     const uint32_t nv = d.vertex_count;
     if (!nv || !d.index_data || (f >= 0.999f && f <= 1.001f)) return false;
     float *cpu = nullptr;
@@ -188,8 +227,10 @@ bool squeeze_hud_x(gvk::Draw &d, int pos, float f, std::vector<uint8_t> &copy) {
         peca_v[v] = it->second;
     }
     if (pecas.empty()) return false;
-    // grupos: pedaços encostados (folga de 3% da tela na largura) e com altura em comum
+    // grupos: pedaços encostados (folga de 3% da tela na largura) e com altura em comum; os de tela cheia (fundo, fade)
+    // não se mexem e não juntam nada
     const uint32_t np = (uint32_t)pecas.size();
+    auto cheia = [&](uint32_t i) { return pecas[i].x1 - pecas[i].x0 >= 1.9f; };
     std::vector<uint32_t> grp(np);
     for (uint32_t i = 0; i < np; i++) grp[i] = i;
     auto gr = [&](uint32_t i) {
@@ -199,6 +240,7 @@ bool squeeze_hud_x(gvk::Draw &d, int pos, float f, std::vector<uint8_t> &copy) {
     if (np <= 4096)
         for (uint32_t i = 0; i < np; i++)
             for (uint32_t j = i + 1; j < np; j++) {
+                if (cheia(i) || cheia(j)) continue;
                 const Caixa &a = pecas[i], &b = pecas[j];
                 const bool perto_x = a.x0 <= b.x1 + 0.06f && b.x0 <= a.x1 + 0.06f;
                 const bool mesma_altura = a.y0 <= b.y1 && b.y0 <= a.y1;
@@ -209,7 +251,12 @@ bool squeeze_hud_x(gvk::Draw &d, int pos, float f, std::vector<uint8_t> &copy) {
         Caixa &g = grupos[gr(i)];
         const Caixa &c = pecas[i];
         g.x0 = std::min(g.x0, c.x0), g.x1 = std::max(g.x1, c.x1);
+        g.y0 = std::min(g.y0, c.y0), g.y1 = std::max(g.y1, c.y1);
     }
+    // o lado sai do grupo entre desenhos (o GoW manda uma letra ou um trecho por desenho)
+    if (hg)
+        for (uint32_t i = 0; i < np; i++)
+            if (gr(i) == i && !cheia(i)) hg->expandir(grupos[i].x0, grupos[i].x1, grupos[i].y0, grupos[i].y1);
     static int diag = getenv("VITART_UI_LOG") ? 400 : 0; // diagnóstico: os pedaços e grupos dos primeiros desenhos
     static int conta = 0;
     if (diag > 0 && ++conta % 40 == 0) {

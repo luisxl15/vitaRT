@@ -673,6 +673,15 @@ void game_options_tick() {
         if (const char *e = getenv("VITART_ASPECT")) a = (float)std::atof(e); // teste
         float w = a / (720.f / 408.f);
         if (std::fabs(a - 16.f / 9.f) < 0.03f) w = 1.f;
+        // os menus do título (o do GoW1 parte o texto e deixa a borda sem fundo) ficam em 16:9: largo só jogando e até
+        // 60 s depois (a pausa não fica trocando; cada troca refaz os alvos)
+        {
+            using clk = std::chrono::steady_clock;
+            static clk::time_point ultimo_jogo{};
+            const bool jogando = rd32(game_id() == 1 ? 0x812c2e04u : 0x812ec498u) == (game_id() == 1 ? 0xbu : 0xcu);
+            if (jogando) ultimo_jogo = clk::now();
+            if (ultimo_jogo == clk::time_point{} || clk::now() - ultimo_jogo > std::chrono::seconds(60)) w = 1.f;
+        }
         gvk::set_aspect_widen(w);
     }
     if (const uint32_t v = g_req_fps.exchange(0); v >= 1 && v <= 3 && v != g_opt.fps) {
