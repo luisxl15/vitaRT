@@ -501,6 +501,27 @@ HUD_PACK = {'HealthMeter': (0.312, 0.319, 1.293, 0.035), 'MagicMeter': (0.312, 0
             'PowerUpMeter': (0.312, 0.319, 1.293, -0.009), 'HealthMeterBlackBar': None, 'MagicMeterBlackBar': None}
 
 
+def meter_growth(f, clip):
+    """Comprimento da barra no nível inicial / no máximo: a ponta (x) no quadro 50 e no 100, a partir do x do quadro 1."""
+    x = {}
+    for h, keys in clip.anims:
+        for k in keys:
+            fr, hd, t = struct.unpack_from('<HHH', k, 0)
+            if hd and t < len(f.xforms):
+                x.setdefault(fr, []).append(struct.unpack_from('<h', f.xforms[t], 0x10)[0] / 16)
+    if not all(q in x for q in (1, 50, 100)):
+        return 1.0
+    x0 = min(x[1])
+    return (max(x[50]) - x0) / (max(x[100]) - x0)
+
+
+def meter_start(f, clip):
+    """x (no clipe) onde a barra começa: o menor x do quadro 1."""
+    xs = [struct.unpack_from('<h', f.xforms[struct.unpack_from('<H', k, 4)[0]], 0x10)[0] / 16
+          for h, keys in clip.anims for k in keys if struct.unpack_from('<H', k, 0)[0] == 1 and struct.unpack_from('<H', k, 2)[0]]
+    return min(xs) if xs else 0.0
+
+
 def hud_pack_layout(f):
     mm_h = named(f.root, f, 'MainMeter')
     mm = f.c7[obj(f, mm_h, 7)]
@@ -512,7 +533,16 @@ def hud_pack_layout(f):
         hit = names & set(HUD_PACK)
         if not hit:
             continue
-        spec = HUD_PACK[hit.pop()]
+        nome = hit.pop()
+        spec = HUD_PACK[nome]
+        sc_novo, x_ini = None, 0.0
+        if spec is not None and nome in ('HealthMeter', 'MagicMeter'):
+            # a barra do GoW1 dobra com os upgrades (quadros 50..100 do clipe empurram a ponta para a direita) e a lâmina
+            # do pack tem tamanho fixo: o comprimento do MÁXIMO cabe nela, o do começo do jogo ocupa ~metade. O começo
+            # da barra (x do quadro 1 no clipe) fica onde já estava com a escala ajustada à mão.
+            hd = next(struct.unpack_from('<H', k, 2)[0] for k in keys if struct.unpack_from('<H', k, 2)[0])
+            clip = f.c7[obj(f, hd, 7)]
+            sc_novo, x_ini = spec[2] * meter_growth(f, clip), meter_start(f, clip)
         for k in keys:  # todas as chaves do elemento (o nome só vem na primeira)
             if struct.unpack_from('<H', k, 2)[0] == 0:
                 continue  # chave de remoção
@@ -526,6 +556,9 @@ def hud_pack_layout(f):
                 tx = mm_x + x / 16
                 left, left2 = hud_x(u0), hud_x(u1)
                 ntx = tx + (left2 - left) - (sc - 1) * (left - tx)
+                if sc_novo is not None:  # escala menor, com o começo da barra parado
+                    ntx += x_ini * (a_ / 65536) * (sc - sc_novo)
+                    sc = sc_novo
                 struct.pack_into('<4i', t, 0, round(a_ * sc), b_, c_, d_)
                 struct.pack_into('<hh', t, 0x10, round((ntx - mm_x) * 16), round(y + dv * 160.8 * 16))
             f.xforms.append(t)
