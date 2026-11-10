@@ -1,0 +1,2814 @@
+*1*
+[R2Button]
+*2*
+Vuoto
+*3*
+Mortale (Facile)
+*4*
+Spartano (Normale)
+*5*
+Dio (Difficile)
+*6*
+Titano (Molto difficile)
+*7*
+Gen,Feb,Mar,Apr,Mag,Giu,Lug,Ago,Set,Ott,Nov,Dic
+*8*
+Mortale,Spartano,Dio,Titano
+*9*
+[IconCyclopsEye] [PS2_CyclopsEye_Count] / 20
+*10*
+Feroce!
+*11*
+Sadico!
+*12*
+Selvaggio!
+*13*
+Disumano!
+*14*
+Sanguinario!
+*15*
+Implacabile!
+*16*
+Spietato!
+*17*
+Senza pietà!
+*18*
+Mostruoso!
+*19*
+Tirannico!
+*20*
+Immortale!
+*21*
+Furioso!
+*22*
+Divino!
+*23*
+Onnipotente!
+*24*
+Olimpico!
+*25*
+Strapotente!
+*26*
+Erculeo!
+*27*
+Supremo!
+*28*
+Soprannaturale!
+*29*
+Impossibile!
+*30*
+Fiero!
+*31*
+Uccisione brutale!
+*32*
+Uccisione spietata!
+*33*
+Mutilazione!
+*34*
+Schiacciato!
+*35*
+Annientato!
+*36*
+Continua così!
+*37*
+Ancora, ancora, ancora!
+*38*
+Niente male per un mortale!
+*39*
+Il mistero si svela!
+*40*
+Più colpi, più indizi!
+*41*
+Il tuo destino ti attende!
+*42*
+Il tuo fato si sta svelando!
+*43*
+Ci sei quasi!
+*44*
+Il segreto è vicino!
+*45*
+WWW.ISLANDOFRHODES.ORG
+*100*T
+Premi [SquareButton] per l'[*1]Attacco leggero.
+Premi [TriangleButton] per l'[*1]Attacco pesante.
+Premi [CircleButton] per [*1]Afferrare.
+*101*T
+Attiva la magia premendo [L2Button].
+Premi rapidamente [CircleButton] per aumentare i danni.
+*102*T
+Tieni premuto [R1Button] davanti a un forziere per aprirlo.
+*103*T
+[*1]Parata
+Premi [L1Button] per parare gli attacchi.
+*105*T
+[*1]Salto
+Premi [XButton] per saltare.
+Premi [XButton], [XButton] per un doppio salto.
+*106*T
+[*1]Lancio
+Tieni premuto [TriangleButton] per lanciare
+un nemico in aria.
+*107*
+Il cadavere di uno Spartano caduto.
+*108*
+Questo soldato è morto.
+*109*
+Un'altra vita spezzata da Zeus.
+*110*
+Queste morti non resteranno invendicate.
+*111*T
+Mettiti davanti alla mano del Colosso
+e premi [CircleButton] per lanciarne il braccio.
+*112*T
+[*1]Messaggio tutorial
+Hai appena ricevuto un messaggio tutorial.
+Spiegano le abilità di Kratos.
+---
+Si possono disattivare nel menu Opzioni.
+Premi il tasto Select per aprirlo.
+*113*T
+Premi rapidamente [CircleButton] per aprire i cancelli.
+*114*H
+Kratos ha assorbito l'energia vitale del
+Colosso nella Lama dell'Olimpo.
+*118*H
+Vanno riflessi entrambi i raggi degli occhi.
+*120*
+Hai ottenuto l'Amuleto delle Moire.
+*121*T
+[*1]Amuleto delle Moire
+Per usare l'amuleto e rallentare il tempo
+tieni premuto [L1Button] e premi [R1Button]
+----
+La Statua delle Moire risplende
+quando sei nel suo raggio.
+----
+La barra gialla mostra quanta
+carica ti rimane.
+*122*
+Hai ottenuto lo scudo di Perseo.
+*132*
+Ti serve la chiave del Custode dei Cavalli.
+*133*T
+[*1]Furia di Crono
+Premi [L2Button] per piazzare sfere di fulmini.
+Premi [LeftButton] per selezionarla.
+----
+Usala per abbattere i nemici.
+Se ne possono piazzare fino a 3 alla volta.
+*134*
+Hai ottenuto la chiave del Custode dei Cavalli.
+*135*
+Hai usato la chiave del Custode dei Cavalli
+per liberare i paraocchi dei cavalli.
+*136*
+Il fermo è bloccato
+e non si può ancora sganciare.
+*138*
+Alla statua sembra mancare lo scudo.
+*141*T
+Usa il [DpadButton] per passare da un
+attacco magico all'altro.
+*147*T
+[*1]Arrampicata sulla sporgenza
+Premi [XButton] per salire sulla sporgenza.
+Premi [R1Button] per calarti e restare appeso.
+*151*H
+Per attivare la Modalità Titano premi insieme [L3] e [R3]
+*152*H
+Non hai abbastanza potere per distruggere la porta.
+*153*T
+[*1]Oggetti luccicanti
+Puoi rompere gli oggetti che luccicano
+o interagire con essi.
+*154*H
+[*1]Calcio
+Tieni premuti [R1Button] e [XButton] per caricare un calcio.
+Rilascia quando sei pronto a colpire.
+*155*T
+[*1]Spinta
+Premi [XButton] per lanciarti contro il Corvo
+*156*T
+[*1]Flagello di Tifone
+Tieni premuto [L2Button] per attivare il Flagello di Tifone
+Premi [SquareButton] per sparare
+*157*T
+Premi [SquareButton] per un [*1] calcio rapido.
+Premi [TriangleButton] per un [*1]fendente.
+Premi [CircleButton] per la [*1]presa sulla fune.
+*167*
+Hai ottenuto il Terremoto di Atlante.
+*168*T
+[*1]Terremoto di Atlante
+Premi [L2Button] per usare Terra Distruttiva.
+Premi [DownButton] per selezionarlo.
+----
+Usalo per creare onde sismiche.
+*172*T
+Usa [JoystickL] per muoverti sulla fune.
+Premi [XButton] per tirarti avanti rapidamente.
+*180*T
+Spingi [JoystickL] in su per salire.
+Spingi [JoystickL] in giù per scendere.
+Spingi [JoystickL] a sinistra o a destra per girare attorno alla fune.
+*181*T
+[*1]Ali di Icaro
+Salta e tieni premuto [XButton] per attivare le Ali di Icaro.
+---------
+Continua a tenere premuto [XButton] per planare.
+Quando rilasci [XButton] Kratos cade.
+*182*T
+Spingi [JoystickL] nella direzione in cui vuoi saltare.
+Premi [XButton] per saltare giù dalla fune.
+*183*T
+Premi [R1Button] per lasciare la fune.
+*184*
+Hai ottenuto le Ali di Icaro.
+*198*T
+[*1]Scivolata sul muro
+Tieni premuto [R1Button] per scivolare giù dalle pareti
+Rilascia [R1Button] per fermarti.
+*200*
+Hai ottenuto la Furia di Crono.
+*201*
+Crono offrì i Destrieri del Tempo alle
+Sorelle in un vano tentativo di cambiare il suo fato.
+*203*
+È scritto in una lingua che non sai leggere.
+*204*T
+Per usare l'Amuleto e fermare il tempo
+tieni premuto [L1Button] e premi [R1Button]
+*205*T
+Tieni premuto [R1Button] per afferrare una manovella.
+Ruota [JoystickL] per girare la manovella.
+-----
+Non devi seguire la velocità
+dell'icona in fondo allo schermo.
+*208*
+Hai ottenuto la Grandine di Borea.
+*211*T
+Premi [SquareButton], [TriangleButton] o [CircleButton] per attaccare Icaro.
+*212*
+Hai ottenuto il Vello d'Oro.
+*216*
+C'è un'incisione di Borea,
+il dio del vento del Nord.
+*217*
+Hai ottenuto la Chiave dell'Ariete.
+*218*
+Ti serve il Teschio del Guerriero
+per aprire questa porta.
+*219*
+Hai ottenuto il Teschio del Guerriero.
+*220*
+Ti serve la Chiave dell'Ariete
+per aprire questa porta.
+*221*
+La porta è chiusa.
+*222*H
+[*1]Scatto subacqueo
+Tieni premuto e poi rilascia [R1Button] per uno scatto
+o per rompere le barriere sott'acqua.
+*224*
+La porta è chiusa.
+*225*
+Le Sorelle del Fato esigono un sacrificio col fuoco.
+*231*
+[*1]Sono tutto ciò che resta... Ora so
+[*1]che non raggiungerò le Sorelle...
+*236*T
+[*1]Testa di Euriale
+Tieni premuto [L2Button] per attivare la Testa di Euriale.
+Premi [UpButton] per selezionarla.
+-----
+Tieni premuto [L2Button] e poi [SquareButton]
+per pietrificare il nemico con lo Sguardo della Gorgone.
+*237*
+Sacrifica cinque nemici per placare le Sorelle.
+Pietrificali con lo Sguardo della Gorgone.
+Finiscili mandandoli in frantumi.
+*240*T
+[*1]Furia dei Titani
+Premi insieme [L3] e [R3] per attivare
+la Furia dei Titani.
+---
+Durante la Furia dei Titani tutti gli attacchi
+hanno più [*1]Potenza.
+*243*T
+Tieni premuto [L1Button] e premi [SquareButton], [TriangleButton] o [CircleButton]
+per le mosse speciali.
+*246*
+Il cancello è chiuso.
+*247*T
+Tieni premuto [R1Button] per afferrare una manovella.
+Ruota [JoystickL] per girare la manovella.
+------
+Non devi seguire la velocità
+dell'icona in fondo allo schermo.
+*251*T
+[*1]Flagello di Tifone
+Tieni premuto [L2Button] per attivare il Flagello di Tifone.
+Premi [RightButton] per selezionarlo.
+----
+Usalo per mirare e colpire
+nemici o oggetti da lontano.
+*252*
+Questo cancello è chiuso.
+Ti serve la Chiave di Euriale.
+*253*T
+Con la Furia dei Titani attiva,
+premi insieme [L3] e [R3] per disattivarla.
+*254*H
+Non hai abbastanza potere per sollevare le dita.
+*255*T
+Premi [R1Button] per staccarti dal soffitto.
+*256*
+Hai trovato la Chiave di Euriale.
+*257*
+Hai usato la Chiave di Euriale.
+*258*T
+Usa le Ali di Icaro sopra una corrente d'aria
+per guadagnare altezza e distanza.
+*259*
+Hai ottenuto la Testa di Euriale.
+*260*T
+[*1]Piuma di Prometeo
+Distruggi le armature magiche con la
+Piuma di Prometeo [SquareButton] [SquareButton] [TriangleButton].
+*261*
+Hai ottenuto il Flagello di Tifone.
+*262*
+Hai ottenuto la Furia dei Titani.
+*263*T
+[*1]Aggancio
+Tieni premuto [R1Button] per continuare a oscillare.
+---
+Premi [XButton] mentre oscilli per staccarti.
+Premi [XButton], [XButton] per un doppio salto.
+*266*
+Hai ottenuto un'impugnatura per manovella.
+*267*
+Alla manovella manca l'impugnatura.
+*268*
+Hai messo l'impugnatura sulla manovella.
+*269*T
+Usa [JoystickL] per guidare Pegaso.
+-----
+Premi [SquareButton] per l'[*1]Attacco leggero.
+Premi [TriangleButton] per l'[*1]Attacco pesante.
+-----
+Premi [L1Button] per la [*1]Carica a sinistra.
+Premi [R1Button] per la [*1]Carica a destra.
+Premi [XButton] per la [*1]Carica in avanti.
+*270*T
+La [*1]Carica in avanti[*0]  consuma la barra blu.
+*271*T
+Premi [XButton] per la [*1]Carica in avanti.
+*272*T
+Premi [SquareButton] per l'[*1]Attacco leggero.
+Premi [TriangleButton] per l'[*1]Attacco pesante.
+*277*
+Hai ottenuto la Lancia del Destino.
+*278*
+Hai ottenuto il Martello del Barbaro.
+*280*T
+Premi [XButton] per salire la scala con un salto.
+Spingi [JoystickL] in giù per scivolare.
+*282*
+Hai ottenuto la Lama dell'Olimpo.
+*283*
+Un'altra vita spezzata da Zeus.
+*286*
+Hai usato la chiave del Custode dei Cavalli.
+*287*T
+Premi [R1Button] per calarti
+e restare appeso alla sporgenza.
+*288*T
+Premi [XButton] per tirarti su.
+*291*T
+[*1]Evoca Anima
+Usa [JoystickR] per mandare le Anime contro i nemici.
+*292*T
+Premi [R2Button] per passare dalle Lame di Atena
+all'Arma secondaria scelta.
+*293*
+Devi proteggere il Traduttore.
+*294*T
+Premi il tasto Start e poi usa [CircleButton]
+per cambiare l'Arma secondaria.
+-----
+Puoi equipaggiare solo un'Arma
+secondaria alla volta.
+*295*T
+Usa il Vello d'Oro per deviare
+i proiettili e i raggi nemici
+premendo [L1Button] un attimo prima dell'impatto.
+*296*T
+Mettiti davanti alla fiamma e premi [L1Button]
+un attimo prima dell'impatto per deviarla.
+*297*
+Per cambiare il destino dell'Olimpo,
+Zeus si appella alle Moire.
+*298*
+I resti sfigurati del suo volto
+risvegliano orribili ricordi del passato.
+*360*T
+Spingi [JoystickL] in giù e [XButton] per saltare via dal muro.
+*390*
+Hai aperto la porta con
+il Teschio del Guerriero.
+*391*
+Hai aperto la porta con
+la Chiave dell'Ariete.
+*392*
+Devi mettere le ceneri nel fuoco
+per far risorgere la Fenice.
+*393*
+[*1]Potenziamento della Furia dei Titani
+*394*
+Gaia ti concede il dono della Salute.
+Che i tuoi nemici tremino davanti alla
+tua nuova forza.
+*395*
+Gaia ti concede il dono della Magia.
+Che i tuoi nemici si inchinino davanti al
+tuo nuovo potere.
+*396*
+Hai aperto la porta con
+la Grandine di Borea.
+*440*
+Tre viaggiatori diretti verso
+un destino ignoto.
+*441*
+Infuria la lotta senza fine tra
+i Titani e gli Olimpi.
+*442*
+Un'anima solitaria contempla la scia
+di carneficina che la circonda.
+*443*
+Ora la Furia dei Titani fa più danni,
+subisci meno danni dagli attacchi nemici
+e la barra dei Titani si svuota più lentamente.
+*444*
+[*1] Ares
+Il Dio della Guerra caduto
+*445*
+[*1] Zeus
+Re degli Dei
+*446*
+[*1] Poseidone
+Dio del Mare
+*447*
+[*1] Elio
+Dio del Sole
+*448*
+[*1] Ade
+Dio degli Inferi
+*470*
+[*1]Sopravvive il più forte
+Gli dei ti hanno maledetto e ti tolgono
+la salute.  Uccidi tutti i nemici per sopravvivere.
+--------
+Ottieni punti bonus senza usare
+la furia dei titani.
+*471*
+Sei sopravvissuto e hai sconfitto i nemici.
+*472*
+[*1]Proteggi i deboli
+Impedisci che il Traduttore venga ucciso.  La sua
+salute cala quando è fuori dal cerchio.
+--------
+Ottieni punti bonus mantenendo la salute
+del Traduttore sopra il 50 percento.
+*473*
+Hai salvato il Traduttore.
+*474*
+[*1]Raccogli i frutti
+Fai combo lunghe e raccogli
+almeno 500 sfere prima che scada il tempo.
+-------
+Ottieni punti bonus raccogliendo
+almeno 600 sfere prima che scada il tempo.
+*475*
+Hai raccolto abbastanza Sfere rosse.
+Sei potenziato!
+*476*
+[*1]Morte dall'alto
+Uccidi almeno 10 nemici in aria
+prima che scada il tempo.
+---------
+Ottieni punti bonus uccidendo
+almeno 15 nemici in aria.
+*477*
+Sei un maestro del combattimento aereo.
+*478*
+[*1]La perfezione è divina
+Uccidi tutti i nemici senza farti colpire.
+------
+Ottieni punti bonus senza
+usare la magia.
+*479*
+Hai padroneggiato e dimostrato
+le tue abilità di combattimento.
+*480*
+[*1]Cimitero di Gorgoni
+Pietrifica e frantuma almeno 25 nemici
+prima che scada il tempo.
+------
+Ottieni punti bonus frantumando
+almeno 35 nemici.
+*481*
+Hai distrutto i tuoi nemici.
+*482*
+[*1]Furia cieca
+Strappa l'occhio al Ciclope
+prima che scada il tempo.
+-------
+Ottieni punti bonus pietrificando e frantumando
+almeno 2 nemici.
+*483*
+Hai strappato l'occhio in tempo.
+*484*
+Hai salvato il Traduttore e
+ottenuto il bonus.
+*485*
+Sei sopravvissuto, hai sconfitto i nemici e
+ottenuto il bonus.
+*500*T
+Tieni premuto [R1Button] per afferrare una manovella.
+Tira e tieni [JoystickL] in giù per muovere la manovella.
+*501*T
+Decapitare Medusa dà sempre sfere di magia.
+*502*T
+[*1]Sfere rosse
+Usa le Sfere rosse per potenziare
+Armi e Magie.
+*503*T
+Tieni premuto [R1Button] mentre spingi [JoystickL] nella direzione
+in cui vuoi muovere l'oggetto.
+----
+[*1]Calcio
+Tieni premuti [R1Button] e [XButton] per caricare un calcio.
+Rilascia quando sei pronto a colpire.
+*504*T
+Muovi rapidamente [JoystickL] avanti e indietro per liberarti!
+*505*T
+[*1]Arrampicata sui muri
+Usa [JoystickL] per muoverti lungo i muri.
+----
+Spingi [JoystickL] a sinistra, a destra o in su
+e [XButton] per saltare rapidamente lungo il muro.
+----
+Spingi [JoystickL] in giù e [XButton] per saltare via.
+*506*T
+[*1]Nuoto
+Usa [JoystickL] per nuotare.
+Premi [SquareButton] per immergerti.  Premi [XButton] o [TriangleButton] per risalire.
+*507*T
+Premi rapidamente [CircleButton] per uccidere il Minotauro.
+Uccidere la creatura in questo modo
+dà sempre Salute.
+*508*T
+[*1]Sguardo della Gorgone
+Tieni premuti [L2Button] e [SquareButton] per pietrificare i nemici.
+Usa [JoystickR] per cambiare bersaglio.
+*509*T
+[*1]Flagello di Tifone
+Tieni premuto [L2Button] e premi [SquareButton] per sparare.
+Usa [JoystickR] per cambiare bersaglio.
+*510*T
+Premi [XButton] per afferrare la sporgenza.
+Premi di nuovo [XButton] per risalirci sopra.
+*511*T
+Muovi rapidamente [JoystickL] avanti e indietro per liberarti!
+*512*T
+Premi [L3] e [R3] per attivare la Furia dei Titani!
+*513*T
+Muovi rapidamente [JoystickL] avanti e indietro per liberarti!
+*515*T
+[*1]Parata
+Premi [L1Button] per parare.
+*516*
+[*1]Messaggio di suggerimento
+Hai appena ricevuto un suggerimento.
+Ti aiuta a risolvere gli enigmi.
+---
+Si possono disattivare nel menu Opzioni.
+Premi il tasto Select per aprirlo.
+*517*T
+[*1]Sfere verdi
+Le Sfere verdi ricaricano la Salute.
+*518*T
+Hai raccolto abbastanza Sfere rosse per potenziare
+le Armi. Premi il tasto Start per aprire il
+[*1]menu Power Up.
+*519*T
+Distruggi gli Scudi magici con la
+Piuma di Prometeo [SquareButton] [SquareButton] [TriangleButton].
+*520*T
+[*1]Sfere blu
+Le Sfere blu ricaricano la Magia.
+*521*T
+Lo Sguardo della Gorgone non colpisce le Gorgoni.
+*522*T
+[*1]Sfere della Furia dei Titani
+Le sfere dorate ricaricano la Furia dei Titani.
+*523*T
+[*1]Scala
+Premi [XButton] per salire con un salto.
+Spingi [JoystickL] in giù per scivolare.
+----
+Spingi [JoystickL] in giù e [XButton] per saltare via.
+-----
+Hai appena ricevuto un messaggio tutorial.
+Spiegano le abilità di Kratos.
+----
+Si possono disattivare nel menu Opzioni.
+Premi il tasto Select per aprirlo.
+*527*T
+Premi alternando [L1Button] e [R1Button] ripetutamente
+per liberarti dalla presa del colosso.
+*528*T
+Premi rapidamente [CircleButton] per aprire i cancelli.
+*529*T
+Premi rapidamente [CircleButton] per caricare la balista.
+*530*T
+Premi [R1Button] per raccogliere il corpo.
+Premi [R1Button] per posare il corpo.
+*531*T
+Usa [SquareButton] per sparare.
+Usa [JoystickR] per cambiare bersaglio.
+*532*T
+Premi [CircleButton] quando appare sopra un nemico
+per iniziare il Minigioco.
+*533*T
+[*1]Salto dal muro
+Mettiti accanto
+al bordo del vuoto.
+----
+Spingi [JoystickL] nella direzione in cui vuoi saltare.
+Premi [XButton] per saltare oltre il vuoto.
+*535*T
+[*1]Scatto subacqueo
+Tieni premuto e poi rilascia [R1Button] per uno scatto
+o per rompere le barriere sott'acqua.
+*536*T
+[*1]Arrampicata sul soffitto
+Usa [JoystickL] per muoverti lungo il soffitto.
+----
+Spingi [JoystickL] in una direzione e [XButton]
+per tirarti rapidamente lungo il soffitto.
+*540*
+Hai ottenuto l'Occhio del Ciclope.
+*542*T
+[*1]Schivata
+Usa [JoystickR] per schivare.
+*564*T
+[*1]Aggancio
+Premi [R1Button] per agganciarti a un punto di aggancio.
+I punti di aggancio risplendono quando sei vicino.
+---
+Tieni premuto [R1Button] per continuare a oscillare.
+---
+Premi [XButton] mentre oscilli per staccarti.
+Premi [XButton], [XButton] per un doppio salto.
+*589*T
+Ruota [JoystickL] seguendo le indicazioni sullo schermo.
+Un giro per indicazione.
+*590*
+Entra nella luce splendente e premi
+[R1Button] per salvare i progressi.
+*601*
+Terme di Rodi
+*602*
+Palazzo di Rodi
+*603*
+Ritorno dall'Ade
+*604*
+La Caverna della Mano
+*605*
+Fuoco dell'Olimpo
+*606*
+La Prigione cavernosa di Tifone
+*607*
+Le Rupi di Lachesi
+*608*
+Il Giardino di Lachesi
+*609*
+Il Cammino verso i Destrieri
+*610*
+I Destrieri del Tempo
+*611*
+L'Atrio del Destino
+*612*
+Il Tempio di Euriale
+*613*
+Il Fiume dei Dimenticati
+*614*
+Veduta delle Pianure
+*615*
+La Sconfitta di Euriale
+*616*
+Il Cortile di Atropo
+*617*
+L'Attraversamento delle Pianure
+*618*
+Dentro il Possente Titano
+*619*
+L'Ascesa di Atlante
+*620*
+Il Grande Abisso
+*621*
+La Liberazione della Fenice
+*622*
+L'Auditorium Est
+*623*
+Sacrificio alle Moire
+*624*
+L'Auditorium Ovest
+*625*
+La Sala della Fenice
+*626*
+Il Tempio delle Moire
+*627*
+Il Santuario Interno
+*628*
+La Sala del Telaio
+*629*
+Le Vasche Divine
+*630*
+Le Catacombe dei Caduti
+*631*
+Il Confine della Creazione
+*632*
+Il Grande Abisso
+*633*
+Il Volto di Atlante
+*634*
+I Bastioni Orientali
+*635*
+Davanti al Telaio
+*636*
+Ingresso al Sottosuolo
+*700*
+ARMI
+[*1]
+S
+Usa questi strumenti di Guerra
+per micidiali attacchi corpo a corpo.
+*701*
+[*1] [IconBlade] LAME DI ATENA
+[*1]
+B1H
+Potenti lame donate
+dalla Dea Atena.
+*702*
+Slancio di Icaro (in aria)
+[XButton]
+B1
+In aria, premi [XButton]
+per guadagnare altezza.
+*703*
+Ascensione Olimpica
+Tieni premuto [TriangleButton]
+B1
+Tieni premuto [TriangleButton] per lanciare i nemici
+e saltare in aria.
+*704*
+Arpione di Orione
+[CircleButton]
+B1
+Premi [CircleButton] quando il nemico è in aria
+per scaraventarlo a terra.
+*705*
+Contrattacco di Atena
+Premi [L1Button]
+B1
+Premi [L1Button] appena prima che l'attacco
+nemico vada a segno per pararlo.
+*706*
+Piuma di Prometeo
+[SquareButton], [SquareButton], [TriangleButton]
+B1
+Una combo rapida e potente
+con un finale infuocato.
+*707*
+Furia delle Erinni
+[L1Button] + [CircleButton]
+B2
+Concentra la tua furia su un nemico
+con questo attacco a colpi multipli.
+*708*
+Furia delle Erinni (in aria)
+[L1Button] + [CircleButton]
+B2
+Fai roteare rapidamente le lame in questo
+attacco aereo a colpi multipli.
+*709*
+Ciclone del Caos
+[L1Button] + [SquareButton]
+B3
+Fai roteare rapidamente le lame
+colpendo più volte tutti
+i nemici intorno.
+*710*
+Ciclone del Caos (in aria)
+[L1Button] + [SquareButton]
+B3
+In aria, fai roteare rapidamente
+le lame colpendo più volte tutti
+i nemici intorno.
+*711*
+Spirito di Ercole
+[TriangleButton], [TriangleButton], [TriangleButton]
+B3
+Una combo potente ma lenta a colpi multipli
+con un finale esplosivo che
+lancia i nemici in aria.
+*712*
+Valore di Ercole
+[TriangleButton], [TriangleButton], [SquareButton]
+B3
+Una combo potente ma lenta a colpi multipli
+che scaglia via i nemici.
+*713*
+Carica di Iperione (corsa)
+Tieni premuto [SquareButton]
+B4
+Tieni premuto [SquareButton] per un fendente ad arco,
+continua a tenere [SquareButton] per partire
+in una carica di corsa.
+*714*
+Assalto di Iperione (in corsa)
+[SquareButton]
+B4
+Durante una Carica di Iperione
+premi [SquareButton] per colpire
+il nemico con una spallata.
+*715*
+Ascesa di Iperione (in corsa)
+[TriangleButton]
+B4
+Durante una Carica di Iperione
+premi [TriangleButton] per un
+montante che lancia i nemici.
+*716*
+Ira di Atena (schivando)
+[JoystickR], [TriangleButton]
+B4
+Mentre schivi ([JoystickR]), premi [TriangleButton] per
+creare un'onda esplosiva sul terreno
+che lancia in aria i nemici davanti a te.
+*717*
+Furia del Tartaro
+[L1Button] + [TriangleButton]
+B5
+Abbatti le lame su più
+nemici, lanciandoli
+in aria.
+*718*
+Furia del Tartaro (in aria)
+[L1Button] + [TriangleButton]
+B5
+In aria, scatena più attacchi
+e atterra con un finale esplosivo
+che lancia i nemici in aria.
+*719*
+[*1] [IconHammer] MARTELLO DEL BARBARO
+[*1]
+H1H
+Martello macchiato del
+sangue del Re Barbaro.
+*720*
+Sconfitta schiacciante
+[L1Button] + [SquareButton]
+H1
+Lento attacco rotante a colpi multipli
+che prende velocità rapidamente.
+*721*
+Potenza del Re
+[L1Button] + [TriangleButton]
+H1
+Un possente colpo dall'alto che crea
+un'onda potente davanti a te
+lanciando i nemici in aria.
+*722*
+Potenza del Re (in aria)
+[L1Button]
+H1
+Un possente colpo dall'alto in aria che
+crea un'onda potente davanti a te
+lanciando i nemici in aria.
+*723*
+Evoca Anima
+Muovi di scatto [JoystickR]
+H2
+Muovi di scatto la levetta destra ([JoystickR])
+per evocare un'Anima Maledetta
+ai tuoi ordini.
+*724*
+Legione di Anime
+[L1Button] + [CircleButton]
+H3
+Evoca una Legione di Anime Maledette
+contro i nemici ignari.
+*725*
+[*1] [IconStaff] LANCIA DEL DESTINO
+[*1]
+C1H
+Arma del Cavaliere Oscuro
+estratta dal cadavere del Grifone.
+*726*
+Fendente letale
+[L1Button] + [SquareButton]
+C1
+Fai roteare la lancia in un ampio arco
+colpendo più nemici.
+*727*
+Schegge perforanti
+[L1Button] + [TriangleButton]
+C1
+Scaglia una raffica di
+proiettili affilati come rasoi.
+*728*
+Schegge perforanti (in aria)
+[L1Button]
+C1
+Scaglia in aria una raffica di
+proiettili affilati come rasoi.
+*729*
+Resti sventurati
+[L1Button] + [CircleButton]
+C2
+Usa la lancia per creare trappole letali
+che esplodono al contatto con i nemici.
+*730*
+Fendente alterante
+[L1Button] + [SquareButton]
+C3
+Fai roteare la lancia in un ampio arco:
+tutti i nemici colpiti
+esplodono dopo poco.
+*731*
+[*1] [IconOlympus] LAMA DELL'OLIMPO
+[*1]
+O1H
+Questa lama pose fine alla Grande Guerra dei Titani,
+ora racchiude tutto il tuo potere divino.
+*732*
+Assoluzione divina
+[L1Button] + [SquareButton]
+O1
+Trafiggi un nemico con la lama
+più volte.
+*733*
+Castigo divino
+[L1Button] + [TriangleButton]
+O1
+Scatena un'esplosione di
+Potenza Divina.
+*734*
+Castigo divino (in aria)
+[L1Button]
+O1
+In aria, scatena
+un'esplosione di Potenza Divina.
+*735*
+Sacrificio divino
+[L1Button] + [CircleButton]
+O2
+Assorbi le sfere da tutti i nemici
+che toccano la
+sfera di potere sacro.
+*736*
+Ira degli Dei
+[SquareButton] o [TriangleButton]
+O3
+Tutti gli attacchi scaricano
+potenti esplosioni di Potenza Divina.
+*737*
+MAGIA
+[*1]
+S
+Un potente complemento
+al tuo arsenale letale.
+*738*
+[*1] [IconLightning] IRA DI POSEIDONE
+[*1]
+L1H
+Attacca più nemici insieme con questo
+potente dono del sommo Poseidone.
+*739*
+Collera di Poseidone
+[L2Button], premi [CircleButton]
+L1
+Premi [L2Button] per attivare questo potente attacco di energia.
+Poi premi rapidamente [CircleButton] per aumentare
+raggio e danni dell'attacco.
+*740*
+[*1] [IconWind] FLAGELLO DI TIFONE
+[*1]
+W1H
+Attacca i nemici a distanza
+con quest'arma strappata
+dall'occhio di Tifone.
+*741*
+Raffica di vento
+[L2Button] + [SquareButton]
+W1
+Tieni premuto [L2Button] e poi premi [SquareButton]
+per scagliare una raffica di vento sul nemico.
+*742*
+Raffica di vento (in aria)
+[L2Button] + [SquareButton]
+W1
+In aria, tieni premuto [L2Button] e poi premi [SquareButton]
+per scagliare una raffica di vento sul nemico.
+*743*
+Vortice letale
+[L2Button] + [TriangleButton]
+W2
+Tieni premuto [L2Button] e poi premi [TriangleButton]
+per scatenare un turbine
+che lancia i nemici in aria.
+*744*
+Raffica di vento (caricata)
+[L2Button] + tieni premuto [SquareButton]
+W3
+Tenendo premuto [L2Button], tieni premuto [SquareButton] e rilascia
+per sparare più raffiche a ricerca.
+*745*
+Tempesta del Titano
+[L2Button] + [CircleButton]
+W3
+Tieni premuto [L2Button] e poi premi [CircleButton]
+per comandare una tempesta furiosa
+con un'ampia area di danno.
+*746*
+[*1] [IconElectric] FURIA DI CRONO
+[*1]
+T1H
+L'ira del Grande Signore dei Titani
+scorre in te.
+*747*
+Furia di Crono
+[L2Button]
+T1
+Premi [L2Button] per creare una
+sfera di fulmini che colpisce più nemici.
+Se ne possono piazzare fino a tre.
+*748*
+Furia di Crono (in aria)
+[L2Button]
+T1
+In aria, premi [L2Button] per creare una
+sfera di fulmini che colpisce più nemici.
+Se ne possono piazzare fino a tre.
+*749*
+[*1] [IconMedusa] TESTA DI EURIALE
+[*1]
+M1H
+Lo sguardo di questa vile creatura
+trasforma i nemici in pietra.
+*750*
+Sguardo della Gorgone
+[L2Button] + [SquareButton]
+M1
+Tieni premuto [L2Button] e poi [SquareButton]
+finché il nemico nel mirino
+diventa di pietra.
+*751*
+Sguardo della Gorgone (in aria)
+[L2Button] + [SquareButton]
+M1
+In aria, tieni premuto [L2Button] e poi [SquareButton]
+finché il nemico nel mirino
+diventa di pietra.
+*752*
+Lampo della Gorgone
+[L2Button] + [TriangleButton]
+M2
+Tieni premuto [L2Button] e poi premi [TriangleButton]
+per pietrificare i nemici
+con un solo sguardo.
+*753*
+Lampo della Gorgone (in aria)
+[L2Button] + [TriangleButton]
+M2
+In aria, tieni premuto [L2Button] e poi premi [TriangleButton]
+per pietrificare i nemici
+con un solo sguardo.
+*754*
+Esplosione della Gorgone
+[L2Button] + [CircleButton]
+M3
+Tieni premuto [L2Button] e poi premi [CircleButton]
+per scatenare un'ondata della magia di Euriale
+che pietrifica più nemici.
+*755*
+Esplosione della Gorgone (in aria)
+[L2Button] + [CircleButton]
+M3
+In aria, tieni premuto [L2Button] e poi premi [CircleButton]
+per scatenare un'ondata della magia di Euriale
+che pietrifica più nemici.
+*756*
+Furia della Gorgone
+[L2Button] + tieni premuto [CircleButton]
+M3
+Tenendo premuto [L2Button], tieni premuto [CircleButton] e rilascia
+per pietrificare tutti i nemici intorno.
+*757*
+[*1] [IconEarth] TERREMOTO DI ATLANTE
+[*1]
+E1H
+Un dono del possente Atlante:
+il potere della terra è ai tuoi ordini
+per distruggere i nemici.
+*758*
+Terra tremante
+[L2Button]
+E1
+Colpisci il suolo con i pugni,
+scagliando detriti sui nemici
+e facendo danni in un ampio raggio.
+*759*
+Terra tremante (in aria)
+[L2Button]
+E1
+Schiantati al suolo dall'alto,
+creando detriti e
+facendo danni in un ampio raggio.
+*760*
+Terra distruttiva
+[L2Button], premi [CircleButton]
+E3
+Premi [L2Button] per provocare un terremoto,
+poi premi rapidamente [CircleButton] per creare
+più detriti e fare più danni.
+*761*
+Terra distruttiva (in aria)
+[L2Button], premi [CircleButton]
+E3
+In aria, premi [L2Button] per provocare un terremoto,
+poi premi rapidamente [CircleButton] per creare
+più detriti e fare più danni.
+*762*
+RELIQUIE
+[*1]
+S
+Oggetti mitici che ti aiutano
+nel viaggio verso le Sorelle del Fato.
+*763*
+[*1] [IconTrident] TRIDENTE DI POSEIDONE
+[*1]
+P1H
+Questo simbolo del potere di Poseidone
+ti permette di respirare sott'acqua.
+*764*
+Nuota su
+[TriangleButton] o [XButton]
+P1
+Per nuotare verso l'alto tieni premuto [TriangleButton]
+o [XButton].
+*765*
+Nuota giù
+[SquareButton]
+P1
+Per nuotare verso il basso tieni premuto [SquareButton].
+*766*
+Scatto subacqueo
+Tieni premuto [R1Button]
+P1
+Tieni premuto e poi rilascia [R1Button]
+per scattare avanti sott'acqua e
+distruggere gli ostacoli sul cammino.
+*767*
+[*1] [IconHelmet] FURIA DEI TITANI
+[*1]
+R1H
+Lascia che la Furia dei Titani
+guidi le tue lame!
+*768*
+Attiva Furia dei Titani
+[L3] + [R3]
+R1
+Premi [L3] e [R3] insieme
+per richiamare
+la Furia dei Titani.
+*769*
+Bagliore di Prometeo
+[L1Button]
+R1
+Premi [L1Button] per un'esplosione di fuoco
+che respinge i nemici vicini.
+*770*
+Tormento di Prometeo
+[SquareButton], tieni premuto [SquareButton]
+B4
+Premi [SquareButton] e continua a tenerlo premuto
+per un attacco infuocato continuo tutt'intorno.
+*771*
+Inferno di Prometeo
+Tieni premuto [L1Button]
+B5
+Quando il contatore combo è 25 o più,
+tieni premuto [L1Button] per un torrente di fuoco
+che danneggia i nemici intorno.
+*772*
+[*1] [IconAmuletFates] AMULETO DELLE MOIRE
+[*1]
+A1H
+Usa il potere del tempo
+per ottenere vendetta.
+*773*
+Attiva Amuleto
+[L1Button] + [R1Button]
+A1
+Tieni premuto [L1Button] e premi [R1Button] per rallentare il tempo
+vicino a una Statua delle Moire attiva.
+Non si attiva con la Furia dei Titani in corso.
+*774*
+[*1] [IconGoldenFleece] VELLO D'ORO
+[*1]
+G1H
+Ti permette di respingere gli attacchi,
+i proiettili e i raggi dei nemici.
+*775*
+Ritorno di Argo
+[L1Button]
+G1
+Premi [L1Button] prima di essere colpito
+per respingere un attacco, un proiettile o un raggio.
+*776*
+Vendetta di Argo
+[L1Button], [SquareButton]
+G1
+Dopo una parata riuscita, premi [SquareButton]
+per un potente contrattacco che colpisce
+tutti i nemici vicini.
+*777*
+[*1] [IconIcarus] ALI DI ICARO
+[*1]
+I1H
+Ali strappate a Icaro:
+ti permettono di volare per poco.
+*778*
+Planata di Icaro (in aria)
+Tieni premuto [XButton]
+I1
+In aria, premi [XButton] e continua a tenerlo premuto
+per planare per un breve tempo.
+*779*
+Ascensione di Icaro
+[L1Button] + [XButton]
+I1
+Usa le ali per
+lanciare i nemici vicini
+e saltare in aria.
+*780*
+Colpo di Icaro (in aria)
+[L1Button] + [XButton]
+I1
+In aria, sferra un rapido
+colpo con le ali.
+*799*
+[*1] [IconQuestionMark]      ? ? ? ? ? ?
+Bloccato
+[*2]  -  nuovo
+[TriangleButton] = Indietro
+[XButton] = Chiudi gruppo
+[XButton] = Apri gruppo
+*801*
+Rodi
+0
+*802*
+I Cieli sopra la Grecia
+0
+*803*
+La Tana del Titano
+0
+*804*
+La Caverna di Tifone
+0
+*805*
+Il Confine del Mondo
+0
+*806*
+Il Tempio di Lachesi
+0
+*807*
+I Destrieri del Tempo
+0
+*808*
+La Sala di Lachesi
+0
+*809*
+L'Atrio del Destino
+0
+*810*
+La Palude dei Dimenticati
+0
+*811*
+Il Tempio di Euriale
+0
+*812*
+Le Rovine dei Dimenticati
+0
+*813*
+La Sala di Atropo
+0
+*814*
+L'Attraversamento delle Pianure
+0
+*815*
+Il Ponte ad Aggancio del Destino
+0
+*816*
+Il Grande Abisso
+0
+*817*
+Atlante
+0
+*818*
+Il Palazzo delle Moire
+0
+*819*
+L'Auditorium di Lachesi
+0
+*820*
+Il Giardino degli Dei
+0
+*821*
+L'Auditorium di Atropo
+0
+*822*
+La Sala della Fenice
+0
+*823*
+Il Tempio delle Moire
+0
+*824*
+Il Trono di Lachesi
+0
+*825*
+Il Tempio dell'Oracolo
+0
+*826*
+La Sala del Telaio
+0
+*827*
+La Vetta del Sacrificio
+0
+*828*
+Bonus ottenuto
+0
+*829*
+Bonus fallito
+0
+*898*
+La strada verso l'E3...
+AAP
+Di nuovo in viaggio.
+Premi [XButton] per riprodurre.
+[*1]
+[*1]
+[*1]
+[*1]
+BonusRoadtoE3
+*899*
+Riconoscimenti
+AAP
+Guarda il filmato dei riconoscimenti.
+Premi [XButton] per riprodurre.
+[*1]
+[*1]
+[*1]
+[*1]
+BonusCredits
+*900*
+Sfida dei Titani
+G0C
+7 stanze, 7 sfide.
+Sopravviverai a tutte?
+Premi [XButton] per giocare.
+7 stanze, 7 sfide.
+Sopravviverai a tutte?
+Completa il gioco per sbloccarla.
+*901*
+Arena delle Moire
+C3F
+Controlla il tuo destino
+e combatti alle tue condizioni...
+Premi [XButton] per giocare.
+Controlla il tuo destino
+e combatti alle tue condizioni...
+Ottieni il grado Titano nella Modalità Sfida per sbloccarla.
+*902*
+Modalità Titano
+G0
+L'esperienza definitiva di God of War® II.
+Solo per giocatori esperti.
+Sceglila dal menu Nuova partita.
+L'esperienza definitiva di God of War® II.
+Solo per giocatori esperti.
+Completa il gioco per sbloccarla.
+*903*
+Urne del Potere
+G0
+Nella Partita bonus puoi usare
+le Urne in tuo possesso.
+Sceglile dal menu Stato.
+Raccogli le preziose Urne
+e brandisci il Potere supremo.
+Completa il gioco per sbloccarle.
+*904*
+Costume bonus 1
+G0
+Kratos più un costume da pesce
+fa il Merluzzo della Guerra!
+Sceglilo all'inizio della Partita bonus.
+La vita di Kratos è sempre stata
+una lotta controcorrente...
+Completa il gioco per sbloccarlo.
+*905*
+Costume bonus 2
+G0
+Indossa un'Armatura forgiata con
+le Squame della letale Idra.
+Sceglilo all'inizio della Partita bonus.
+Mi sono sempre chiesto cosa
+avessero fatto del corpo...
+Completa il gioco per sbloccarlo.
+*906*
+Costume bonus 3
+G2
+Intraprendi la tua Odissea Oscura
+con un guerriero all'altezza.
+Sceglilo all'inizio della Partita bonus.
+La strada della vendetta
+è oscura...
+Completa il gioco in Modalità Dio per sbloccarlo.
+*907*
+Costume bonus 4
+G3
+Gioca nei panni della
+nobile Dea Atena.
+Sceglilo all'inizio della Partita bonus.
+Perché essere un Dio della Guerra
+quando puoi essere una dea?
+Completa il gioco in Modalità Titano per sbloccarlo.
+*908*
+Costume bonus 5
+G3
+Ora puoi avere la forza
+e l'aspetto di Ercole.
+Sceglilo all'inizio della Partita bonus.
+I Classici
+non passano mai di moda...
+Completa il gioco in Modalità Titano per sbloccarlo.
+*909*
+Costume bonus 6
+CE
+Il Generale Kratos torna dal passato
+ed è ai tuoi ordini.
+Sceglilo all'inizio della Partita bonus.
+L'unica cosa che perseguita
+un fantasma è il suo passato...
+Raccogli 20 Occhi del Ciclope per sbloccarlo.
+*910*
+Costume bonus 7
+C2
+Indossa l'Armatura del Dio della Guerra
+per incutere paura ai nemici.
+Sceglilo all'inizio della Partita bonus.
+Hai faticato tanto per averla la prima volta,
+sarebbe un peccato sprecarla.
+Ottieni il grado Dio nella Modalità Sfida per sbloccarlo.
+*911*
+Filmati del gioco - Alta risoluzione
+G0P
+Guarda tutti i filmati in alta risoluzione.
+Premi [XButton] per riprodurre.
+[XButton] salta, [TriangleButton] termina.
+Guarda tutti i filmati in alta risoluzione.
+Completa il gioco per sbloccarli.
+[*1]
+DeathKratos
+IsleKickDoor
+BKArenaFight
+AtlasTitanWar
+DeathAthena
+EndMovie
+*912*
+Filmati del gioco - Ordine della storia
+G0P
+Guarda i filmati del gioco in ordine.
+Premi [XButton] per riprodurre.
+[XButton] salta, [TriangleButton] termina.
+Guarda i filmati del gioco in ordine.
+Completa il gioco per sbloccarli.
+[*1]
+IntroHUD
+ColossusEye
+ColossusHand
+BladeOffer
+DeathColossus
+ZeusIntoEagle
+DeathKratos
+IntroPegasus
+IntroPrometheus
+ItemTitanRage
+PegaRevealIsle
+IsleKickDoor
+IntroTheseus
+ItemLightning
+IsleHorsePull
+IsleLahkesisStatue
+Dock1EyeExplode
+BKDragIntro
+BKArenaFight
+Bog20TempleSlide
+IntroPerseus
+Dock2EyeExplode
+IntroIcarus
+DeathIcarus
+AtlasHand
+AtlasTitanWar
+ItemEarthquake
+Translator1Death
+Translator2Death
+SummonLavaGeyser
+SeparatePhoenix
+DeathLastSpartan
+GaiaPepTalk
+DeathKraken
+PhoenixFlight
+IntroLahkesis
+IntroAtropos
+MirrorDestroy
+MirrorProtect
+RhodesReturn
+DeathAthena
+EndMovie
+*913*
+Riconoscimenti
+AAP
+Guarda il filmato dei riconoscimenti.
+Premi [XButton] per riprodurre.
+[*1]
+[*1]
+[*1]
+[*1]
+BonusCredits
+*1025*T
+Premi [CircleButton] per disarcionare il Cavaliere.
+*1026*
+Premi [XButton] per salire sulla sporgenza.
+Premi [CircleButton] per calarti e restare appeso.
+*1101*
+[*1]Urna di Gaia
+Attivala nella Partita bonus
+per ricevere un'abilità speciale.
+*1102*
+[*1]Urna delle Gorgoni
+Attivala nella Partita bonus
+per ricevere un'abilità speciale.
+*1103*
+[*1]Urna dell'Olimpo
+Attivala nella Partita bonus
+per ricevere un'abilità speciale.
+*1104*
+[*1]Urna di Prometeo
+Attivala nella Partita bonus
+per ricevere un'abilità speciale.
+*1111*
+[*1]Urna di Gaia
+Attiva l'abilità speciale dell'Urna
+nel menu Stato.
+*1112*
+[*1]Urna delle Gorgoni
+Attiva l'abilità speciale dell'Urna
+nel menu Stato.
+*1113*
+[*1]Urna dell'Olimpo
+Attiva l'abilità speciale dell'Urna
+nel menu Stato.
+*1114*
+[*1]Urna di Prometeo
+Attiva l'abilità speciale dell'Urna
+nel menu Stato.
+*1500*
+Cinghiale selvatico
+Boar00
+*1501*
+Segugio rabbioso
+Rabdog00
+*1502*
+Seme di Cerbero
+Cerpup00
+*1503*
+Arpia
+Harpy00
+*1504*
+Arpia dell'Ade
+Harpy20
+*1505*
+Arpia maledetta
+Harpy30
+*1506*
+Ninfa
+Bug10
+*1507*
+Ninfa dell'Ade
+Bug20
+*1508*
+Donna greca
+Greekf00
+*1509*
+Cittadino greco
+Greekm00
+*1510*
+Resti maledetti
+Bones00
+*1511*
+Arciere di Rodi
+rharch00
+*1512*
+Arciere non morto
+Archer00
+*1513*
+Arciere maledetto
+Archer10
+*1514*
+Soldato di Rodi
+rhsold00
+*1515*
+Mercenario barbaro
+bkarmy00
+*1516*
+Signore delle Bestie
+train00
+*1517*
+Legionario non morto
+Skelly00
+*1518*
+Legionario maledetto
+Skelly10
+*1519*
+Spettro di Atene
+Wraith00
+*1520*
+Spettro dell'Asfodelo
+Wraith10
+*1521*
+Demone dell'Ade
+Orderp00
+*1522*
+Sentinella delle Moire
+Orders00
+*1523*
+Guardiano delle Moire
+Orders10
+*1524*
+Colosso delle Moire
+Orderl00
+2
+*1525*
+Colosso dell'Ade
+Orderl10
+2
+*1526*
+Capitano dei Legionari
+Captan00
+2
+*1527*
+Legionario dell'Ade
+Captan10
+2
+*1528*
+Satiro
+Satyr00
+2
+*1529*
+Campione dei Satiri
+Satyr10
+2
+*1530*
+Sirena
+Siren00
+2
+*1531*
+Sirena vedova
+Siren10
+2
+*1532*
+Gorgone
+Medusa00
+2
+*1533*
+Gorgone assassina
+Medusa10
+2
+*1534*
+Regina delle Gorgoni
+Medusa20
+2
+*1535*
+Minotauro soldato
+Mintar00
+2
+*1536*
+Minotauro dell'Ade
+Mintar30
+2
+*1537*
+Minotauro dell'Erebo
+Mintar40
+2
+*1538*
+Sommo Sacerdote delle Moire
+priest10
+1
+*1539*
+Ciclope bruto
+Cyclop00
+1
+*1540*
+Ciclope tiranno
+Cyclop01
+1
+*1541*
+Ciclope berserker
+Cyclop30
+1
+*1542*
+Cerbero
+Cerbus10
+1
+*1543*
+Allevatore di Cerberi
+Cerbus00
+1
+*1544*
+Minotauro Titano
+rock10
+1
+*3900*
+2750
+*3901*
+5250
+*3902*
+9500
+*3903*
+13500
+*3910*
+1650
+*3911*
+3500
+*3920*
+2500
+*3921*
+12500
+*3930*
+3350
+*3931*
+15000
+*3940*
+4500
+*3941*
+10000
+*3950*
+4000
+*3951*
+8000
+*3960*
+3750
+*3961*
+12500
+*3970*
+4500
+*3971*
+17500
+*3980*
+9000
+*3981*
+25000
+*4000*
+[XButton] = Continua
+[XButton] = Seleziona
+[TriangleButton] = Annulla
+[TriangleButton] = Indietro
+[XButton] = Potenzia
+[XButton]
+[CircleButton] = Cambia arma
+Indietro =  [TriangleButton]
+*4001*
+Attivo
+*4002*
+Disattivo
+*4003*
+Sì
+*4004*
+No
+*4005*
+Pausa
+*4006*
+Opzioni
+*4007*
+Mosse
+*4008*
+Oggetti
+*4009*
+Power Up
+*4010*
+Continua
+*4011*
+Riprendi dall'ultimo checkpoint
+*4012*
+Esci dal gioco
+*4013*
+Torna ai Tesori
+*4014*
+Torna al menu di pausa
+*4015*
+Vuoi passare alla Modalità Facile?
+(La modifica riguarda solo i combattimenti)
+*4016*
+Vuoi davvero ricominciare?
+Vuoi davvero uscire dal gioco?
+*4017*
+Vuoi davvero
+tornare ai Tesori?
+*4018*
+SEI MORTO
+*4019*
+HAI FALLITO
+*4020*
+Colpi
+*4021*
+Caricamento...
+*4022*
+BLOCCATO
+*4023*
+Ricomincia la sfida
+*4024*
+Torna alle opzioni dell'Arena
+*4025*
+Ricomincia l'Arena
+*4026*
+Torna alla scelta della sfida
+*4027*
+Vuoi davvero tornare
+alla scelta della sfida?
+*4028*
+Vuoi davvero tornare
+alle opzioni dell'Arena?
+*4029*
+Tieni premuto
+*4030*
+Vuoi davvero passare
+alla Modalità Facile?
+(Dopo il cambio non potrai tornare indietro)
+*4031*
+Ottenuto
+*4032*
+Uccisioni in aria:
+*4033*
+Frantumati:
+*4100*
+Hai ottenuto un Occhio di Gorgone.
+*4101*
+Raccoglierne ancora [/:HealthShardsNeeded] per aumentare
+la salute massima.
+*4102*
+Hai ottenuto una Piuma di Fenice.
+*4103*
+Raccoglierne ancora [/:MagicShardsNeeded] per aumentare
+la magia massima.
+*4104*
+6 Occhi di Gorgone ottenuti.
+*4105*
+La barra della salute aumenta.
+*4106*
+Sacrificio accettato.
+*4107*
+6 Piume di Fenice ottenute.
+*4108*
+La barra della magia aumenta.
+*4110*
+Hai ottenuto un Occhio del Ciclope.
+*4111*
+Raccogli abbastanza occhi per
+sbloccare un Tesoro bonus.
+*4150*
+Schema dei comandi
+*4151*
+Modalità audio:
+*4152*
+Mono
+*4153*
+Stereo
+*4154*
+Surround
+*4155*
+Volume effetti
+*4156*
+Volume musica
+*4157*
+Ammorbidisci:
+*4158*
+Scansione progressiva:
+*4159*
+Schermo intero:
+*4160*
+Vibrazione:
+*4161*
+Torna al menu principale
+*4162*
+Comandi di volo:
+*4163*
+Normali
+*4164*
+Invertiti
+*4165*
+Suggerimenti/Tutorial:
+*4166*
+Nessuno
+Solo suggerimenti
+Solo tutorial
+Entrambi
+*4200*
+Usa magia
+*4201*
+Parata
+*4202*
+Menu
+*4203*
+Rotolata/Schivata
+*4204*
+Attacco pesante
+*4205*
+Salto
+*4206*
+Attacco leggero
+*4207*
+Azione/Interagisci
+*4208*
+Afferra
+*4209*
+Cammina / Corri
+*4210*
+Usa arma secondaria
+*4211*
+Attiva
+Furia dei Titani
+*4250*
+La scansione progressiva è attiva.
+*4251*
+ATTENZIONE.
+*4252*
+Se il televisore non supporta la
+scansione progressiva, lo schermo diventerà
+nero. Attendi qualche secondo e il menu
+tornerà.
+*4253*
+Vuoi continuare?
+*4254*
+Vuoi mantenere questa impostazione?
+*4300*
+Occhi di Gorgone
+*4301*
+Piume di Fenice
+*4302*
+Amuleto delle Moire
+*4303*
+Ali di Icaro
+*4304*
+Vello d'Oro
+*4305*
+Teschio del Guerriero
+*4306*
+Chiave dell'Ariete
+*4307*
+Scudo di Perseo
+*4308*
+Tridente di Poseidone
+*4309*
+Occhio del Ciclope
+*4310*
+Te ne servono ancora [/:HealthShardsNeeded]
+per allungare la
+barra della salute di 1 livello.
+*4311*
+Trova 6 Occhi di Gorgone
+per allungare la
+barra della salute.
+*4312*
+Hai raccolto
+tutti gli
+Occhi di Gorgone.
+*4315*
+Te ne servono ancora [/:MagicShardsNeeded]
+per allungare la
+barra della magia di 1 livello.
+*4316*
+Trova 6 Piume di
+Fenice per allungare
+la barra della magia.
+*4317*
+Hai raccolto
+tutte le
+Piume di Fenice
+*4318*
+Il Tridente di Poseidone
+ti permette
+di respirare sott'acqua.
+[LB]
+Nuota su: tieni [TriangleButton] o [XButton]
+Nuota giù: tieni [SquareButton]
+Scatto subacqueo: tieni [R1Button]
+*4320*
+Una Sacra Reliquia che
+ti permette di
+rallentare il tempo.
+[LB]
+Vicino a una
+Statua delle Moire
+tieni [L1Button] e premi [R1Button].
+*4321*
+[PS2_CyclopsEye_Count] / 20
+Uccidi i Ciclopi
+e raccogli l'Occhio
+per ottenere un Tesoro bonus.
+*4322*
+Hai ucciso abbastanza Ciclopi.
+Costume bonus sbloccato.
+*4325*
+Ali strappate a Icaro.
+Ti danno la
+capacità di planare.
+[LB]
+In aria,
+tieni premuto [XButton].
+*4327*
+Il Vello mitico ti
+permette di respingere attacchi,
+proiettili e raggi.
+[LB]
+Prima di essere colpito,
+premi [L1Button] per parare.
+*4330*
+Il Teschio di un
+Guerriero ucciso
+in battaglia.
+*4331*
+Il Corno dell'Ariete
+è un antico simbolo
+di grande potere.
+*4332*
+La superficie di questo scudo
+risplende come uno specchio.
+*4333*
+Urna del Potere
+*4334*
+[/:UrnStatus] / 6
+Queste Urne racchiudono
+un potere immenso.
+[LB]
+Guarda le urne raccolte
+nel menu Stato.
+*4335*
+[/:UrnStatus] / 6
+Hai trovato tutte
+le Urne del Potere.
+[LB]
+Attivale durante
+la Partita bonus.
+*4339*
+Oggetto bloccato
+*4341*
+Gli oggetti in questa schermata
+non si potenziano.
+*4450*
+Inserisci un disco di God of War® II.
+*4451*
+Disco errato.
+*4452*
+Reinseriscilo per continuare.
+*4453*
+Il disco è stato rimosso.
+*4454*
+Controller non supportato
+*4455*
+Collega un controller.
+*4456*
+Collega un controller
+per continuare.
+*4457*
+Il controller è stato
+scollegato.
+*4500*
+MEMORY CARD
+Slot 1
+*4501*
+MEMORY CARD
+Slot 2
+*4502*
+Scegli un file da caricare.
+*4503*
+Scegli un file di salvataggio.
+*4504*
+Salvataggio del file.
+*4505*
+Non spegnere la console.
+*4506*
+Creare un nuovo file di God of War® II?
+*4507*
+Sovrascrivere il file di God of War® II?
+*4508*
+Non ci sono dati salvati.
+*4509*
+Errore durante il caricamento.
+*4510*
+Errore durante il salvataggio.
+*4511*
+Errore di formattazione della
+MEMORY CARD (PS2)
+nello slot MEMORY CARD [PS2_MemoryCard_CardSlot].
+*4512*
+Errore di lettura del salvataggio.
+*4513*
+Caricamento del salvataggio.
+*4514*
+Caricare il salvataggio di God of War® II?
+*4515*
+Spazio libero insufficiente
+per un nuovo salvataggio sulla
+MEMORY CARD (PS2)
+negli slot MEMORY CARD 1 e 2.
+*4516*
+Formattazione della
+MEMORY CARD (PS2)
+nello slot MEMORY CARD [PS2_MemoryCard_CardSlot].
+*4517*
+La MEMORY CARD (PS2)
+nello slot MEMORY CARD [PS2_MemoryCard_CardSlot] non è formattata.
+*4518*
+Nessuna MEMORY CARD (PS2)
+negli slot MEMORY CARD 1 o 2.
+*4519*
+MEMORY CARD (PS2)
+nello slot MEMORY CARD [PS2_MemoryCard_CardSlot].
+*4520*
+Spazio insufficiente per creare i dati di salvataggio.
+*4521*
+Servono almeno 525KB liberi per
+i dati di God of War® II.
+*4522*
+Spazio libero insufficiente
+per un nuovo salvataggio sulla
+MEMORY CARD (PS2)
+nello slot MEMORY CARD [PS2_MemoryCard_CardSlot].
+*4523*
+I dati contengono Tesori sbloccati ma
+nessuna partita salvata.
+*4524*
+Caricamento completato.
+*4525*
+Salvataggio completato.
+*4526*
+Formattazione completata.
+*4527*
+Vuoi formattare e creare un salvataggio?
+*4528*
+Caricare i Tesori sbloccati?
+*4529*
+Vuoi iniziare il gioco?
+*4530*
+Vuoi salvare la partita?
+*4531*
+Vuoi salvare i progressi?
+*4532*
+Zeus ti ha dato l'opportunità
+di salvare i progressi.
+*4533*
+Nessuna MEMORY CARD (PS2)
+nello slot MEMORY CARD [PS2_MemoryCard_CardSlot].
+*4534*
+Salva:
+*4535*
+Gaia ti ha dato l'opportunità
+di salvare i progressi.
+*4550*
+Hai completato God of War® II
+[LB]
+Hai sbloccato dei Tesori.
+Hai sbloccato la Lama dell'Olimpo,
+potenziabile nella Partita bonus.
+[LB]
+Grado: [PS2_PlayerGrade]
+*4552*
+Hai completato God of War® II
+in Modalità Dio.
+Hai sbloccato dei Tesori.
+Hai sbloccato la Lama dell'Olimpo,
+potenziabile nella Partita bonus.
+[LB]
+Grado: [PS2_PlayerGrade]
+*4553*
+Hai completato God of War® II
+in Modalità Titano.
+Hai sbloccato dei Tesori.
+Hai sbloccato la Lama dell'Olimpo,
+potenziabile nella Partita bonus.
+[LB]
+Grado: [PS2_PlayerGrade]
+*4556*
+Salvare i progressi nella
+Sfida dei Titani?
+[LB]
+Verranno salvati i punteggi migliori
+delle sfide e
+i tesori sbloccati.
+*4557*
+Salvare i progressi fatti
+nell'Arena delle Moire?
+[LB]
+Verranno salvati sfere, potenziamenti
+e i tesori sbloccati.
+*4559*
+Hai raccolto 20
+Occhi del Ciclope.
+Costume bonus sbloccato.
+*4600*
+Stato
+*4601*
+Tempo di gioco totale
+*4602*
+Morti totali
+*4603*
+Salvataggi totali
+*4604*
+Combo massima
+*4605*
+Sfere rosse raccolte
+*4606*
+Uccisioni
+*4607*
+Uccisioni brutali
+*4608*
+Uccisioni per smembramento
+*4609*
+Uccisioni per frantumazione
+*4630*
+Urne del Potere
+*4631*
+Urna di Gaia:
+*4632*
+Urna delle Gorgoni:
+*4633*
+Urna dell'Olimpo:
+*4634*
+Urna di Prometeo:
+*4635*
+Urna delle Moire:
+*4636*
+Urna di Poseidone:
+*4640*
+Trova questa Urna nascosta
+per sbloccarne il potere
+durante la
+Partita bonus.
+*4641*
+Attiva
+l'Urna di Gaia
+durante una
+Partita bonus
+per un'abilità speciale.
+*4642*
+Attiva
+l'Urna di Gaia per
+avere 10 volte le sfere rosse.
+*4643*
+Trova questa Urna nascosta
+per sbloccarne il potere
+durante la
+Partita bonus.
+*4644*
+Attiva
+l'Urna delle Gorgoni
+durante una
+Partita bonus
+per un'abilità speciale.
+*4645*
+Attiva
+l'Urna delle Gorgoni
+per dare alle armi
+il potere di
+pietrificare i nemici.
+*4646*
+Trova questa Urna nascosta
+per sbloccarne il potere
+durante la
+Partita bonus.
+*4647*
+Attiva
+l'Urna dell'Olimpo
+durante una
+Partita bonus
+per un'abilità speciale.
+*4648*
+Attiva
+l'Urna dell'Olimpo
+per avere
+magia
+infinita.
+*4649*
+Trova questa Urna nascosta
+per sbloccarne il potere
+durante la
+Partita bonus.
+*4650*
+Attiva
+l'Urna di Prometeo
+durante una
+Partita bonus
+per un'abilità speciale.
+*4651*
+Attiva
+l'Urna di Prometeo
+per avere
+infinita
+Furia dei Titani.
+*4652*
+Trova questa Urna nascosta
+per sbloccarne il potere
+durante la
+Partita bonus.
+*4653*
+Attiva
+l'Urna delle Moire
+durante una
+Partita bonus
+per un'abilità speciale.
+*4654*
+Attiva
+l'Urna delle Moire
+per allungare il
+tempo utile per
+le combo.
+*4655*
+Trova questa Urna nascosta
+per sbloccarne il potere
+durante la
+Partita bonus.
+*4656*
+Attiva
+l'Urna di Poseidone
+durante una
+Partita bonus
+per un'abilità speciale.
+*4657*
+Attiva
+l'Urna di Poseidone per
+usare l'Ira di Poseidone
+al posto della
+Furia di Crono.
+*4700*
+Prossimo potenziamento:
+*4701*
+Non hai ancora
+ottenuto questo attacco.
+*4702*
+MAX
+*4703*
+Livello
+*4704*
+Magia bloccata
+*4705*
+Lame di Atena
+*4706*
+Ira di Poseidone
+*4707*
+Lama dell'Olimpo
+*4708*
+Flagello di Tifone
+*4709*
+Furia di Crono
+*4710*
+Martello del Barbaro
+*4711*
+Testa di Euriale
+*4712*
+Lancia del Destino
+*4713*
+Terremoto di Atlante
+*4714*
+AL MASSIMO
+*4715*
+Vuoto
+*4716*
+Ti servono [/:PausePowerUpOrbs][OrbIcon]sfere
+per potenziare l'oggetto.
+*4717*
+Info potenziamento:
+*4718*
+Premi [XButton] per
+versare le Sfere rosse
+nelle Lame e nella
+Magia.
+*4719*
+Magia
+non disponibile
+*4731*
+Sblocca
+Danni aumentati
+Furia delle Erinni
+*4732*
+Sblocca
+Nuove combo
+Ciclone del Caos
+*4733*
+Sblocca
+Carica di Iperione
+Tormento di Prometeo
+*4734*
+Sblocca
+Furia del Tartaro
+Inferno di Prometeo
+*4735*
+Sblocca
+Danni massimi
+*4741*
+Sblocca
+Raffica di vento rapida
+Vortice letale
+*4742*
+Sblocca
+Raffica di vento caricata
+Tempesta del Titano
+*4751*
+*4752*
+*4761*
+Sblocca
+Terra tremante
+Potenziamento
+*4762*
+Sblocca
+Terra distruttiva
+*4771*
+Sblocca
+Sguardo della Gorgone migliorato
+Lampo della Gorgone
+*4772*
+Sblocca
+Esplosione della Gorgone
+Furia della Gorgone
+*4781*
+Sblocca
+Danni aumentati
+Evoca Anima
+*4782*
+Sblocca
+Danni aumentati
+Legione di Anime
+*4791*
+Sblocca
+Danni aumentati
+Resti sventurati
+*4792*
+Sblocca
+Danni aumentati
+Fendente alterante
+*4801*
+Sblocca
+Danni aumentati
+Sacrificio divino
+*4802*
+Sblocca
+Danni aumentati
+Ira degli Dei
+*4803*
+La Lama che pose fine
+alla Grande Guerra dei Titani
+*4811*
+Sblocca
+Furia di Crono migliorata
+Colpisce altri nemici
+*4812*
+Sblocca
+Furia di Crono migliorata
+Colpisce altri nemici
+*4850*
+[/:StaticTextLvl2] - Nuove mosse:
+[/:StaticTextLvl3] - Nuove mosse:
+[/:StaticTextLvl4] - Nuove mosse:
+[/:StaticTextLvl5] - Nuove mosse:
+*4851*
+Nuova abilità:
+*4852*
+Nuove abilità:
+*4860*
+Danni aumentati
+Furia delle Erinni:  [L1Button] + [CircleButton]
+Furia delle Erinni (in aria):  [L1Button] + [CircleButton]
+*4861*
+Nuova abilità:  - Furia dei Titani
+Quando la barra è piena,
+premi ( [L3] + [R3] ) per attivarla.
+*4862*
+Danni aumentati
+Ciclone del Caos:  [L1Button] + [SquareButton]
+Ciclone del Caos (in aria): [L1Button] + [SquareButton]
+Spirito di Ercole:  [TriangleButton], [TriangleButton], [TriangleButton]
+Valore di Ercole:  [TriangleButton], [TriangleButton], [SquareButton]
+*4863*
+Danni aumentati
+Carica di Iperione: tieni [SquareButton] per correre
+Assalto di Iperione (in corsa):  [SquareButton]
+Ascesa di Iperione (in corsa): [TriangleButton]
+Ira di Atena (schivando): [JoystickR],  [TriangleButton]
+[*1] Nuova mossa della Furia dei Titani
+Tormento di Prometeo: tieni [SquareButton]
+*4864*
+Danni aumentati
+Furia del Tartaro:  [L1Button] + [TriangleButton]
+Furia del Tartaro (in aria):  [L1Button] + [TriangleButton]
+[*1] Nuova mossa della Furia dei Titani
+Inferno di Prometeo: tieni [L1Button]
+*4865*
+I danni delle Lame
+sono al massimo.
+*4871*
+Raffica di vento rapida: [L2Button] e premi [SquareButton]
+Vortice letale: [L2Button] + [TriangleButton]
+*4872*
+Vortice letale migliorato
+Raffica di vento (caricata): [L2Button] + tieni [SquareButton]
+Tempesta del Titano: [L2Button] + [CircleButton]
+*4881*
+*4882*
+*4891*
+Danni aumentati
+Terra tremante migliorata
+*4892*
+Danni aumentati
+Terra distruttiva:[L2Button], premi [CircleButton]
+*4901*
+Sguardo della Gorgone migliorato
+Lampo della Gorgone: [L2Button] + [TriangleButton]
+Lampo della Gorgone (in aria): [L2Button] + [TriangleButton]
+*4902*
+Sguardo della Gorgone migliorato
+Esplosione della Gorgone: [L2Button] + [CircleButton]
+Esplosione della Gorgone (in aria): [L2Button] + [CircleButton]
+Furia della Gorgone: [L2Button] + tieni [CircleButton]
+*4911*
+Danni aumentati
+Evoca Anima: muovi di scatto [JoystickR]
+*4912*
+Danni aumentati
+Legione di Anime: [L1Button] + [CircleButton]
+*4921*
+Danni aumentati
+Resti sventurati: [L1Button] + [CircleButton]
+*4922*
+Danni aumentati
+Fendente alterante: [L1Button] + [SquareButton]
+*4931*
+Danni aumentati
+Sacrificio divino: [L1Button] + [CircleButton]
+*4932*
+Danni aumentati
+Ira degli Dei: [SquareButton] o [TriangleButton]
+*4941*
+La Furia di Crono fa più danni
+La Furia di Crono colpisce più nemici
+*4942*
+La Furia di Crono fa più danni
+La Furia di Crono colpisce più nemici
+Il nucleo della Furia di Crono esplode
+*5001*
+Tesori
+*5002*
+Carica
+*5003*
+Nuova partita
+*5004*
+Avvia demo
+*5050*
+God of War® II va completato
+in modalità Mortale, Spartano o Dio
+per sbloccare la Modalità Titano.
+*5051*
+Scegli la difficoltà:
+*5052*
+Mortale
+(facile)
+*5053*
+Spartano
+(normale)
+*5054*
+Dio
+(difficile)
+*5055*
+Titano
+(molto difficile)
+*5100*
+Scegli un costume
+*5101*
+Merluzzo della Guerra
+(Abilità preferita: Magia e Salute )
+*5102*
+Armatura dell'Idra
+(Abilità preferita: Salute)
+*5103*
+Odissea Oscura
+(Abilità preferita: Furia dei Titani)
+*5104*
+Atena
+(Abilità preferita: Magia)
+*5105*
+Ercole
+(Abilità preferita: Forza)
+*5106*
+Generale Kratos
+(Abilità preferita: Esperienza)
+*5107*
+Armatura del Dio
+(Abilità preferita: Armatura)
+*5120*
+Kratos
+*5121*
+Non disponibile in Modalità Titano.
+*5150*
+Partita bonus
+*5151*
+Vuoi giocare usando la
+Lama dell'Olimpo sbloccata,
+le Urne del Potere e tutti i
+livelli precedenti di Armi e Magie?
+Scegliendo no inizierà una nuova partita
+senza queste funzioni sbloccate.
+*5175*
+Usare le impostazioni dello schermo precedenti?
+*6000*
+Inizia la prossima sfida
+*6001*
+Ricomincia la sfida attuale
+*6002*
+Salva i progressi
+*6003*
+Torna alla scelta della sfida
+*6004*
+*6016*
+Sfida completata!
+*6017*
+Grado della sfida
+*6020*
+Menu Sfida
+*6021*
+Menu Arena
+*6100*
+Tempo:
+*6101*
+Sfere rosse:
+*6102*
+Danni subiti:
+*6103*
+Nemici uccisi:
+*6104*
+Combo massima:
+*6105*
+Bonus:
+*6106*
+Grado:
+*6108*
+Punteggio totale:
+*6110*
+[*4] Furia cieca
+Strappa l'occhio
+al Ciclope
+prima che scada il tempo.
+*6111*
+[*4] Morte dall'alto
+Uccidi dieci nemici in
+aria prima che scada il tempo.
+*6112*
+[*4] Cimitero di Gorgoni
+Pietrifica venticinque nemici
+e mandali in frantumi
+prima che scada il tempo.
+*6113*
+[*4]Proteggi i deboli
+Proteggi il Traduttore
+a ogni costo.
+*6114*
+[*4] Raccogli i frutti
+Raccogli cinquecento
+Sfere rosse
+prima che scada il tempo.
+*6115*
+[*4] Sopravvive il più forte
+Distruggi tutti i nemici
+prima che finisca la salute.
+*6116*
+[*4] La perfezione è divina
+Uccidi tutti i nemici
+senza farti colpire.
+*6120*
+Nessuno
+*6121*
+Ottenuto
+*6180*
+Completa la sfida [/:ChallengePrevLock]
+per rendere disponibile
+questa sfida.
+*6198*
+Sfida
+*6199*
+Scelta della sfida
+*6200*
+Ricompensa della sfida!
+*6201*
+Grado Mortale:
+Urna delle Moire
+*6202*
+Grado Spartano:
+Urna di Poseidone
+*6203*
+Grado Dio:
+Un Costume bonus
+*6204*
+Grado Titano:
+Arena delle Moire
+*6205*
+????????
+*6206*
+Hai sbloccato
+*6300*
+Arena delle Moire
+*6301*
+Casuale
+*6302*
+Normale
+*6303*
+Infinito
+*6304*
+Nessuno
+*6305*
+Vetta
+*6306*
+Dedalo
+*6307*
+Barbaro
+*6320*
+Facile
+*6321*
+Picchiaduro
+*6322*
+Normale
+*6323*
+Spietato
+*6325*
+Torna al menu Arena
+*6350*
+Kratos
+*6351*
+Arena
+*6352*
+Nemici
+*6353*
+Salute:
+*6354*
+Magia:
+*6355*
+Furia dei Titani:
+*6356*
+Difficoltà:
+*6357*
+Sfondo:
+*6358*
+Creatura 1:
+*6359*
+Creatura 2:
+*6360*
+Creatura 3:
+*6365*
+Entra nell'Arena
+*6380*
+Nome:
+*6381*
+Numero:
+*6382*
+Attacco:
+*6383*
+Rinascita:
+*7000*
+E3 Demo 2006
+*7001*
+[XButton] = Inizia
+*7100*
+Disattivato
+per la demo
