@@ -80,19 +80,26 @@ def sem_mods(jogo, tmp):
     ini = os.path.join(jogo, 'data', 'vitart_options.ini')
     if os.path.exists(ini):
         # sem os mods, sem a ISO de quem montou (caminho da máquina dele) e com os cheats desligados
-        fora = tuple('mod_%s=' % m for m in sem) + ('mod_', 'ps2_iso=')
+        fora = tuple('mod_%s=' % m for m in sem) + ('mod_', 'ps2_iso=', 'language=')  # instalado sem tradução ligada
         txt = [l.split('=')[0] + '=0' if l.startswith('cheat_') else l
                for l in open(ini, encoding='utf-8', errors='replace').read().splitlines() if not l.startswith(fora)]
         open(os.path.join(troca, 'data', 'vitart_options.ini'), 'w', encoding='utf-8', newline='\n').write('\n'.join(txt) + '\n')
     # troféus zerados e sem saves: o runtime cria data/trophy/<NPWR>/unlocked.txt no primeiro troféu e
     # data/savedata0/GOW1|GOW2 no primeiro save
-    return ['--sem=data/mods/%s/' % m for m in sem] + ['--sem=data/trophy/', '--sem=data/savedata0/', '--troca=' + troca]
+    # traduções: só as fontes; records/ é gerado no PC de quem joga (o francês e o espanhol do GoW2 têm o texto oficial)
+    tdir = os.path.join(jogo, 'data', 'traducoes')
+    trad = []
+    for c in sorted(os.listdir(tdir)) if os.path.isdir(tdir) else []:
+        trad += ['--sem=data/traducoes/%s/records/' % c, '--sem=data/traducoes/%s/records.tsv' % c]
+    return ['--sem=data/mods/%s/' % m for m in sem] + ['--sem=data/trophy/', '--sem=data/savedata0/', '--sem=capturas/',
+            '--sem=data/mods_removidos/', '--sem=data/texdump/', '--sem=data/modkit_work/'] + trad + ['--troca=' + troca]
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('jogo')
     ap.add_argument('saida')
+    ap.add_argument('--sem-opcionais', action='store_true', help='não gera opcionais/ (já estão na release)')
     ap.add_argument('rif')
     ap.add_argument('--sha', default=SHA_PKG)
     ap.add_argument('--sem-dados', action='store_true')
@@ -168,7 +175,7 @@ def main():
         fora = ['--sem=game/'] + ['--sem=' + c for _, cs in OPCIONAIS for c in cs]
         subprocess.run(['node', os.path.join(TOOLS, 'empacotar_instalador.js'), jogo, os.path.join(out, 'dados'), a.rif, a.sha] +
                        extra + fora, check=True)
-        for nome, cs in OPCIONAIS:
+        for nome, cs in ([] if a.sem_opcionais else OPCIONAIS):
             print('== pacote opcional:', nome)
             subprocess.run(['node', os.path.join(TOOLS, 'empacotar_instalador.js'), jogo, os.path.join(out, 'opcionais', nome), a.rif,
                             a.sha] + ['--so=' + c for c in cs], check=True)
