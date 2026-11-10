@@ -35,12 +35,12 @@ Mantenha juntas as pastas "instalador" e "dados".
 '''
 
 
-# Pacotes opcionais (não saem do PKG e passam de 7 GB juntos): cada um vira <saída>/opcionais/<nome>, cifrado com a
+# O áudio do PS2 vai dentro dos dados (decisão dele, 10/11), não como opcional.
+# Pacotes opcionais (não saem do PKG e passam de 5 GB juntos): cada um vira <saída>/opcionais/<nome>, cifrado com a
 # mesma chave, para baixar à parte da release; o instalador instala os que achar ao lado dos dados.
 OPCIONAIS = [
     ('texturas_hd', ['data/texpack/']),
     ('pbr', ['data/pbr/']),
-    ('audio_ps2', ['data/ps2audio']),
     ('videos_hd', ['data/videos/']),
 ]
 
