@@ -19,6 +19,11 @@ import time
 import traceback
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# UTF-8 nos dois sentidos: a interface abre o Python portátil com -E, que ignora PYTHONIOENCODING, e sem isto o
+# Windows usa a página de código dele (acentos viravam lixo na tela: "Portugu?s", "Capit?o Frio")
+for _s in (sys.stdin, sys.stdout, sys.stderr):
+    if hasattr(_s, 'reconfigure'):
+        _s.reconfigure(encoding='utf-8', errors='replace')
 _OUT = sys.stdout
 sys.stdout = sys.stderr  # os print() do modkit não podem sujar o protocolo
 
