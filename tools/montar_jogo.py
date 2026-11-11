@@ -252,6 +252,10 @@ def main():
         os.makedirs(os.path.join(dst, 'data', 'ui-arte', 'steam'), exist_ok=True)
         for n in ('capa.png', 'fundo1.png', 'fundo2.png', 'logo.png'):
             shutil.copy2(os.path.join(web, n), os.path.join(dst, 'data', 'ui-arte', 'steam', n))
+    # a arte de cada jogo, das texturas dele (logo, tela-título, carregamento): ver tools/steam_atalhos.py
+    por_jogo = os.path.join(REPO, '..', 'gow-dump', 'arte_steam')
+    if os.path.isdir(por_jogo):
+        shutil.copytree(por_jogo, os.path.join(dst, 'data', 'ui-arte', 'steam'), dirs_exist_ok=True)
 
     print('== traduções (Settings > Idioma do jogo)')
     # só as fontes e o idioma.ini; o Settings gera records/ ao escolher (o francês e o espanhol do GoW2 saem do jogo)

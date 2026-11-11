@@ -8,7 +8,8 @@ Ganha a sobreposição, a Steam Input e o modo Big Picture. Conquistas da Steam 
 AppID da loja): os troféus continuam os do vitart, com o aviso na tela.
 
 Arte: com uma chave da SteamGridDB (grátis, steamgriddb.com > Preferences > API), a mesma fonte do Steam ROM Manager;
-sem ela, a arte da coletânea que vem com o jogo (data/ui-arte/steam).
+sem ela, as imagens padrão de cada jogo que vêm com ele (data/ui-arte/steam/<jogo>/sgdb_*, escolhidas na SteamGridDB;
+créditos em creditos_steamgriddb.tsv) ou, faltando elas, a arte tirada das texturas do jogo, com o logo por cima.
 
 O shortcuts.vdf é binário (KeyValues): 0x00 abre um mapa, 0x01 é texto, 0x02 é inteiro de 32 bits, 0x08 fecha. A Steam
 reescreve o arquivo ao fechar, então ele só é mexido com a Steam fechada. O ID do atalho é o do Steam ROM Manager:
@@ -170,13 +171,78 @@ def arte_sgdb(chave, nome, ano, pasta, log):
     return feitos
 
 
-def arte_local(jogo_dir, codigo):
-    """A arte da coletânea que vem com o jogo (data/ui-arte/steam)."""
-    d = os.path.join(jogo_dir, 'data', 'ui-arte', 'steam')
-    pega = lambda n: os.path.join(d, n) if os.path.exists(os.path.join(d, n)) else None
-    fundo = pega('fundo1.png' if codigo == 'gow1' else 'fundo2.png')
-    return {k: v for k, v in {'capa': pega('capa.png'), 'hero': fundo, 'logo': pega('logo.png'),
-                              'icone': os.path.join(jogo_dir, 'data', 'ui-arte', 'icone.png')}.items() if v}
+def _logo(p):
+    from PIL import Image
+    im = Image.open(p).convert('RGBA')
+    bb = im.getchannel('A').point(lambda v: 255 if v > 8 else 0).getbbox()
+    return im.crop(bb) if bb else im
+
+
+def _cobrir(im, tw, th, ax=0.5, ay=0.5):
+    from PIL import Image
+    esc = max(tw / im.width, th / im.height)
+    im = im.resize((max(tw, round(im.width * esc)), max(th, round(im.height * esc))), Image.LANCZOS)
+    x, y = int((im.width - tw) * ax), int((im.height - th) * ay)
+    return im.crop((x, y, x + tw, y + th))
+
+
+def _degrade(im, de_cima, ate, forca=210):
+    """Escurece do topo (de_cima) ou da base até a fração `ate` da altura: o logo fica legível sobre a arte."""
+    from PIL import Image
+    w, h = im.size
+    g = Image.new('L', (1, h))
+    lim = int(h * ate)
+    for y in range(h):
+        t = (lim - y) / lim if de_cima else (y - (h - lim)) / lim
+        g.putpixel((0, y), int(forca * max(0.0, min(1.0, t))))
+    preto = Image.new('RGBA', (w, h), (0, 0, 0, 255))
+    preto.putalpha(g.resize((w, h)))
+    return Image.alpha_composite(im.convert('RGBA'), preto)
+
+
+# onde o Kratos está em cada arte (fração do corte na horizontal) para a capa vertical
+_CAPA_X = {'gow1': 0.5, 'gow2': 0.78}
+
+
+def arte_local(jogo_dir, codigo, tmp):
+    """Arte do próprio jogo (data/ui-arte/steam/<jogo>: logo, fundo e a base da capa, tiradas das texturas da tela-título
+    e do carregamento): capa e banner compostos com o logo. Sem essa pasta, a arte da coletânea."""
+    from PIL import Image
+    d = os.path.join(jogo_dir, 'data', 'ui-arte', 'steam', codigo)
+    icone = os.path.join(jogo_dir, 'data', 'ui-arte', 'icone.png')
+    if not all(os.path.exists(os.path.join(d, n)) for n in ('logo.png', 'fundo.png', 'capa_base.png')):
+        c = os.path.join(jogo_dir, 'data', 'ui-arte', 'steam')
+        pega = lambda n: os.path.join(c, n) if os.path.exists(os.path.join(c, n)) else None
+        a = {'capa': pega('capa.png'), 'hero': pega('fundo1.png' if codigo == 'gow1' else 'fundo2.png'),
+             'logo': pega('logo.png'), 'icone': icone, 'cortar_capa': 0.085}
+        return {k: v for k, v in a.items() if v}
+    # as imagens padrão escolhidas na SteamGridDB (sgdb_<tipo>.*), quando vêm com o jogo: as do Big Picture também
+    padrao = {}
+    for f in os.listdir(d):
+        base, ext = os.path.splitext(f)
+        if base.startswith('sgdb_') and ext.lower() in ('.png', '.jpg', '.jpeg', '.ico', '.webp'):
+            padrao[base[5:]] = os.path.join(d, f)
+    if {'capa', 'banner', 'hero', 'logo'} <= set(padrao):
+        padrao.setdefault('icone', icone)
+        return padrao
+    logo = _logo(os.path.join(d, 'logo.png'))
+    fundo = Image.open(os.path.join(d, 'fundo.png')).convert('RGBA')
+    capa = _cobrir(Image.open(os.path.join(d, 'capa_base.png')).convert('RGBA'), 600, 900, ax=_CAPA_X.get(codigo, 0.5), ay=0.4)
+    capa = _degrade(capa, True, 0.38)
+    lw = 540
+    lg = logo.resize((lw, round(logo.height * lw / logo.width)), Image.LANCZOS)
+    capa.alpha_composite(lg, ((600 - lw) // 2, 34))
+    banner = _degrade(_cobrir(fundo, 920, 430, ay=0.3), False, 0.55)
+    lw = 440
+    lg = logo.resize((lw, round(logo.height * lw / logo.width)), Image.LANCZOS)
+    banner.alpha_composite(lg, ((920 - lw) // 2, 430 - lg.height - 22))
+    out = {}
+    for nome, im in (('capa', capa), ('banner', banner), ('logo', logo)):
+        out[nome] = os.path.join(tmp, '%s_%s_local.png' % (codigo, nome))
+        im.save(out[nome])
+    out['hero'] = os.path.join(d, 'fundo.png')
+    out['icone'] = icone
+    return out
 
 
 def preparar(src, dst, tamanho=None, cortar_topo=0.0, ay=0.5):
@@ -238,7 +304,9 @@ def adicionar(jogo_dir, chave_sgdb='', fechar=False, log=print):
                 a = arte_sgdb(chave_sgdb, nome, ano, tmp, log)
             except Exception as e:  # noqa: BLE001
                 log('SteamGridDB falhou (%s): usando a arte do jogo' % e)
-        loc = arte_local(jogo_dir, codigo)
+        loc = arte_local(jogo_dir, codigo, tmp)
+        if a:  # a capa da SteamGridDB não leva o corte da capa da coletânea
+            loc.pop('cortar_capa', None)
         for k, v in loc.items():
             a.setdefault(k, v)
         artes[codigo] = a
@@ -261,7 +329,7 @@ def adicionar(jogo_dir, chave_sgdb='', fechar=False, log=print):
                 icone = os.path.join(grid, '%d_icon%s' % (aid, os.path.splitext(a['icone'])[1]))
                 shutil.copyfile(a['icone'], icone)
             if a.get('capa'):
-                preparar(a['capa'], os.path.join(grid, '%dp.png' % aid), (600, 900), 0.0 if chave_sgdb and 'capa' in a and '_capa' in a['capa'] else 0.085)
+                preparar(a['capa'], os.path.join(grid, '%dp.png' % aid), (600, 900), a.get('cortar_capa', 0.0))
             if a.get('banner'):
                 preparar(a['banner'], os.path.join(grid, '%d.png' % aid), (920, 430))
             elif a.get('hero'):
