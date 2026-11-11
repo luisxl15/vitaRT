@@ -6,6 +6,7 @@
 // próprio fluxo (sem laço de realimentação e sem esperar a GPU). A espera só acontece ao apresentar, ao
 // ler um alvo ou quando o anel enche.
 #include "gxm_vk.h"
+namespace vt { void logf(const char *fmt, ...); } // vitart.h (o registro do vitart)
 #include "game.h"
 #include "gxm_overlay.h"
 #include "gxm_window.h"
@@ -66,6 +67,9 @@ VkSwapchainKHR g_swap = VK_NULL_HANDLE;
 std::vector<VkImage> g_swap_images;
 VkExtent2D g_swap_extent{};
 VkSemaphore g_acquired = VK_NULL_HANDLE, g_rendered = VK_NULL_HANDLE;
+// "desenho pronto" por imagem da swapchain: o present ainda pode estar esperando o da imagem anterior quando o próximo
+// quadro sinaliza (VUID-vkQueueSubmit-pSignalSemaphores-00067; o RADV do Steam Deck perdia o dispositivo)
+std::vector<VkSemaphore> g_rendered_img;
 // Profundidade com stencil (o GXM usa DF32 + S8): a vista de amostragem só tem a profundidade, a de
 // anexo tem os dois aspectos.
 constexpr VkFormat kColor = VK_FORMAT_R8G8B8A8_UNORM, kDepth = VK_FORMAT_D32_SFLOAT_S8_UINT;
@@ -643,6 +647,47 @@ VkShaderModule module(const uint32_t *code, uint32_t size) {
     return g_modules_by_ptr[code] = module_by_content(code, size);
 }
 
+// Denormais de 32 bits preservados nos shaders traduzidos. O tradutor guarda tudo (inclusive inteiros: cores
+// empacotadas, índices de osso, máscaras) em registradores float, e um inteiro pequeno lido como float é um denormal.
+// A NVIDIA mantém os bits; o compilador da AMD pode zerá-los. Saíam cores de arco-íris por triângulo nas Radeon
+// (RX 7600, RX 9070 XT), e o D3D11 (registradores uint) funcionava na mesma placa. Com VK_KHR_shader_float_controls,
+// cada módulo ganha OpCapability DenormPreserve, a extensão e OpExecutionMode DenormPreserve 32, sem regerar o cache.
+// VITART_VK_SEM_DENORM=1 desliga.
+static bool g_denorm32 = false;
+static std::vector<uint32_t> with_denorm_preserve(const uint32_t *code, uint32_t size) {
+    const uint32_t n = size / 4;
+    std::vector<uint32_t> out;
+    if (n < 5 || code[0] != 0x07230203u) return out;
+    uint32_t last_cap = 0, first_after_caps = 0, last_ep = 0;
+    std::vector<uint32_t> eps;
+    for (uint32_t i = 5; i < n;) {
+        const uint32_t wc = code[i] >> 16, op = code[i] & 0xffff;
+        if (!wc || i + wc > n) return {};
+        if (op == 17) {
+            if (code[i + 1] == 4464) return {}; // já tem
+            last_cap = i + wc;
+        } else if (!first_after_caps) {
+            first_after_caps = i;
+        }
+        if (op == 15) eps.push_back(code[i + 2]), last_ep = i + wc;
+        if (op == 54) break; // OpFunction: acabou o cabeçalho
+        i += wc;
+    }
+    if (!last_cap || !last_ep || eps.empty()) return {};
+    static const char ext[] = "SPV_KHR_float_controls"; // 22 letras + zero = 6 palavras
+    uint32_t extw[6] = {};
+    std::memcpy(extw, ext, sizeof ext);
+    out.reserve(n + 16);
+    out.insert(out.end(), code, code + last_cap);
+    out.push_back((2u << 16) | 17), out.push_back(4464); // OpCapability DenormPreserve
+    out.push_back((7u << 16) | 10);                      // OpExtension "SPV_KHR_float_controls"
+    out.insert(out.end(), extw, extw + 6);
+    out.insert(out.end(), code + last_cap, code + last_ep);
+    for (uint32_t ep : eps) out.push_back((4u << 16) | 16), out.push_back(ep), out.push_back(4459), out.push_back(32);
+    out.insert(out.end(), code + last_ep, code + n);
+    return out;
+}
+
 VkShaderModule module_by_content(const uint32_t *code, uint32_t size) {
     const uint64_t h = fnv(code, size);
     auto it = g_modules.find(h);
@@ -651,6 +696,11 @@ VkShaderModule module_by_content(const uint32_t *code, uint32_t size) {
     VkShaderModuleCreateInfo ci{VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO};
     ci.codeSize = size;
     ci.pCode = code;
+    std::vector<uint32_t> patched;
+    if (g_denorm32) {
+        patched = with_denorm_preserve(code, size);
+        if (!patched.empty()) ci.codeSize = patched.size() * 4, ci.pCode = patched.data();
+    }
     VkShaderModule m = VK_NULL_HANDLE;
     if (vkCreateShaderModule(g_dev, &ci, nullptr, &m) != VK_SUCCESS) m = VK_NULL_HANDLE;
     return g_modules[h] = m;
@@ -902,6 +952,12 @@ static bool create_swapchain() {
     vkGetSwapchainImagesKHR(g_dev, g_swap, &ni, nullptr);
     g_swap_images.resize(ni);
     vkGetSwapchainImagesKHR(g_dev, g_swap, &ni, g_swap_images.data());
+    VkSemaphoreCreateInfo rsi{VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
+    while (g_rendered_img.size() < ni) { // os que já existem continuam (recriar a swapchain vem depois de um WaitIdle)
+        VkSemaphore sem = VK_NULL_HANDLE;
+        VKC(vkCreateSemaphore(g_dev, &rsi, nullptr, &sem));
+        g_rendered_img.push_back(sem);
+    }
     return true;
 }
 
@@ -1107,6 +1163,9 @@ bool present(uint32_t addr) {
         if (!create_swapchain()) return false;
     }
     if (!g_swap_extent.width || !g_swap_extent.height) return true; // minimizada
+    // a apresentação anterior (o envio que esperou g_acquired) tem de ter acabado ANTES de reusar g_acquired
+    // (VUID-vkAcquireNextImageKHR-semaphore-01779)
+    VKC(vkWaitForFences(g_dev, 1, &g_pfence, VK_TRUE, UINT64_MAX));
     uint32_t idx = 0;
     VkResult r = vkAcquireNextImageKHR(g_dev, g_swap, UINT64_MAX, g_acquired, VK_NULL_HANDLE, &idx);
     if (r == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -1114,7 +1173,6 @@ bool present(uint32_t addr) {
         return true;
     }
     if (r != VK_SUCCESS && r != VK_SUBOPTIMAL_KHR) return fail("vkAcquireNextImageKHR", r);
-    VKC(vkWaitForFences(g_dev, 1, &g_pfence, VK_TRUE, UINT64_MAX)); // apresentação anterior concluída
     VKC(vkResetCommandBuffer(g_pcmd, 0));
     VkCommandBufferBeginInfo bi{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
     bi.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
@@ -1155,6 +1213,15 @@ bool present(uint32_t addr) {
     const VkClearColorValue black{};
     const VkImageSubresourceRange all{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
     vkCmdClearColorImage(g_pcmd, dst.img, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &black, 1, &all);
+    { // limpar e depois copiar na mesma imagem: duas escritas de transferência, a cópia espera a limpeza (SYNC-HAZARD-WRITE-AFTER-WRITE)
+        VkImageMemoryBarrier mb{VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER};
+        mb.srcAccessMask = mb.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        mb.oldLayout = mb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        mb.srcQueueFamilyIndex = mb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        mb.image = dst.img;
+        mb.subresourceRange = all;
+        vkCmdPipelineBarrier(g_pcmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1, &mb);
+    }
     const double sw = g_swap_extent.width, sh = g_swap_extent.height, sa = (double)src.w / src.h;
     int32_t dw = (int32_t)sw, dh = (int32_t)(sw / sa + 0.5);
     if (dh > (int32_t)sh) dh = (int32_t)sh, dw = (int32_t)(sh * sa + 0.5);
@@ -1181,12 +1248,13 @@ bool present(uint32_t addr) {
     si.commandBufferCount = 1;
     si.pCommandBuffers = &g_pcmd;
     si.signalSemaphoreCount = 1;
-    si.pSignalSemaphores = &g_rendered;
+    VkSemaphore pronto = idx < g_rendered_img.size() ? g_rendered_img[idx] : g_rendered;
+    si.pSignalSemaphores = &pronto;
     VKC(vkResetFences(g_dev, 1, &g_pfence));
     VKC(vkQueueSubmit(g_queue, 1, &si, g_pfence));
     VkPresentInfoKHR pi{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
     pi.waitSemaphoreCount = 1;
-    pi.pWaitSemaphores = &g_rendered;
+    pi.pWaitSemaphores = &pronto;
     pi.swapchainCount = 1;
     pi.pSwapchains = &g_swap;
     pi.pImageIndices = &idx;
@@ -1263,11 +1331,35 @@ bool init(bool validation, bool window) {
         }
     }
     dci.pEnabledFeatures = &feats;
-    const char *dext = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
-    if (window) {
-        dci.enabledExtensionCount = 1;
-        dci.ppEnabledExtensionNames = &dext;
+    std::vector<const char *> dexts;
+    if (window) dexts.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+    {
+        VkPhysicalDeviceProperties pp;
+        vkGetPhysicalDeviceProperties(g_phys, &pp);
+        uint32_t ne = 0;
+        vkEnumerateDeviceExtensionProperties(g_phys, nullptr, &ne, nullptr);
+        std::vector<VkExtensionProperties> ex(ne);
+        vkEnumerateDeviceExtensionProperties(g_phys, nullptr, &ne, ex.data());
+        bool fc = false;
+        for (auto &e : ex) fc |= !std::strcmp(e.extensionName, VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);
+        bool keep = false;
+        if (fc) {
+            VkPhysicalDeviceFloatControlsPropertiesKHR fcp{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR};
+            VkPhysicalDeviceProperties2 p2{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2};
+            p2.pNext = &fcp;
+            vkGetPhysicalDeviceProperties2(g_phys, &p2);
+            keep = fcp.shaderDenormPreserveFloat32 == VK_TRUE;
+        }
+        if (keep && !getenv("VITART_VK_SEM_DENORM")) {
+            dexts.push_back(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);
+            g_denorm32 = true;
+        }
+        vt::logf("vitart: GPU %s (Vulkan %u.%u.%u, driver 0x%08x, fornecedor 0x%04x); denormais de 32 bits preservados: %s",
+             pp.deviceName, VK_VERSION_MAJOR(pp.apiVersion), VK_VERSION_MINOR(pp.apiVersion), VK_VERSION_PATCH(pp.apiVersion),
+             pp.driverVersion, pp.vendorID, g_denorm32 ? "sim" : keep ? "desligado (VITART_VK_SEM_DENORM)" : "sem suporte");
     }
+    dci.enabledExtensionCount = (uint32_t)dexts.size();
+    dci.ppEnabledExtensionNames = dexts.empty() ? nullptr : dexts.data();
     VKC(vkCreateDevice(g_phys, &dci, nullptr, &g_dev));
     vkGetDeviceQueue(g_dev, g_qfam, 0, &g_queue);
     VkCommandPoolCreateInfo pci{VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
@@ -2244,6 +2336,8 @@ void shutdown() {
     if (g_swap) vkDestroySwapchainKHR(g_dev, g_swap, nullptr);
     if (g_acquired) vkDestroySemaphore(g_dev, g_acquired, nullptr);
     if (g_rendered) vkDestroySemaphore(g_dev, g_rendered, nullptr);
+    for (VkSemaphore sem : g_rendered_img) vkDestroySemaphore(g_dev, sem, nullptr);
+    g_rendered_img.clear();
     if (g_surface) vkDestroySurfaceKHR(g_inst, g_surface, nullptr);
     for (auto &kv : g_pipes) if (kv.second) vkDestroyPipeline(g_dev, kv.second, nullptr);
     for (auto &kv : g_modules) if (kv.second) vkDestroyShaderModule(g_dev, kv.second, nullptr);
