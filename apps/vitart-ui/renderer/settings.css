@@ -31,6 +31,13 @@
 .video-info .valor { margin-top: 4px; font: 15px var(--f-titulo); color: var(--marfim); user-select: text; }
 .video-info .valor.fino { font: 12px/1.5 Consolas, monospace; color: var(--cinza); word-break: break-all; }
 
+/* ------------------------------------------------------------------ Steam */
+.steam-painel { max-width: 760px; padding: 20px 24px; }
+.steam-painel .valor { margin-top: 4px; font: 15px var(--f-titulo); color: var(--marfim); }
+.steam-painel .legenda { margin-top: 6px; }
+.steam-chave { display: flex; gap: 10px; margin-top: 10px; }
+.steam-chave .entrada { flex: 1; }
+
 /* ------------------------------------------------------------------ Idioma do jogo */
 .idiomas { grid-template-columns: repeat(3, 1fr); }
 .idiomas .api { min-height: 150px; }

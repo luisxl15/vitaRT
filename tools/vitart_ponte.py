@@ -440,6 +440,42 @@ def m_salvar_opcao(a):
     return _flags()
 
 
+# Steam (tools/steam_atalhos.py): God of War e God of War II como atalhos na biblioteca, com a arte, como o EmuDeck.
+# A chave da SteamGridDB (opcional) fica em <dados>/steamgriddb_chave.txt, só neste PC.
+def _jogo_dir():
+    return os.path.dirname(os.path.abspath(cfg['data']))
+
+
+def _sgdb_arq():
+    return os.path.join(cfg['data'], 'steamgriddb_chave.txt')
+
+
+def m_steam(a):
+    import steam_atalhos as SA
+    e = SA.estado(_jogo_dir())
+    e['tem_chave'] = os.path.exists(_sgdb_arq())
+    return e
+
+
+def m_steam_adicionar(a):
+    import steam_atalhos as SA
+    chave = (a.get('chave') or '').strip()
+    if chave:
+        open(_sgdb_arq(), 'w', encoding='utf-8').write(chave)
+    elif os.path.exists(_sgdb_arq()):
+        chave = open(_sgdb_arq(), encoding='utf-8').read().strip()
+    registro = []
+    try:
+        r = SA.adicionar(_jogo_dir(), chave, fechar=bool(a.get('fechar')), log=registro.append)
+    except RuntimeError as e:
+        if str(e) == 'steam_aberta':
+            return {'steam_aberta': True}
+        raise
+    r['registro'] = registro
+    r['tem_chave'] = bool(chave)
+    return r
+
+
 # Idioma do jogo: as traduções de <dados>/traducoes (vitart_modkit.py, "traduções"); language= no ini, uma só. O
 # runtime aplica ao abrir o jogo (hle_io.cpp). O texto oficial (francês e espanhol do GoW2) sai do jogo instalado.
 def _trad_velha(code):

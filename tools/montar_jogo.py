@@ -246,6 +246,13 @@ def main():
     print('== shaders')
     print('  ', espelhar(os.path.join(rt, 'spv'), os.path.join(dst, 'shaders')))
 
+    print('== arte dos atalhos da Steam (Settings > Steam; tools/steam_atalhos.py)')
+    web = os.path.join(REPO, '..', 'gow-dump', 'arte_web', 'x4')
+    if os.path.isdir(web):
+        os.makedirs(os.path.join(dst, 'data', 'ui-arte', 'steam'), exist_ok=True)
+        for n in ('capa.png', 'fundo1.png', 'fundo2.png', 'logo.png'):
+            shutil.copy2(os.path.join(web, n), os.path.join(dst, 'data', 'ui-arte', 'steam', n))
+
     print('== traduções (Settings > Idioma do jogo)')
     # só as fontes e o idioma.ini; o Settings gera records/ ao escolher (o francês e o espanhol do GoW2 saem do jogo)
     shutil.copytree(os.path.join(REPO, 'games', 'gow', 'traducoes'), os.path.join(dst, 'data', 'traducoes'), dirs_exist_ok=True)

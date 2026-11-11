@@ -4,6 +4,7 @@ const NAV_ICO = {
   video: '<rect x="1.5" y="3" width="13" height="8.5"/><path d="M5.5 14h5M8 11.5V14"/>',
   idioma: '<circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c2 2 2.6 4.2 2.6 6.5S10 12.5 8 14.5M8 1.5C6 3.5 5.4 5.7 5.4 8S6 12.5 8 14.5"/>',
   ctl: '<rect x="1.5" y="4.5" width="13" height="7.5" rx="1"/><path d="M4 7h1M6.5 7h1M9 7h1M11.5 7h1M4.5 9.5h7"/>',
+  steam: '<circle cx="8" cy="8" r="6.5"/><circle cx="10.5" cy="6" r="1.8"/><path d="M1.8 9.6 6 11.4M9.2 7.4 6.4 10.6"/><circle cx="5.8" cy="11.2" r="1.3"/>',
   atual: '<path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M2.5 13.5h11"/>',
   avan: '<path d="M2 4h7M12 4h2M2 8h2M7 8h7M2 12h9M14 12h0"/><circle cx="10.5" cy="4" r="1.5"/><circle cx="5.5" cy="8" r="1.5"/><circle cx="12.5" cy="12" r="1.5"/>',
 };
@@ -14,6 +15,8 @@ const SECOES = [
     sub: 'Os textos do God of War I e II (menus, dicas, tutoriais). Só um idioma fica ligado; vale na próxima vez que o jogo abrir.' },
   { id: 'ctl', nome: 'Controles', sobre: 'Teclado, mouse e controle', titulo: 'Controles', arte: 'chave',
     sub: 'O esquema do God of War (2018) de PC, com cada tecla e botão trocável.' },
+  { id: 'steam', nome: 'Steam', sobre: 'Biblioteca da Steam', titulo: 'Steam', arte: 'rocha',
+    sub: 'God of War e God of War II na sua biblioteca da Steam, com capa, banner e logo, como o EmuDeck faz: sobreposição, controle da Steam e modo Big Picture.' },
   { id: 'atual', nome: 'Atualizações', sobre: 'Correções e pacotes', titulo: 'Atualizações', arte: 'rocha',
     sub: 'Correções novas do vitart e os pacotes opcionais (texturas HD, PBR, áudio do PS2, vídeos HD), direto da página do projeto.' },
   { id: 'avan', nome: 'Avançado', sobre: 'Diagnóstico', titulo: 'Avançado', arte: 'rocha',
@@ -162,6 +165,59 @@ async function escolherIdioma(codigo) {
     cascata($$('#idiomas .api.sel'), [{ transform: 'scale(.985)' }, { transform: 'none' }], 0, 260);
     avisar('Salvo', st.opcoes && st.opcoes.jogo_aberto ? 'Vale quando o jogo abrir de novo.' : 'Vale na próxima vez que o jogo abrir.');
   } catch (e) { avisar('Não deu', e.message, 'erro'); }
+}
+
+// ------------------------------------------------------------------ Steam
+// tools/steam_atalhos.py (pela ponte): atalhos "jogo que não é da Steam" que abrem cada jogo direto, com a arte na pasta
+// grid. Arte da SteamGridDB com a chave (opcional), senão a da coletânea. A Steam precisa estar fechada para gravar.
+function montarSteam(sec) {
+  sec.append(
+    el('div', { class: 'painel steam-painel' },
+      el('div', { class: 'caixa' }, 'Situação'),
+      el('div', { class: 'valor', id: 'steam-estado' }, '...'),
+      el('div', { class: 'caixa', style: { marginTop: '18px' } }, 'Chave da SteamGridDB (opcional)'),
+      el('div', { class: 'mudo legenda' }, 'Com ela, cada jogo ganha a própria capa, banner e logo da SteamGridDB, como no Steam ROM Manager. Sem ela, os dois usam a arte da coletânea.'),
+      el('div', { class: 'steam-chave' },
+        el('input', { class: 'entrada', id: 'steam-chave', type: 'password', spellcheck: 'false', autocomplete: 'off', placeholder: 'cole a chave aqui' }),
+        el('button', { class: 'btn fino', onclick: () => vt.abrirLink('https://www.steamgriddb.com/profile/preferences/api') }, 'Pegar uma chave')),
+      el('div', { class: 'linha-acao' }, el('button', { class: 'btn forte', id: 'steam-botao', onclick: () => adicionarSteam(false) }, 'Adicionar à Steam')),
+      el('div', { class: 'mudo legenda' }, 'Conquistas da Steam não existem para jogos de fora da loja: os troféus continuam os do jogo, com o aviso na tela.')));
+  carregarSteam();
+}
+
+async function carregarSteam() {
+  try { st.steam = await vt.rpc('steam'); } catch (e) { $('#steam-estado').textContent = e.message; return; }
+  pintarSteam();
+}
+
+function pintarSteam() {
+  const s = st.steam;
+  const alvo = $('#steam-estado');
+  if (!s.steam) { alvo.textContent = tr('Não achei a Steam neste PC.'); $('#steam-botao').disabled = true; return; }
+  alvo.textContent = s.atalhos && s.atalhos.length
+    ? tr('Na biblioteca: {a}', { a: s.atalhos.join(', ') })
+    : tr('Steam encontrada ({a} conta(s)); os jogos ainda não estão na biblioteca.', { a: s.usuarios });
+  $('#steam-botao').textContent = s.atalhos && s.atalhos.length ? tr('Atualizar os atalhos') : tr('Adicionar à Steam');
+  if (s.tem_chave) $('#steam-chave').placeholder = tr('chave salva (cole outra para trocar)');
+}
+
+async function adicionarSteam(fechar) {
+  const b = $('#steam-botao');
+  b.disabled = true;
+  try {
+    const r = await vt.rpc('steam_adicionar', { chave: $('#steam-chave').value.trim(), fechar });
+    if (r.steam_aberta) {
+      b.disabled = false;
+      if (await confirmar('A Steam está aberta', 'A Steam reescreve a lista de jogos ao fechar. Fechar a Steam agora, adicionar os jogos e abri-la de novo?', 'Fechar e adicionar'))
+        return adicionarSteam(true);
+      return;
+    }
+    st.steam = r;
+    $('#steam-chave').value = '';
+    pintarSteam();
+    avisar('Pronto', 'God of War e God of War II estão na sua biblioteca da Steam.');
+  } catch (e) { avisar('Não deu', e.message, 'erro'); }
+  b.disabled = false;
 }
 
 // ------------------------------------------------------------------ Controles
@@ -534,7 +590,7 @@ vt.aoEvento(m => {
   $('#atu-txt').textContent = tr(nome) + ' ' + Math.round(100 * f) + '%' + (m.etapa === 'baixando' ? ' · ' + gb(m.feito) + ' / ' + gb(m.total) : '');
 });
 
-const MONTAR = { video: montarVideo, idioma: montarIdioma, ctl: montarCtl, atual: montarAtual, avan: montarAvan };
+const MONTAR = { video: montarVideo, idioma: montarIdioma, steam: montarSteam, ctl: montarCtl, atual: montarAtual, avan: montarAvan };
 
 // ------------------------------------------------------------------ início
 vt.aoEvento(m => {

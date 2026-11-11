@@ -830,10 +830,11 @@ const std::string &vt::main_dll_path() { return g_main_dll; }
     ExitProcess(0);
 }
 
-// Aberto sem argumentos (clique duplo no exe do jogo instalado): tudo relativo à pasta do exe.
+// Aberto sem argumentos (clique duplo no exe do jogo instalado): tudo relativo à pasta do exe. Com "gow1" ou "gow2"
+// (os atalhos da Steam, Settings › Steam) abre esse jogo direto, sem o menu do Vita.
 //   bin\  as DLLs do jogo e o link.hlevars.txt    game\PCSA00126  o app do Vita
 //   data\ o vitart-data                           shaders\        o cache de shaders    logs\ o registro
-static std::vector<std::string> installed_args(const char *argv0) {
+static std::vector<std::string> installed_args(const char *argv0, const char *jogo = nullptr) {
     wchar_t exe[MAX_PATH];
     GetModuleFileNameW(nullptr, exe, MAX_PATH);
     const std::filesystem::path dir = std::filesystem::path(exe).parent_path();
@@ -843,14 +844,21 @@ static std::vector<std::string> installed_args(const char *argv0) {
     std::filesystem::create_directories(dir / L"logs", ec);
     if (!getenv("VITART_VULKAN")) _putenv_s("VITART_VULKAN", "1"); // _putenv: o getenv do CRT enxerga
     if (!getenv("VITART_SPV_DIR")) _putenv_s("VITART_SPV_DIR", "shaders");
+    std::string main_dll = "bin/eboot.dll";
+    if (jogo && (!_stricmp(jogo, "gow1") || !_stricmp(jogo, "gow2"))) {
+        std::string j = jogo;
+        for (char &ch : j) ch = (char)std::tolower((unsigned char)ch);
+        main_dll = "bin/" + j + ".dll";
+    }
     return {argv0, "--app", "game/PCSA00126", "--data", "data", "--hle-vars", "bin/link.hlevars.txt",
-            "--log", "logs/vitart.log", "bin/eboot.dll", "bin/libc.dll", "bin/libfios2.dll"};
+            "--log", "logs/vitart.log", main_dll, "bin/libc.dll", "bin/libfios2.dll"};
 }
 
 int main(int argc, char **argv) {
     std::vector<std::string> inst;
     std::vector<char *> inst_argv;
-    if (argc == 1 && !(inst = installed_args(argv[0])).empty()) {
+    const bool jogo_direto = argc == 2 && (!_stricmp(argv[1], "gow1") || !_stricmp(argv[1], "gow2"));
+    if ((argc == 1 || jogo_direto) && !(inst = installed_args(argv[0], jogo_direto ? argv[1] : nullptr)).empty()) {
         for (auto &s : inst) inst_argv.push_back(s.data());
         argc = (int)inst_argv.size();
         argv = inst_argv.data();
