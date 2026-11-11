@@ -35,3 +35,65 @@ FLP_Shell	44	Não
 FLP_Shell	45	Sim
 FLP_Shell	51	= Cancelar
 FLP_Shell	54	= Continuar
+FLP_HUD	68	Usar Magia
+FLP_HUD	69	Bloquear
+FLP_HUD	70	Pausa
+FLP_HUD	71	Menus
+FLP_HUD	72	Rolar/Esquivar
+FLP_HUD	73	Ataque Forte
+FLP_HUD	74	Pular
+FLP_HUD	75	Ataque Normal
+FLP_HUD	76	Ação / Interagir
+FLP_HUD	77	Agarrar
+FLP_HUD	78	Andar / Correr
+FLP_HUD	79	Olhar da Medusa
+FLP_HUD	80	BLOQUEADO
+FLP_HUD	81	Exército de Hades
+FLP_HUD	82	Fúria de Zeus
+FLP_HUD	83	Ira de Poseidon
+FLP_HUD	91	Disparada
+FLP_HUD	96	Golpes
+FLP_HUD	99	Itens
+FLP_HUD	101	Olhos da Górgona
+FLP_HUD	105	Penas da Fênix
+FLP_HUD	112	Tridente de Poseidon
+FLP_HUD	115	Chaves das Musas
+FLP_HUD	120	Rolar
+FLP_HUD	121	Rolar
+FLP_HUD	131	= Melhorar
+FLP_HUD	132	Magia Bloqueada
+FLP_HUD	133	Fúria de Zeus
+FLP_HUD	134	Próxima Melhoria:
+FLP_HUD	136	Nível 1
+FLP_HUD	138	Nível 2
+FLP_HUD	139	- NO MÁXIMO
+FLP_HUD	140	Nível 3
+FLP_HUD	141	Olhar da Medusa
+FLP_HUD	144	Lâmina de Ártemis
+FLP_HUD	146	Ira de Poseidon
+FLP_HUD	150	Exército de Hades
+FLP_HUD	151	Lâminas do Caos
+FLP_HUD	154	Nível 4
+FLP_HUD	155	Nível 5
+FLP_HUD	156	Lâmina dos Deuses
+FLP_HUD	157	Lâminas de Atena
+FLP_HUD	158	Vazio
+FLP_HUD	164	Melhorias
+FLP_HUD	166	Sobre Melhorias:
+FLP_Shell	19	Usar Magia
+FLP_Shell	20	Bloquear
+FLP_Shell	21	Pausa
+FLP_Shell	22	Menus
+FLP_Shell	23	Rolar / Esquivar
+FLP_Shell	24	Ataque Forte
+FLP_Shell	25	Pular
+FLP_Shell	26	Ataque Normal
+FLP_Shell	27	Ação / Interagir
+FLP_Shell	28	Agarrar
+FLP_Shell	29	Andar / Correr
+FLP_Shell	30	Disparada
+FLP_Shell	31	BLOQUEADO
+FLP_Shell	36	Olhar da Medusa
+FLP_Shell	37	Exército de Hades
+FLP_Shell	38	Fúria de Zeus
+FLP_Shell	39	Ira de Poseidon

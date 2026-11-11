@@ -9,7 +9,7 @@ fica em <tradução>/fontes/rotulos_gow1.tsv, uma linha por rótulo de uma linha
 --rotulos antes do menu do vitart, no FLP inglês (o francês e o espanhol oficiais têm os deles).
 
 Alinhamento: o rótulo novo mantém o centro (se o original estava centrado na origem do clipe), a borda esquerda
-(x = 0, os "= Voltar" ao lado do ícone) ou a borda direita (os das linhas de opções, colados ao valor).
+(os "= Voltar", ao lado do ícone) ou a borda direita (os das linhas de opções, colados ao valor).
 """
 import struct
 
@@ -75,8 +75,8 @@ def aplicar(f, tabela, lang):
         w_ref = sum(w for _, w in c0['glyphs'])
         w_new = sum(w for _, w in glyphs)
         x = struct.unpack_from('<h', st.h, 0x10)[0]
-        if x == 0:
-            nx = 0                                   # colado ao ícone, à esquerda
+        if x == 0 or texto.startswith('='):
+            nx = x                                   # colado ao ícone ("= Voltar"), à esquerda
         elif abs(x + w_ref / 2) <= max(60, w_ref * 0.12):
             nx = -(w_new // 2)                       # centrado
         else:
