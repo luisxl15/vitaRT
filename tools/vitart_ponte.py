@@ -504,7 +504,10 @@ def m_salvar_idioma(a):
     if code and code not in [t['codigo'] for t in K.list_translations(cfg)]:
         raise ValueError('tradução desconhecida: %s' % code)
     registro = []
+    antes = K.get_language(cfg)
     K.set_language(cfg, code, log=registro.append)
+    if code != antes:  # o menu de opções do vitart vem no idioma escolhido: refaz o patch do menu
+        K.rebuild(cfg, log=registro.append)
     return {'atual': code, 'registro': registro}
 
 

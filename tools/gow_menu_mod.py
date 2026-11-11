@@ -25,6 +25,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import flp  # noqa: E402
+import gow_menu_i18n  # noqa: E402
 import kbm_flp  # noqa: E402
 import psarc_gxp as P  # noqa: E402
 
@@ -73,6 +74,15 @@ LINES = {
                 {1: 'Press X', 2: 'Done'}),
 }
 MODS = []  # nomes dos mods da página Mods (configure)
+LINES_EN = dict(LINES)  # os textos em inglês; configure traduz para LANG
+LANG = ''
+
+
+def T(s):
+    """Texto do menu no idioma escolhido (tools/gow_menu_i18n.py)."""
+    return gow_menu_i18n.traduzir(s, GAME, LANG)
+
+
 PAGE = '_level0/:VtPage'
 GAMES = {
     'gow1': dict(
@@ -97,12 +107,14 @@ GAMES = {
 }
 
 
-def configure(game, mods=()):
+def configure(game, mods=(), lang=''):
     """Põe nas variáveis do módulo a configuração do jogo (as funções abaixo as usam). mods: nomes dos mods
     instalados para este jogo, na ordem de mods/modlist.tsv (até 16): página Mods com uma linha liga/desliga
     por mod e o Apply."""
-    global GAME, CFG, STATE, ROWS, PATH, ORDER, PAGES, Y, FIRST_NEW, LAST_NEW, KEY, LO, MODS
-    GAME = game
+    global GAME, CFG, STATE, ROWS, PATH, ORDER, PAGES, Y, FIRST_NEW, LAST_NEW, KEY, LO, MODS, LANG
+    GAME, LANG = game, lang or ''
+    LINES.clear()
+    LINES.update(LINES_EN)
     CFG = dict(GAMES[game], new=list(GAMES[game]['new']), pages={k: list(v) for k, v in GAMES[game]['pages'].items()})
     MODS = list(mods)[:16]
     if MODS:
@@ -121,6 +133,11 @@ def configure(game, mods=()):
         main = CFG['pages'][0]
         main.insert(len(main) - 1, cat)  # antes de "Return to Pause Menu"
         CFG['pages'][4] = rows + [restart, back]
+    # textos no idioma escolhido (os nomes dos mods ficam como estão)
+    for key, (clip, text, var, txt, kind, table) in list(LINES.items()):
+        if isinstance(table, dict):
+            table = {k: T(v) for k, v in table.items()}
+        LINES[key] = (clip, text if key[:3] == 'mod' and len(key) == 4 else T(text), var, txt, kind, table)
     STATE = CFG['state']
     # ROWS: (estado, nome do clipe, rótulo, variável decodificada, peso, variável do texto) nas linhas novas
     weights = {name: w for name, w, _ in FIELDS}
@@ -322,12 +339,12 @@ def texts_script(f):
             a.setv(txt, '')
         elif kind == 'avail':
             a.getv(var).push(2).eq().not_().jumpif('x' + txt)
-            a.setv(txt, 'On').jump('y' + txt)
+            a.setv(txt, T('On')).jump('y' + txt)
             a.label('x' + txt)
             a.getv(var).push(3).eq().not_().jumpif('z' + txt)
-            a.setv(txt, 'Unavailable').jump('y' + txt)
+            a.setv(txt, T('Unavailable')).jump('y' + txt)
             a.label('z' + txt)
-            a.setv(txt, 'Off')
+            a.setv(txt, T('Off'))
             a.label('y' + txt)
         else:
             for v, t in table.items():
@@ -1025,7 +1042,9 @@ def main():
     game = 'gow2' if 'gow2' in os.path.basename(psarc).lower() else 'gow1'
     # --modlist <mods/modlist.tsv>: página Mods com os mods instalados (tools/vitart_modkit.py escreve a lista)
     modlist = sys.argv[sys.argv.index('--modlist') + 1] if '--modlist' in sys.argv else None
-    configure(game, read_modlist(modlist, game))
+    # --lang <código>: os textos do menu do vitart nesse idioma (Settings > Idioma do jogo)
+    lang = sys.argv[sys.argv.index('--lang') + 1] if '--lang' in sys.argv else ''
+    configure(game, read_modlist(modlist, game), lang)
     # --files-out <pasta>: grava também os arquivos trocados, crus (os mods que trocam o r_perma/r_shella recebem
     # assim o menu e os ícones do vitart por cima; ver tools/vitart_modkit.py)
     files_out = sys.argv[sys.argv.index('--files-out') + 1] if '--files-out' in sys.argv else None

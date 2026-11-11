@@ -306,12 +306,13 @@ def rebuild(cfg, log=print):
     write_modlist(cfg, mods)
     modlist = os.path.join(mods_dir(cfg), 'modlist.tsv')
     py = [cfg['python'], '-P', os.path.join(TOOLS, 'gow_menu_mod.py')]
+    lang = ['--lang', get_language(cfg)] if get_language(cfg) else []  # o menu do vitart no idioma do jogo
     for game in ('gow1', 'gow2'):
         ps = psarc_path(cfg, game)
         if not os.path.exists(ps):
             continue
         log('== %s: patch base' % game)
-        run(py + [ps, os.path.join(mods_dir(cfg), PSARC[game] + '.vtpatch'), '--modlist', modlist], log)
+        run(py + [ps, os.path.join(mods_dir(cfg), PSARC[game] + '.vtpatch'), '--modlist', modlist] + lang, log)
         for m in mods:
             if m.game != game or not m.files('src'):
                 continue
@@ -320,7 +321,7 @@ def rebuild(cfg, log=print):
             args = []
             for rel in sorted(m.files('src'), key=lambda r: '_VitaTV' in r):  # o normal antes do PS TV
                 args += ['--wad', '%s=%s' % (rel, os.path.join(m.dir, 'src', *rel.split('/')))]
-            run(py + [ps, '-', '--modlist', modlist, '--files-out', tmp] + args, log)
+            run(py + [ps, '-', '--modlist', modlist, '--files-out', tmp] + args + lang, log)
             for rel in BASE_FILES:
                 src = os.path.join(tmp, *rel.split('/'))
                 if os.path.exists(src) and (rel in m.files('src') or rel.replace('wad/_VitaTV/', 'wad/') in m.files('src')):
