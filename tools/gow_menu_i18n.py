@@ -16,6 +16,7 @@ TEXTOS = {
         'Cheats': 'Trapaças', 'Back': 'Voltar', 'Mods': 'Mods', 'Apply': 'Aplicar',
         'Off': 'Não', 'On': 'Sim', 'Windowed': 'Janela', 'Borderless': 'Sem Bordas', 'Press X': 'Aperte X',
         'Done': 'Feito', 'Unavailable': 'Indisp.', 'Max FPS': 'FPS Máximo', 'Auto': 'Auto',
+        'Quit to Desktop': 'Fechar o Jogo', 'Confirm': 'X de Novo', 'Exiting...': 'Saindo...',
     },
     'es': {
         'HD Textures': 'Texturas HD', 'PS2 Audio': 'Audio de PS2', 'Resolution': 'Resolución',
@@ -26,6 +27,7 @@ TEXTOS = {
         'Cheats': 'Trucos', 'Back': 'Volver', 'Mods': 'Mods', 'Apply': 'Aplicar',
         'Off': 'No', 'On': 'Sí', 'Windowed': 'Ventana', 'Borderless': 'Sin Bordes', 'Press X': 'Pulsa X',
         'Done': 'Hecho', 'Unavailable': 'No Disp.', 'Max FPS': 'FPS Máx.', 'Auto': 'Auto',
+        'Quit to Desktop': 'Cerrar el Juego', 'Confirm': 'X Otra Vez', 'Exiting...': 'Saliendo...',
     },
     'fr': {
         'HD Textures': 'Textures HD', 'PS2 Audio': 'Audio PS2', 'Resolution': 'Résolution',
@@ -36,6 +38,7 @@ TEXTOS = {
         'Cheats': 'Triches', 'Back': 'Retour', 'Mods': 'Mods', 'Apply': 'Appliquer',
         'Off': 'Non', 'On': 'Oui', 'Windowed': 'Fenêtré', 'Borderless': 'Sans Bordure',
         'Press X': 'Valider', 'Done': 'Fait', 'Unavailable': 'Indispo.', 'Max FPS': 'FPS Max',
+        'Quit to Desktop': 'Fermer le Jeu', 'Confirm': 'Confirmer', 'Exiting...': 'Fermeture...',
         'Auto': 'Auto',
     },
     'it': {
@@ -47,6 +50,7 @@ TEXTOS = {
         'Cheats': 'Trucchi', 'Back': 'Indietro', 'Mods': 'Mod', 'Apply': 'Applica',
         'Off': 'No', 'On': 'Sì', 'Windowed': 'Finestra', 'Borderless': 'Senza Bordi', 'Press X': 'Premi X',
         'Done': 'Fatto', 'Unavailable': 'Non Disp.', 'Max FPS': 'FPS Max', 'Auto': 'Auto',
+        'Quit to Desktop': 'Chiudi il Gioco', 'Confirm': 'X Ancora', 'Exiting...': 'Chiusura...',
     },
     'de': {
         'HD Textures': 'HD-Texturen', 'PS2 Audio': 'PS2-Audio', 'Resolution': 'Auflösung',
@@ -57,6 +61,7 @@ TEXTOS = {
         'Cheats': 'Cheats', 'Back': 'Zurück', 'Mods': 'Mods', 'Apply': 'Anwenden',
         'Off': 'Aus', 'On': 'An', 'Windowed': 'Fenster', 'Borderless': 'Randlos', 'Press X': 'X Drücken',
         'Done': 'Fertig', 'Unavailable': 'N. Verfügbar', 'Max FPS': 'Max. FPS', 'Auto': 'Auto',
+        'Quit to Desktop': 'Spiel Beenden', 'Confirm': 'Nochmal X', 'Exiting...': 'Beendet...',
     },
 }
 

@@ -72,6 +72,9 @@ LINES = {
     'cat_mods': ('VtCatMods', 'Mods', '_level0/:VtCatM', '_level0/:VtCatMText', 'submenu', 4),
     'restart': ('VtRestart', 'Apply', '_level0/:VtRestart', '_level0/:VtRestartText', 'action',
                 {1: 'Press X', 2: 'Done'}),
+    # fechar o jogo (game_options.cpp, "quit"): o 1º X pede confirmação ("Confirm"), o 2º fecha
+    'quit': ('VtQuit', 'Quit to Desktop', '_level0/:VtQuit', '_level0/:VtQuitText', 'confirm',
+             {1: 'Press X', 2: 'Confirm', 3: 'Exiting...'}),
 }
 MODS = []  # nomes dos mods da página Mods (configure)
 LINES_EN = dict(LINES)  # os textos em inglês; configure traduz para LANG
@@ -89,8 +92,8 @@ GAMES = {
         state='PS2_Cheat', wad=(30, b'FLP_HUD'), shell=(30, b'FLP_Shell'), nobody=(24,),
         new=[(5, 'tex'), (6, 'aud'), (7, 'res'), (8, 'fps'), (11, 'vsync'), (9, 'cnt'), (10, 'dsp'), (12, 'qte'),
              (13, 'hp'), (14, 'mp'), (15, 'rage'), (16, 'trophy'), (17, 'cat_gfx'), (18, 'cat_game'), (19, 'cat_cheat'),
-             (20, 'back'), (21, 'asp')],
-        pages={0: [1, 2, 17, 18, 19, 3, 4], 1: [5, 7, 21, 8, 11, 9, 10, 20], 2: [6, 12, 20], 3: [13, 14, 15, 16, 20]},
+             (20, 'back'), (21, 'asp'), (22, 'quit')],
+        pages={0: [1, 2, 17, 18, 19, 3, 22, 4], 1: [5, 7, 21, 8, 11, 9, 10, 20], 2: [6, 12, 20], 3: [13, 14, 15, 16, 20]},
         old={1: ('MusicVolume', 'A'), 2: ('SFXVolume', 'A'), 3: ('Controller', 'B'), 4: ('Return', 'B')},
         y=(-175.0, 175.0), row_k=1.0, frames=(7, 8, 9), kx=22, x_state='3',
         dyn_label=False),
@@ -98,8 +101,8 @@ GAMES = {
         state='PS2_OverUnder', wad=(1, b'FLP_HUDA'), shell=(1, b'FLP_ShellA'), nobody=(0, 24),  # tag 0: parâmetro (o tamanho é o valor)
         new=[(7, 'res'), (8, 'fps'), (9, 'vsync'), (10, 'cnt'), (11, 'dsp'), (12, 'qte'), (13, 'tex'), (14, 'aud'),
              (15, 'hp'), (16, 'mp'), (17, 'rage'), (18, 'trophy'), (19, 'cat_gfx'), (20, 'cat_game'), (21, 'cat_cheat'),
-             (22, 'back'), (23, 'ehp'), (24, 'asp')],
-        pages={0: [1, 2, 3, 4, 5, 19, 20, 21, 6], 1: [13, 7, 24, 8, 9, 10, 11, 22], 2: [14, 12, 23, 22], 3: [15, 16, 17, 18, 22]},
+             (22, 'back'), (23, 'ehp'), (24, 'asp'), (25, 'quit')],
+        pages={0: [1, 2, 3, 4, 5, 19, 20, 21, 25, 6], 1: [13, 7, 24, 8, 9, 10, 11, 22], 2: [14, 12, 23, 22], 3: [15, 16, 17, 18, 22]},
         old={1: ('MessageTips', 'A'), 2: ('MusicVolume', 'A'), 3: ('SFXVolume', 'A'), 4: ('Controller', 'B'),
              5: ('FlightControls', 'A'), 6: ('Return', 'B')},
         y=(-165.0, 207.5), row_k=1.0, frames=(9, 10, 11), kx=19, x_state='4',
@@ -167,6 +170,7 @@ def configure(game, mods=(), lang=''):
 configure('gow1')
 LAST_KBM = []  # trocas dos ícones de teclado do último FLP escrito (mod_flp)
 VALUE_RISE = 25.0  # unidades da linha
+VALUE_SHIFT = 70.0  # linhas de ação: o valor mais perto do rótulo (na linha selecionada ele saía da tela)
 ST = 'PauseOptions_State'
 
 
@@ -302,6 +306,8 @@ def show_script(f):
         a.label('q1' + q)
     if any(k == 'trophy' for _, k in CFG['new']):
         a.setv('_level0/:VtTrophy', 1)  # a ação volta a "Press X" a cada abertura da página
+    if any(k == 'quit' for _, k in CFG['new']):
+        a.setv('_level0/:VtQuit', 1)  # a confirmação de fechar não fica armada de uma abertura para outra
     if any(k == 'asp' for _, k in CFG['new']):
         # proporção da tela: consulta síncrona (1 = o índice no campo do estado, 2 = o estado de volta)
         a.fscommand('FSCommand:VT_aspq_1')
@@ -404,6 +410,15 @@ def change_script(f, step):
         elif kind == 'action':  # desbloquear troféus: X (ou direita) uma vez -> "Done"
             a.getv(var).push(2).eq().jumpif('trava')
             choose(s, var, 2)
+        elif kind == 'confirm':  # fechar o jogo: 1º X -> "Confirm", 2º X -> fecha
+            if step > 0:
+                a.getv(var).push(3).eq().jumpif('trava')
+                a.getv(var).push(2).eq().not_().jumpif('c%d' % s)
+                choose(s, var, 3)
+                a.label('c%d' % s)
+                choose(s, var, 2)
+            else:
+                a.jump('trava')
         elif kind == 'list':  # resolução 1..4, FPS 1..3 (30, 60, máximo)
             top = len(table)
             for v in range(1, top + 1):
@@ -702,8 +717,11 @@ def justify(f, pm):
             if e is not None:
                 edge = e if edge is None else max(edge, e)
         if edge is not None:
+            # linhas de ação ("Press X", "Confirm"): o texto é mais largo que On/Off e, na linha selecionada, que
+            # cresce a partir da origem, passava da borda da tela; a margem direita delas fica VALUE_SHIFT para dentro
+            tr = t_right - (VALUE_SHIFT if LINES.get(KEY.get(st), (0,) * 5)[4] in ('action', 'confirm') else 0.0)
             for keys in values:
-                shift(keys, t_right - edge)
+                shift(keys, tr - edge)
 
 
 def mod_flp(b, icons=True):

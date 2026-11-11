@@ -134,6 +134,7 @@ void presented() {
 }
 
 bool closed() { return g_closed; }
+void request_close() { g_closed = true; } // o mesmo caminho do X da janela (game_options.cpp, "Quit to Desktop")
 
 bool rect(int &x, int &y, int &w, int &h) {
     RECT r;

@@ -15,6 +15,7 @@ void pump();
 bool take_resized();
 // F9 foi apertado desde a última chamada (captura do quadro para diagnóstico).
 bool take_capture();
+void request_close();     // fecha o jogo como o X da janela
 void mark_resized();
 // Depois de cada apresentação: na troca de módulo a janela aparece no 2º quadro e avisa o processo anterior.
 void presented();

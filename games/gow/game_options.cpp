@@ -25,6 +25,7 @@
 #include <filesystem>
 #include <tuple>
 #include "gxm_vk.h"
+#include "gxm_window.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -86,7 +87,7 @@ Options g_opt;
 // Pedidos vindos do menu (thread do jogo), aplicados no próximo quadro: 0 = nenhum.
 std::atomic<uint32_t> g_req_ehp{0}, g_req_asp{0};
 std::atomic<uint32_t> g_req_tex{0}, g_req_aud{0}, g_req_res{0}, g_req_fps{0}, g_req_cnt{0}, g_req_dsp{0}, g_req_vsync{0}, g_req_qte{0},
-    g_req_hp{0}, g_req_mp{0}, g_req_rage{0}, g_req_trophy{0}, g_req_restart{0};
+    g_req_hp{0}, g_req_mp{0}, g_req_rage{0}, g_req_trophy{0}, g_req_restart{0}, g_req_quit{0};
 // Carregador de mods (hle_io.cpp, docs/modding/README.md): mod_<id>=0/1 no ini (vale ao reiniciar). O menu lista os mods
 // de mods/modlist.tsv deste jogo pelo índice (moda..modp = 0..15).
 std::vector<std::pair<std::string, bool>> g_mods; // (id, ligado), todos os mod_* do ini
@@ -266,6 +267,7 @@ void on_import(arc_ctx *ctx, uint32_t stub) {
     if (!std::strcmp(key, "rage")) g_req_rage = v;
     if (!std::strcmp(key, "trophy")) g_req_trophy = v;
     if (!std::strcmp(key, "restart")) g_req_restart = v;
+    if (!std::strcmp(key, "quit")) g_req_quit = v; // "Quit to Desktop": 3 = confirmado
     if (!std::strcmp(key, "asp") && v <= 6) g_req_asp = v;
     // aspq: consulta síncrona da linha Aspect Ratio (a palavra não tem mais bits livres): 1 = o índice no campo do
     // estado, 2 = o estado de sempre de volta
@@ -746,6 +748,11 @@ void game_options_tick() {
         }
         logf("vitart: mods aplicados%s", hero || boot ? "; herói/HUD/menus mudaram, reiniciando" : "");
         if (hero || boot) restart_process();
+    }
+    if (g_req_quit.exchange(0) == 3) { // "Quit to Desktop" confirmado: fecha como pelo X da janela
+        save();
+        logf("vitart: fechando o jogo pelo menu (Quit to Desktop)");
+        gvk::win::request_close();
     }
     cheats_tick(game_id());
     enemy_hp_tick(game_id());
