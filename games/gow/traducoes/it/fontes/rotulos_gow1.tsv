@@ -1,0 +1,99 @@
+# Rótulos fixos dos menus do GoW1 (tools/gow1_rotulos.py): registro FLP, índice, texto (it)
+FLP_HUD	0	= Continua
+FLP_HUD	11	Esci dal Gioco
+FLP_HUD	12	Riprendi dall'Ultimo Checkpoint
+FLP_HUD	13	= Scegli
+FLP_HUD	14	SEI MORTO
+FLP_HUD	17	No
+FLP_HUD	18	Sì
+FLP_HUD	20	HAI FALLITO
+FLP_HUD	28	= Annulla
+FLP_HUD	56	= Indietro
+FLP_HUD	57	Opzioni
+FLP_HUD	58	Continua
+FLP_HUD	59	Pausa
+FLP_HUD	60	Torna ai Tesori
+FLP_HUD	61	Torna al Menu di Pausa
+FLP_HUD	62	Mostra Comandi
+FLP_HUD	63	Volume Effetti
+FLP_HUD	64	Volume Musica
+FLP_HUD	65	Opzioni
+FLP_HUD	68	Usa Magia
+FLP_HUD	69	Para
+FLP_HUD	70	Pausa
+FLP_HUD	71	Menu
+FLP_HUD	72	Rotola/Schiva
+FLP_HUD	73	Attacco Forte
+FLP_HUD	74	Salta
+FLP_HUD	75	Attacco Normale
+FLP_HUD	76	Azione / Interagisci
+FLP_HUD	77	Afferra
+FLP_HUD	78	Cammina / Corri
+FLP_HUD	79	Sguardo di Medusa
+FLP_HUD	80	BLOCCATO
+FLP_HUD	81	Esercito di Ade
+FLP_HUD	82	Furia di Zeus
+FLP_HUD	83	Ira di Poseidone
+FLP_HUD	91	Scatto
+FLP_HUD	96	Mosse
+FLP_HUD	99	Oggetti
+FLP_HUD	101	Occhi di Gorgone
+FLP_HUD	105	Piume di Fenice
+FLP_HUD	112	Tridente di Poseidone
+FLP_HUD	115	Chiavi delle Muse
+FLP_HUD	120	Scorri
+FLP_HUD	121	Scorri
+FLP_HUD	131	= Potenzia
+FLP_HUD	132	Magia Bloccata
+FLP_HUD	133	Furia di Zeus
+FLP_HUD	134	Prossimo Potenziamento:
+FLP_HUD	136	Livello 1
+FLP_HUD	138	Livello 2
+FLP_HUD	139	- AL MASSIMO
+FLP_HUD	140	Livello 3
+FLP_HUD	141	Sguardo di Medusa
+FLP_HUD	144	Lama di Artemide
+FLP_HUD	146	Ira di Poseidone
+FLP_HUD	150	Esercito di Ade
+FLP_HUD	151	Spade del Caos
+FLP_HUD	154	Livello 4
+FLP_HUD	155	Livello 5
+FLP_HUD	156	Lama degli Dei
+FLP_HUD	157	Spade di Atena
+FLP_HUD	158	Vuoto
+FLP_HUD	164	Potenzia
+FLP_HUD	166	Info Potenziamento:
+FLP_HUD	185	Caricamento...
+FLP_Shell	0	= Scegli
+FLP_Shell	1	Tesori
+FLP_Shell	2	Carica
+FLP_Shell	3	Opzioni
+FLP_Shell	4	Nuova Partita
+FLP_Shell	13	= Indietro
+FLP_Shell	14	Torna al Menu Principale
+FLP_Shell	15	Mostra Comandi
+FLP_Shell	16	Volume Effetti
+FLP_Shell	17	Volume Musica
+FLP_Shell	18	Opzioni
+FLP_Shell	19	Usa Magia
+FLP_Shell	20	Para
+FLP_Shell	21	Pausa
+FLP_Shell	22	Menu
+FLP_Shell	23	Rotola/Schiva
+FLP_Shell	24	Attacco Forte
+FLP_Shell	25	Salta
+FLP_Shell	26	Attacco Normale
+FLP_Shell	27	Azione / Interagisci
+FLP_Shell	28	Afferra
+FLP_Shell	29	Cammina / Corri
+FLP_Shell	30	Scatto
+FLP_Shell	31	BLOCCATO
+FLP_Shell	36	Sguardo di Medusa
+FLP_Shell	37	Esercito di Ade
+FLP_Shell	38	Furia di Zeus
+FLP_Shell	39	Ira di Poseidone
+FLP_Shell	43	Tesori
+FLP_Shell	44	No
+FLP_Shell	45	Sì
+FLP_Shell	51	= Annulla
+FLP_Shell	54	= Continua

@@ -1,0 +1,99 @@
+# Rótulos fixos dos menus do GoW1 (tools/gow1_rotulos.py): registro FLP, índice, texto (de)
+FLP_HUD	0	= Weiter
+FLP_HUD	11	Spiel Beenden
+FLP_HUD	12	Neustart am Checkpoint
+FLP_HUD	13	= Wählen
+FLP_HUD	14	DU BIST TOT
+FLP_HUD	17	Nein
+FLP_HUD	18	Ja
+FLP_HUD	20	GESCHEITERT
+FLP_HUD	28	= Abbruch
+FLP_HUD	56	= Zurück
+FLP_HUD	57	Optionen
+FLP_HUD	58	Weiter
+FLP_HUD	59	Pause
+FLP_HUD	60	Zu den Schätzen
+FLP_HUD	61	Zum Pausenmenü
+FLP_HUD	62	Steuerung
+FLP_HUD	63	Effekte
+FLP_HUD	64	Musik
+FLP_HUD	65	Optionen
+FLP_HUD	68	Magie
+FLP_HUD	69	Blocken
+FLP_HUD	70	Pause
+FLP_HUD	71	Menüs
+FLP_HUD	72	Rollen/Ausweichen
+FLP_HUD	73	Starker Angriff
+FLP_HUD	74	Springen
+FLP_HUD	75	Normaler Angriff
+FLP_HUD	76	Aktion
+FLP_HUD	77	Packen
+FLP_HUD	78	Gehen / Laufen
+FLP_HUD	79	Medusas Blick
+FLP_HUD	80	GESPERRT
+FLP_HUD	81	Armee des Hades
+FLP_HUD	82	Zorn des Zeus
+FLP_HUD	83	Poseidons Wut
+FLP_HUD	91	Sprinten
+FLP_HUD	96	Angriffe
+FLP_HUD	99	Objekte
+FLP_HUD	101	Gorgonenaugen
+FLP_HUD	105	Phönixfedern
+FLP_HUD	112	Poseidons Dreizack
+FLP_HUD	115	Musenschlüssel
+FLP_HUD	120	Blättern
+FLP_HUD	121	Blättern
+FLP_HUD	131	= Aufwerten
+FLP_HUD	132	Magie Gesperrt
+FLP_HUD	133	Zorn des Zeus
+FLP_HUD	134	Nächste Stufe:
+FLP_HUD	136	Stufe 1
+FLP_HUD	138	Stufe 2
+FLP_HUD	139	- MAXIMUM
+FLP_HUD	140	Stufe 3
+FLP_HUD	141	Medusas Blick
+FLP_HUD	144	Klinge der Artemis
+FLP_HUD	146	Poseidons Wut
+FLP_HUD	150	Armee des Hades
+FLP_HUD	151	Chaosklingen
+FLP_HUD	154	Stufe 4
+FLP_HUD	155	Stufe 5
+FLP_HUD	156	Götterklinge
+FLP_HUD	157	Athenas Klingen
+FLP_HUD	158	Leer
+FLP_HUD	164	Aufwerten
+FLP_HUD	166	Aufwerten:
+FLP_HUD	185	Lädt...
+FLP_Shell	0	= Wählen
+FLP_Shell	1	Schätze
+FLP_Shell	2	Laden
+FLP_Shell	3	Optionen
+FLP_Shell	4	Neues Spiel
+FLP_Shell	13	= Zurück
+FLP_Shell	14	Zum Hauptmenü
+FLP_Shell	15	Steuerung
+FLP_Shell	16	Effekte
+FLP_Shell	17	Musik
+FLP_Shell	18	Optionen
+FLP_Shell	19	Magie
+FLP_Shell	20	Blocken
+FLP_Shell	21	Pause
+FLP_Shell	22	Menüs
+FLP_Shell	23	Rollen/Ausweichen
+FLP_Shell	24	Starker Angriff
+FLP_Shell	25	Springen
+FLP_Shell	26	Normaler Angriff
+FLP_Shell	27	Aktion
+FLP_Shell	28	Packen
+FLP_Shell	29	Gehen / Laufen
+FLP_Shell	30	Sprinten
+FLP_Shell	31	GESPERRT
+FLP_Shell	36	Medusas Blick
+FLP_Shell	37	Armee des Hades
+FLP_Shell	38	Zorn des Zeus
+FLP_Shell	39	Poseidons Wut
+FLP_Shell	43	Schätze
+FLP_Shell	44	Nein
+FLP_Shell	45	Ja
+FLP_Shell	51	= Abbruch
+FLP_Shell	54	= Weiter
