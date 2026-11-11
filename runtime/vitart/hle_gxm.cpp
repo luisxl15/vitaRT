@@ -838,6 +838,54 @@ static float attr_value(const uint8_t *p, uint32_t fmt, uint32_t i) {
 }
 static uint32_t attr_size(uint32_t fmt) { return fmt <= 1 || fmt == 4 || fmt == 5 ? 1 : fmt == 9 ? 4 : 2; }
 
+// O GoW empacota vértices sem alinhamento: stride 19, com half floats nos bytes 3 e 11. O Vulkan exige que o
+// endereço de cada componente seja múltiplo do tamanho dele; a NVIDIA lê assim mesmo, a AMD (RADV, AMDVLK, Steam
+// Deck) busca do endereço arredondado e o vértice vira lixo: cores de arco-íris por triângulo na geometria
+// iluminada (captura F9 de uma RX 9070 XT, quadro 27790: 610 de 675 desenhos). Os streams com atributo
+// desalinhado são copiados para um layout alinhado a 4 bytes (só os atributos usados, na mesma ordem).
+static void realign_streams(std::vector<gvk::VertexStream> &streams, std::vector<gvk::VertexAttr> &attrs, uint32_t nv,
+                            std::vector<std::vector<uint8_t>> &store) {
+    static const bool off = getenv("VITART_VK_NO_REALIGN") != nullptr; // comparação: o layout cru como antes
+    if (off) return;
+    for (uint32_t b = 0; b < streams.size(); b++) {
+        gvk::VertexStream &st = streams[b];
+        bool bad = false;
+        std::vector<gvk::VertexAttr *> mine;
+        for (gvk::VertexAttr &a : attrs)
+            if (a.stream == b) {
+                mine.push_back(&a);
+                const uint32_t cs = attr_size(a.fmt);
+                if (a.offset % cs || st.stride % cs) bad = true;
+            }
+        if (!bad || mine.empty()) continue;
+        std::sort(mine.begin(), mine.end(), [](const gvk::VertexAttr *x, const gvk::VertexAttr *y) { return x->offset < y->offset; });
+        std::vector<uint32_t> old_off(mine.size()), bytes(mine.size());
+        uint32_t cur = 0;
+        for (size_t i = 0; i < mine.size(); i++) {
+            old_off[i] = mine[i]->offset;
+            bytes[i] = attr_size(mine[i]->fmt) * mine[i]->comps;
+            mine[i]->offset = cur;
+            cur = (cur + bytes[i] + 3) & ~3u;
+        }
+        const uint32_t ns = cur ? cur : 4;
+        std::vector<uint8_t> &dst = store.emplace_back((size_t)nv * ns, 0);
+        for (uint32_t v = 0; v < nv; v++) {
+            const uint8_t *src = st.data + (size_t)v * st.stride;
+            uint8_t *out = dst.data() + (size_t)v * ns;
+            for (size_t i = 0; i < mine.size(); i++) std::memcpy(out + mine[i]->offset, src + old_off[i], bytes[i]);
+        }
+        static bool avisou = false;
+        if (!avisou) {
+            avisou = true;
+            vt::logf("vitart: vértices desalinhados realinhados (stride %u -> %u; exigência do Vulkan, a AMD lê lixo sem isso)",
+                     st.stride, ns);
+        }
+        st.data = dst.data();
+        st.stride = ns;
+        st.size = (uint32_t)dst.size();
+    }
+}
+
 // Texto na proporção certa. A interface (FLP) é feita para 4:3 e o jogo estica tudo na largura do alvo 16:9; as
 // letras saíam 1,33x mais largas. O shader da interface repassa a posição (a CPU do jogo já manda em coordenada
 // de tela), então dá para estreitar aqui, numa cópia dos vértices: os glifos de cada desenho com o atlas da fonte
@@ -1139,6 +1187,7 @@ static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t ida
     // location tem atributo com formato suportado; senão, conversão para vec4 na CPU como antes.
     std::vector<gvk::VertexStream> raw_streams;
     std::vector<gvk::VertexAttr> raw_attrs;
+    std::vector<std::vector<uint8_t>> realigned; // streams realinhados (realign_streams): valem até o gvk::draw
     {
         static const bool no_raw = getenv("VITART_VK_CPU_ATTRS") != nullptr;
         bool ok = !no_raw && !locs.empty();
@@ -1175,6 +1224,7 @@ static void vk_draw_impl(Context &c, uint32_t prim, uint32_t itype, uint32_t ida
                     gvk::VertexStream &vs_ = raw_streams[binding_of[st]];
                     vs_.size = (nv - 1) * vs_.stride + end_of[st];
                 }
+            realign_streams(raw_streams, raw_attrs, nv, realigned);
         } else {
             raw_streams.clear(), raw_attrs.clear();
         }
