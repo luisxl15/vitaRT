@@ -19,7 +19,7 @@ FLP_HUD	63	Efeitos Sonoros
 FLP_HUD	64	Volume da Música
 FLP_HUD	65	Opções
 FLP_HUD	185	Carregando...
-FLP_Shell	0	= Selecionar
+FLP_Shell	0	= Selec.
 FLP_Shell	1	Tesouros
 FLP_Shell	2	Carregar
 FLP_Shell	3	Opções
@@ -97,3 +97,17 @@ FLP_Shell	36	Olhar da Medusa
 FLP_Shell	37	Exército de Hades
 FLP_Shell	38	Fúria de Zeus
 FLP_Shell	39	Ira de Poseidon
+FLP_Shell	84	Espartano (difícil)
+FLP_Shell	85	Deus (muito difícil)
+FLP_Shell	86	Herói (normal)
+FLP_Shell	87	Mortal (fácil)
+FLP_Shell	88	Escolha a Dificuldade:
+FLP_Shell	89	Armadura de Ares
+FLP_Shell	90	(Habilidade: Armadura)
+FLP_Shell	91	Bloqueado
+FLP_Shell	92	Indisponível no Modo Deus.
+FLP_Shell	93	Chef da Guerra
+FLP_Shell	94	(Habilidade: Magia)
+FLP_Shell	96	(Habilidade: Vida)
+FLP_Shell	98	(Habilidade: Experiência)
+FLP_Shell	101	Escolha uma Roupa
