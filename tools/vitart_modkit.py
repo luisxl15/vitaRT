@@ -490,14 +490,15 @@ def msgs_need(text):
     return count, lines
 
 
-def text_records(cfg, game, text, rel, wad=TEXT_WAD, lang='', log=print):
+def text_records(cfg, game, text, rel, wad=TEXT_WAD, lang='', log=print, fix=True, rec_txt=None):
     """(corpo do registro, linhas do records.tsv, mensagens, linhas) para trocar o texto de um jogo por `text`
-    (formato MSGS_TXT, str). `rel` é o caminho do corpo dentro da pasta de quem usa."""
+    (formato MSGS_TXT, str). `rel` é o caminho do corpo dentro da pasta de quem usa. fix=False: o texto já está
+    nas letras da fonte do jogo (o oficial)."""
     ps = psarc_path(cfg, game)
     names = manifest(ps)
     if wad not in names:
         raise ValueError('%s não existe no %s' % (wad, PSARC[game]))
-    fixed, n, faltam = font_fix(text.lstrip('﻿'), lang)
+    fixed, n, faltam = font_fix(text.lstrip('﻿'), lang) if fix else (text.lstrip('﻿'), 0, ())
     if n:
         log('%s: %d letras trocadas por outras que a fonte do jogo tem%s' % (
             game, n, (' (sem glifo: %s)' % ' '.join(sorted(faltam))) if faltam else ''))
@@ -505,7 +506,7 @@ def text_records(cfg, game, text, rel, wad=TEXT_WAD, lang='', log=print):
     if not body.endswith(b'\r\n'):
         body += b'\r\n'
     body += b'\0\0'  # o jogo percorre o texto com strtok: precisa do zero no fim
-    rec_txt = TEXT_REC[game]
+    rec_txt = rec_txt or TEXT_REC[game]
     recs = {r[2]: r for r in wad_records(read_psarc_file(ps, wad), game) if r[2].startswith('MSGS_') or r[2] == rec_txt}
     if rec_txt not in recs:
         raise ValueError('%s não tem %s' % (wad, rec_txt))
@@ -545,9 +546,14 @@ def make_text_mod(cfg, mid, name, game, txt_path, wad=TEXT_WAD, author='', descr
 # language=<código> do vitart_options.ini (runtime/vitart/hle_io.cpp). Uma só: nunca duas traduções ligadas.
 IDIOMAS = [('pt-BR', 'Português (Brasil)'), ('es', 'Español'), ('fr', 'Français'), ('it', 'Italiano'),
            ('de', 'Deutsch')]
-# o GoW2 americano traz o francês e o espanhol oficiais (r_plocf/r_plocs, os que o Vita usa nesses idiomas): são lidos
-# do jogo de quem joga, não vêm com o projeto
-OFICIAL = {('gow2', 'fr'): 'wad/_VitaTV/r_plocf.wad_psp2', ('gow2', 'es'): 'wad/_VitaTV/r_plocs.wad_psp2'}
+# os dois jogos americanos trazem o francês e o espanhol oficiais, completos (menus, HUD e mensagens): com
+# language=fr ou es o vitart dá ao jogo esse idioma de sistema e ele mesmo os carrega (runtime/vitart/hle_sys.cpp). São
+# do jogo de quem joga, não vêm com o projeto. Só o texto do GoW2 tem buracos (mensagens 36-45, o _extra.txt), e o
+# complemento vai para o próprio WAD oficial, que é o que o jogo lê nesse idioma. O do GoW1 está completo (latin-1).
+OFICIAL = {('gow1', 'fr'): ('wad/_VitaTV/r_permf.wad_psp2', 'msgsF.txt'),
+           ('gow1', 'es'): ('wad/_VitaTV/r_perms.wad_psp2', 'msgsS.txt'),
+           ('gow2', 'fr'): ('wad/_VitaTV/r_plocf.wad_psp2', 'MSGS_TXT'),
+           ('gow2', 'es'): ('wad/_VitaTV/r_plocs.wad_psp2', 'MSGS_TXT')}
 _MSG = re.compile(r'^\*(\d+)\*[HT]?\s*$')
 
 
@@ -572,21 +578,24 @@ def _trad_ini_write(d, ini):
 
 
 def translation_source(cfg, code, game):
-    """O texto de um jogo nessa tradução (str) ou None. O oficial do jogo ganha as mensagens que faltam nele."""
+    """(texto, WAD, registro, corrigir a fonte) de um jogo nessa tradução, ou None se não houver o que trocar. No
+    oficial, o texto do jogo mais as mensagens que faltam nele (as do _extra.txt, já nas letras da fonte); sem
+    _extra.txt, nada: o jogo já traz tudo."""
     d = os.path.join(trad_dir(cfg), code, 'fontes')
     p = os.path.join(d, game + '.txt')
-    if os.path.exists(p):
-        return open(p, 'rb').read().decode('utf-8')
-    wad = OFICIAL.get((game, code))
-    if not wad or not os.path.exists(psarc_path(cfg, game)):
+    extra = os.path.join(d, game + '_extra.txt')
+    oficial = OFICIAL.get((game, code))
+    if not oficial:
+        return (open(p, 'rb').read().decode('utf-8'), TEXT_WAD, TEXT_REC[game], True) if os.path.exists(p) else None
+    wad, rec_txt = oficial
+    if not os.path.exists(extra) or not os.path.exists(psarc_path(cfg, game)):
         return None
     recs = wad_records(read_psarc_file(psarc_path(cfg, game), wad), game)
-    rec = next((r for r in recs if r[2] == TEXT_REC[game]), None)
+    rec = next((r for r in recs if r[2] == rec_txt), None)
     if rec is None:
         return None
     text = bytes(rec[3]).split(b'\0')[0].decode('utf-8').rstrip('\r\n') + '\r\n'
-    extra = os.path.join(d, game + '_extra.txt')
-    if os.path.exists(extra):  # só as mensagens que o oficial não tem (o número de cada uma não muda)
+    if True:  # só as mensagens que o oficial não tem (o número de cada uma não muda)
         tem = {m.group(1) for m in map(_MSG.match, text.splitlines()) if m}
         bloco, manter = [], False
         for line in open(extra, 'rb').read().decode('utf-8').splitlines():
@@ -595,8 +604,8 @@ def translation_source(cfg, code, game):
                 manter = m.group(1) not in tem
             if manter:
                 bloco.append(line)
-        text += '\r\n'.join(bloco) + '\r\n'
-    return text
+        text += font_fix('\r\n'.join(bloco), code)[0] + '\r\n'
+    return text, wad, rec_txt, False
 
 
 def build_translation(cfg, code, log=print):
@@ -609,11 +618,16 @@ def build_translation(cfg, code, log=print):
     for game in ('gow1', 'gow2'):
         if not os.path.exists(psarc_path(cfg, game)):
             continue
-        text = translation_source(cfg, code, game)
-        if text is None:
+        src = translation_source(cfg, code, game)
+        if src is None:
+            if (game, code) in OFICIAL:
+                feitos.append(game)
+                log('%s %s: o texto oficial do jogo, completo' % (code, game))
             continue
+        text, wad, rec_txt, fix = src
         rel = 'records/%s.txt' % game
-        body, r, count, lines = text_records(cfg, game, text, rel, lang=code, log=log)
+        body, r, count, lines = text_records(cfg, game, text, rel, wad=wad, lang=code, log=log, fix=fix,
+                                             rec_txt=rec_txt)
         open(os.path.join(d, rel), 'wb').write(body)
         rows += r
         feitos.append(game)

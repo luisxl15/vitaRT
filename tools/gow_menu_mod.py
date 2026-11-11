@@ -999,6 +999,26 @@ def read_modlist(path, game):
     return [out[k] for k in sorted(out)]
 
 
+# WADs do menu de pausa e do menu principal por idioma: (arquivo sem a pasta, sufixo do registro FLP_*)
+LOCALIZED = {
+    'gow1': {'pause': [('r_perma', ''), ('r_permf', 'F'), ('r_perms', 'S')],
+             'shell': [('r_shella', ''), ('r_shellf', 'F'), ('r_shells', 'S')]},
+    'gow2': {'pause': [('r_perma', ''), ('r_plocf', 'F'), ('r_plocs', 'S')],  # FLP_HUDA -> FLP_HUDF, FLP_HUDS
+             'shell': [('r_shella', ''), ('r_shellf', 'F'), ('r_shells', 'S')]},  # FLP_ShellA -> F, S
+}
+
+
+def localized(names, kind, base):
+    """(nome no manifesto, nome do registro) do menu em cada idioma, nas versões normal e do PS TV."""
+    out = []
+    for f, suf in LOCALIZED[GAME][kind]:
+        rn = base if not suf else (base[:-1] if base.endswith(b'A') else base) + suf.encode()
+        for name in ('wad/%s.wad_psp2' % f, 'wad/_VitaTV/%s.wad_psp2' % f):
+            if name in names:
+                out.append((name, rn))
+    return out
+
+
 def main():
     psarc, out = sys.argv[1], sys.argv[2]
     dump = sys.argv[sys.argv.index('--dump') + 1] if '--dump' in sys.argv else None
@@ -1025,10 +1045,12 @@ def main():
     with open(psarc, 'rb') as fh:
         ents, zs, block = P.entries(fh)
         names = P.read_file(fh, ents[0], zs, block).decode('latin1').split('\n')
-        for name in ('wad/r_perma.wad_psp2', 'wad/_VitaTV/r_perma.wad_psp2'):
+        # o menu de pausa em cada idioma do jogo: o inglês e as versões oficiais em francês e espanhol (o jogo
+        # carrega essas quando o idioma do sistema é o francês ou o espanhol; runtime/vitart/hle_sys.cpp)
+        for name, rn in localized(names, 'pause', rname):
             w = WAD_OVERRIDE.get(name) or P.read_file(fh, ents[names.index(name) + 1], zs, block)
-            new_flp = mod_flp(wad_get(w, rname, rtag))
-            files[name] = wad_replace(w, rname, new_flp, rtag)
+            new_flp = mod_flp(wad_get(w, rn, rtag))
+            files[name] = wad_replace(w, rn, new_flp, rtag)
             if LAST_KBM:
                 kbm.append((name, new_flp, LAST_KBM))
             if dump:
@@ -1036,12 +1058,12 @@ def main():
                 open(os.path.join(dump, name.replace('/', '_') + '.flp'), 'wb').write(new_flp)
         # menu principal (Shell): só os ícones de teclado
         stag, sname = CFG['shell']
-        for name in ('wad/r_shella.wad_psp2', 'wad/_VitaTV/r_shella.wad_psp2'):
+        for name, sn in localized(names, 'shell', sname):
             w = WAD_OVERRIDE.get(name) or P.read_file(fh, ents[names.index(name) + 1], zs, block)
-            f = flp.FLP(wad_get(w, sname, stag))
+            f = flp.FLP(wad_get(w, sn, stag))
             swaps = kbm_flp.add_kbm_icons(f, GAME, LO)
             new_flp = f.write()
-            files[name] = wad_replace(w, sname, new_flp, stag)
+            files[name] = wad_replace(w, sn, new_flp, stag)
             kbm.append((name, new_flp, kbm_flp.locate(new_flp, swaps)))
     for name, body in WAD_OVERRIDE.items():
         if name in names and name not in files:

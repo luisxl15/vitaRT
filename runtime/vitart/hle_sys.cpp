@@ -885,13 +885,32 @@ VT_HLE(sceAppUtilInit) {
     ret(ctx, SCE_OK);
 }
 VT_HLE(sceAppUtilShutdown) { ret(ctx, SCE_OK); }
+// Idioma do sistema que o jogo vê. O GoW americano traz francês e espanhol completos (GoW1: r_permf/r_shellf e
+// msgsF.txt, r_perms/r_shells e msgsS.txt; GoW2: r_plocf/r_plocs) e os carrega sozinho quando o Vita está nesse
+// idioma: menus, HUD e mensagens oficiais. language=fr|es do vitart_options.ini (Settings › Idioma) dá 2 ou 3; os
+// outros idiomas ficam no inglês (1), com a tradução por cima do r_perma (hle_io.cpp). VITART_SYS_LANG=<n> força.
+static uint32_t idioma_do_sistema() {
+    static const uint32_t v = [] {
+        if (const char *e = getenv("VITART_SYS_LANG")) return (uint32_t)std::atoi(e);
+        uint32_t r = 1;
+        if (FILE *f = fopen((data_path() + "/vitart_options.ini").c_str(), "r")) {
+            char line[256], code[32];
+            while (fgets(line, sizeof line, f))
+                if (sscanf(line, "language=%31[A-Za-z_-]", code) == 1) r = !strcmp(code, "fr") ? 2u : !strcmp(code, "es") ? 3u : 1u;
+            fclose(f);
+        }
+        if (r != 1) logf("vitart: idioma do sistema %u (%s oficial do jogo)", r, r == 2 ? "francês" : "espanhol");
+        return r;
+    }();
+    return v;
+}
 VT_HLE(sceAppUtilSystemParamGetInt) {
-    // 1 idioma (1 = inglês EUA), 2 botão de confirmação (1 = cruz), 3 formato de data, 4 formato de hora,
-    // 5 fuso, 6 horário de verão.
+    // 1 idioma (1 = inglês EUA, 2 francês, 3 espanhol), 2 botão de confirmação (1 = cruz), 3 formato de data,
+    // 4 formato de hora, 5 fuso, 6 horário de verão.
     static const uint32_t values[] = { 0, 1, 1, 0, 0, 0, 0 };
     const uint32_t id = arg(ctx, 0);
     if (!arg(ctx, 1)) return ret(ctx, 0x80100602u);
-    wr32(arg(ctx, 1), id < 7 ? values[id] : 0);
+    wr32(arg(ctx, 1), id == 1 ? idioma_do_sistema() : id < 7 ? values[id] : 0);
     ret(ctx, SCE_OK);
 }
 // Saves: os arquivos vão para savedata0: (pasta savedata0 do diretório de dados); os parâmetros de cada
