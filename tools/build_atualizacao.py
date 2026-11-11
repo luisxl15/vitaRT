@@ -26,7 +26,7 @@ import build_instalador as BI  # noqa: E402
 # o que uma atualização leva (prefixos relativos à pasta do jogo)
 ATUALIZA = ['God of War Collection.exe', 'Settings.exe', 'bin/gow1.dll', 'bin/gow2.dll', 'bin/eboot.dll', 'bin/libc.dll',
             'bin/libfios2.dll', 'bin/link.hlevars.txt', 'shaders/', 'Ferramentas/tools/', 'Ferramentas/vitart-ui/resources/app/',
-            'Ferramentas/docs/', 'data/versao.txt', 'data/ui-arte/steam/']
+            'Ferramentas/docs/', 'data/versao.txt', 'data/ui-arte/steam/', 'Adicionar à Steam (Linux, Steam Deck).sh']
 
 
 def empacotar(jogo, saida, rif, sha, so, nome, troca=None, bloco=None):

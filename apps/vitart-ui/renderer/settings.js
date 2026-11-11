@@ -193,6 +193,11 @@ async function carregarSteam() {
 function pintarSteam() {
   const s = st.steam;
   const alvo = $('#steam-estado');
+  if (s.wine) { // Settings dentro do Proton (Linux, Steam Deck): o script nativo faz os atalhos
+    alvo.textContent = tr('No Linux e no Steam Deck, rode o "Adicionar à Steam (Linux, Steam Deck).sh" da pasta do jogo no Modo Desktop.');
+    $('#steam-botao').disabled = true;
+    return;
+  }
   if (!s.steam) { alvo.textContent = tr('Não achei a Steam neste PC.'); $('#steam-botao').disabled = true; return; }
   alvo.textContent = s.atalhos && s.atalhos.length
     ? tr('Na biblioteca: {a}', { a: s.atalhos.join(', ') })

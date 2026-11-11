@@ -182,6 +182,16 @@ def exe_do_jogo(vitart, ico, destino):
     aplicar_res(destino, res)
 
 
+SH_STEAM = '''#!/bin/sh
+# Linux e Steam Deck: God of War e God of War II na biblioteca da Steam, com a arte de cada jogo e o Proton.
+# No Steam Deck, rode no Modo Desktop (botão direito > Executar no Konsole, ou: sh "este arquivo").
+cd "$(dirname "$0")" || exit 1
+python3 "Ferramentas/tools/steam_atalhos.py" "$(pwd)" --fechar-steam
+echo
+echo "Pronto. Volte ao Modo de Jogo: os dois jogos estao na biblioteca. Enter fecha esta janela."
+read _ 2>/dev/null
+'''
+
 LEIA_ME = '''God of War Collection (PS Vita) no PC
 =====================================
 
@@ -256,6 +266,9 @@ def main():
     por_jogo = os.path.join(REPO, '..', 'gow-dump', 'arte_steam')
     if os.path.isdir(por_jogo):
         shutil.copytree(por_jogo, os.path.join(dst, 'data', 'ui-arte', 'steam'), dirs_exist_ok=True)
+
+    # Linux / Steam Deck: os atalhos da Steam pelo python3 do sistema (no Proton a Steam fica aberta)
+    open(os.path.join(dst, 'Adicionar à Steam (Linux, Steam Deck).sh'), 'w', encoding='utf-8', newline=chr(10)).write(SH_STEAM)
 
     print('== traduções (Settings > Idioma do jogo)')
     # só as fontes e o idioma.ini; o Settings gera records/ ao escolher (o francês e o espanhol do GoW2 saem do jogo)

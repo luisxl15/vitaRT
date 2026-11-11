@@ -2,6 +2,11 @@
 
     python tools/steam_atalhos.py <pasta do jogo> [--chave-sgdb CHAVE] [--fechar-steam]
 
+Linux e Steam Deck: o mesmo script com o python3 do sistema ("Adicionar à Steam (Linux, Steam Deck).sh" na pasta do
+jogo, no Modo Desktop). O atalho leva o caminho Linux do exe e o CompatToolMapping do config.vdf manda a Steam rodá-lo
+pelo Proton (o mesmo Proton padrão da Steam, ou o proton_experimental). Sem o Pillow, a arte é copiada como está.
+Dentro do Proton (o Settings.exe rodando no Deck) não dá: a Steam está aberta e regravaria a lista ao fechar.
+
 Cada jogo (God of War, God of War II) vira um "jogo que não é da Steam", que abre direto com
 `God of War Collection.exe gow1|gow2`, com capa vertical, banner, fundo (hero), logo e ícone na pasta grid da Steam.
 Ganha a sobreposição, a Steam Input e o modo Big Picture. Conquistas da Steam não existem para atalhos (precisam de um
@@ -31,10 +36,30 @@ JOGOS = [('gow1', 'God of War', 2005), ('gow2', 'God of War II', 2007)]
 EXE = 'God of War Collection.exe'
 UA = 'vitart-settings'
 SEM_JANELA = getattr(subprocess, 'CREATE_NO_WINDOW', 0)
+LINUX = sys.platform.startswith('linux')
+
+
+def sob_wine():
+    """O Windows aqui é o Wine/Proton (o Settings.exe rodando no Linux ou no Steam Deck)."""
+    if os.name != 'nt':
+        return False
+    try:
+        import winreg
+        winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Wine').Close()
+        return True
+    except OSError:
+        return False
 
 
 # ------------------------------------------------------------------ Steam instalada
 def steam_dir():
+    if LINUX:
+        casa = os.path.expanduser('~')
+        for p in ('.local/share/Steam', '.steam/steam', '.steam/root', '.var/app/com.valvesoftware.Steam/.local/share/Steam'):
+            d = os.path.realpath(os.path.join(casa, p))
+            if os.path.isdir(os.path.join(d, 'userdata')):
+                return d
+        return None
     try:
         import winreg
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Valve\Steam') as k:
@@ -58,6 +83,11 @@ def usuarios(steam):
 
 
 def steam_aberta():
+    if LINUX:
+        try:
+            return subprocess.run(['pgrep', '-x', 'steam'], capture_output=True).returncode == 0
+        except OSError:
+            return False
     try:
         t = subprocess.run(['tasklist', '/fo', 'csv', '/nh'], capture_output=True, text=True, errors='replace',
                            creationflags=SEM_JANELA).stdout.lower()
@@ -67,7 +97,10 @@ def steam_aberta():
 
 
 def fechar_steam(steam, espera=40):
-    subprocess.Popen([os.path.join(steam, 'steam.exe'), '-shutdown'], creationflags=SEM_JANELA)
+    if LINUX:
+        subprocess.Popen(['steam', '-shutdown'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    else:
+        subprocess.Popen([os.path.join(steam, 'steam.exe'), '-shutdown'], creationflags=SEM_JANELA)
     fim = time.time() + espera
     while time.time() < fim:
         time.sleep(1)
@@ -75,6 +108,81 @@ def fechar_steam(steam, espera=40):
             time.sleep(2)  # termina de gravar os arquivos dela
             return True
     return False
+
+
+def abrir_steam(steam):
+    if LINUX:
+        subprocess.Popen(['steam'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    else:
+        subprocess.Popen([os.path.join(steam, 'steam.exe')], creationflags=SEM_JANELA)
+
+
+# ------------------------------------------------------------------ config.vdf (KeyValues em texto, Linux: Proton)
+def vdf_texto_ler(t):
+    toks, i, n = [], 0, len(t)
+    while i < n:
+        c = t[i]
+        if c == '"':
+            j, buf = i + 1, []
+            while j < n and t[j] != '"':
+                if t[j] == '\\' and j + 1 < n:
+                    buf.append(t[j:j + 2])
+                    j += 2
+                    continue
+                buf.append(t[j])
+                j += 1
+            toks.append(('s', ''.join(buf)))
+            i = j + 1
+        elif c in '{}':
+            toks.append((c, c))
+            i += 1
+        elif t.startswith('//', i):
+            i = t.find('\n', i) % (n + 1) if t.find('\n', i) >= 0 else n
+        else:
+            i += 1
+    pos = 0
+
+    def mapa():
+        nonlocal pos
+        out = {}
+        while pos < len(toks) and toks[pos][0] != '}':
+            k = toks[pos][1]
+            pos += 1
+            if toks[pos][0] == '{':
+                pos += 1
+                out[k] = mapa()
+                pos += 1
+            else:
+                out[k] = toks[pos][1]
+                pos += 1
+        return out
+    return mapa()
+
+
+def vdf_texto_gravar(d, nivel=0):
+    o, tab = [], '\t' * nivel
+    for k, v in d.items():
+        if isinstance(v, dict):
+            o.append('%s"%s"\n%s{\n%s%s}\n' % (tab, k, tab, vdf_texto_gravar(v, nivel + 1), tab))
+        else:
+            o.append('%s"%s"\t\t"%s"\n' % (tab, k, v))
+    return ''.join(o)
+
+
+def proton_para(steam, ids):
+    """CompatToolMapping do config.vdf: os atalhos rodam pelo Proton (o padrão da Steam, se houver)."""
+    p = os.path.join(steam, 'config', 'config.vdf')
+    if not os.path.exists(p):
+        return None
+    shutil.copy2(p, p + '.vitart.bak')
+    d = vdf_texto_ler(open(p, encoding='utf-8', errors='replace').read())
+    st = d.setdefault('InstallConfigStore', {}).setdefault('Software', {}).setdefault('Valve', {}).setdefault('Steam', {})
+    ct = st.setdefault('CompatToolMapping', {})
+    padrao = (ct.get('0') or {}).get('name') or 'proton_experimental'
+    for aid in ids:
+        ct[str(aid)] = {'name': padrao, 'config': '', 'priority': '250'}
+    open(p, 'w', encoding='utf-8', newline='\n').write(vdf_texto_gravar(d))
+    return padrao
 
 
 # ------------------------------------------------------------------ shortcuts.vdf (KeyValues binário)
@@ -207,7 +315,6 @@ _CAPA_X = {'gow1': 0.5, 'gow2': 0.78}
 def arte_local(jogo_dir, codigo, tmp):
     """Arte do próprio jogo (data/ui-arte/steam/<jogo>: logo, fundo e a base da capa, tiradas das texturas da tela-título
     e do carregamento): capa e banner compostos com o logo. Sem essa pasta, a arte da coletânea."""
-    from PIL import Image
     d = os.path.join(jogo_dir, 'data', 'ui-arte', 'steam', codigo)
     icone = os.path.join(jogo_dir, 'data', 'ui-arte', 'icone.png')
     if not all(os.path.exists(os.path.join(d, n)) for n in ('logo.png', 'fundo.png', 'capa_base.png')):
@@ -225,6 +332,7 @@ def arte_local(jogo_dir, codigo, tmp):
     if {'capa', 'banner', 'hero', 'logo'} <= set(padrao):
         padrao.setdefault('icone', icone)
         return padrao
+    from PIL import Image  # só para compor (o python3 do Steam Deck não tem o Pillow, e as padrão já bastam)
     logo = _logo(os.path.join(d, 'logo.png'))
     fundo = Image.open(os.path.join(d, 'fundo.png')).convert('RGBA')
     capa = _cobrir(Image.open(os.path.join(d, 'capa_base.png')).convert('RGBA'), 600, 900, ax=_CAPA_X.get(codigo, 0.5), ay=0.4)
@@ -247,7 +355,11 @@ def arte_local(jogo_dir, codigo, tmp):
 
 def preparar(src, dst, tamanho=None, cortar_topo=0.0, ay=0.5):
     """Copia a arte para a grid, no tamanho que a Steam usa (corta para a proporção, sem esticar)."""
-    from PIL import Image
+    try:
+        from PIL import Image
+    except ImportError:  # o python3 do Steam Deck não tem o Pillow: as imagens padrão já vêm no tamanho certo
+        shutil.copyfile(src, dst)
+        return
     im = Image.open(src)
     im = im.convert('RGBA' if im.mode in ('RGBA', 'LA', 'P') else 'RGB')
     if cortar_topo:
@@ -263,6 +375,8 @@ def preparar(src, dst, tamanho=None, cortar_topo=0.0, ay=0.5):
 
 # ------------------------------------------------------------------ o que o Settings chama
 def estado(jogo_dir):
+    if sob_wine():
+        return {'steam': None, 'wine': True}
     steam = steam_dir()
     if not steam:
         return {'steam': None}
@@ -278,6 +392,9 @@ def estado(jogo_dir):
 
 
 def adicionar(jogo_dir, chave_sgdb='', fechar=False, log=print):
+    if sob_wine():
+        raise RuntimeError('No Linux e no Steam Deck, rode o "Adicionar à Steam (Linux, Steam Deck).sh" da pasta do jogo '
+                           'no Modo Desktop: aqui dentro do Proton a Steam fica aberta e desfaria os atalhos.')
     steam = steam_dir()
     if not steam:
         raise RuntimeError('Não achei a Steam neste PC.')
@@ -346,8 +463,11 @@ def adicionar(jogo_dir, chave_sgdb='', fechar=False, log=print):
         open(p, 'wb').write(vdf_gravar(d))
         log('conta %s: %s %s' % (u, 'atualizados' if nossos else 'adicionados', ', '.join(n for _, n, _ in JOGOS)))
     shutil.rmtree(tmp, ignore_errors=True)
+    if LINUX:
+        tool = proton_para(steam, [id_atalho(exe, nome) for _, nome, _ in JOGOS])
+        log('Proton dos atalhos: %s' % (tool or 'config.vdf não encontrado (escolha o Proton nas propriedades do jogo)'))
     if reabrir:
-        subprocess.Popen([os.path.join(steam, 'steam.exe')], creationflags=SEM_JANELA)
+        abrir_steam(steam)
         log('Steam aberta de novo')
     return estado(jogo_dir)
 
