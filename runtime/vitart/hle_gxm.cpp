@@ -613,6 +613,32 @@ static std::shared_ptr<std::vector<uint8_t>> texpack_take(uint64_t key, const gx
     const size_t npx = (size_t)job->w * job->h;
     static int fixed = 0;
     if (sdo < 6.0) {
+        // O PNG tem recorte próprio onde o Vita é opaco (efeitos somados à tela, como o brilho das bolas de fogo
+        // da Caixa de Pandora, fireefx): a cor da parte transparente do PNG é lixo (pontos brancos) e, com o alfa
+        // constante, acendia o quadrado inteiro de cada partícula. A cor é multiplicada pelo alfa do PNG
+        // (normalizado pelo máximo dele) antes: fora do recorte fica preto, que somado não aparece.
+        // Só nos efeitos de fundo preto (borda escura na textura do Vita): nas superfícies o alfa do pack pode ser
+        // máscara de brilho do PS2, e multiplicar escureceria a textura.
+        double borda = 0;
+        uint32_t nb = 0;
+        for (uint32_t y = 0; y < info.height; y++)
+            for (uint32_t x = 0; x < info.width; x++)
+                if (y == 0 || x == 0 || y + 1 == info.height || x + 1 == info.width) {
+                    const uint8_t *o = &orig[4 * ((size_t)y * info.width + x)];
+                    borda += 0.299 * o[0] + 0.587 * o[1] + 0.114 * o[2], nb++;
+                }
+        if (sdp >= 6.0 && nb && borda / nb < 25.0) {
+            uint8_t amax = 0;
+            for (size_t i = 0; i < npx; i++) amax = std::max(amax, px[4 * i + 3]);
+            if (amax) {
+                for (size_t i = 0; i < npx; i++) {
+                    const uint32_t k = std::min<uint32_t>(255u, px[4 * i + 3] * 255u / amax);
+                    for (int c = 0; c < 3; c++) px[4 * i + c] = (uint8_t)((px[4 * i + c] * k + 127) / 255);
+                }
+                static int pm = 0;
+                if (pm++ < 8) logf("vitart: pack de texturas: cor de %s multiplicada pelo recorte do PNG", g_texpack[key].c_str());
+            }
+        }
         const uint8_t a = (uint8_t)std::lround(std::min(255.0, mo));
         for (size_t i = 0; i < npx; i++) px[4 * i + 3] = a;
         if (fixed++ < 8) logf("vitart: pack de texturas: alfa de %s = %u (uniforme como no Vita)", g_texpack[key].c_str(), a);
