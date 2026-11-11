@@ -1045,6 +1045,20 @@ def main():
     # --lang <código>: os textos do menu do vitart nesse idioma (Settings > Idioma do jogo)
     lang = sys.argv[sys.argv.index('--lang') + 1] if '--lang' in sys.argv else ''
     configure(game, read_modlist(modlist, game), lang)
+    # --rotulos <rotulos_gow1.tsv>: rótulos fixos dos menus traduzidos (tools/gow1_rotulos.py), só no FLP inglês do
+    # PS TV (o que o vitart carrega; os índices dos rótulos da versão normal são outros)
+    rot = {}
+    if '--rotulos' in sys.argv and game == 'gow1':
+        import gow1_rotulos
+        rot = gow1_rotulos.ler(sys.argv[sys.argv.index('--rotulos') + 1])
+
+    def rotular(data, rec):
+        if not rot.get(rec.decode()):
+            return data
+        import gow1_rotulos
+        f = flp.FLP(data)
+        print('%s: %d rótulos traduzidos' % (rec.decode(), gow1_rotulos.aplicar(f, rot[rec.decode()], lang)))
+        return f.write()
     # --files-out <pasta>: grava também os arquivos trocados, crus (os mods que trocam o r_perma/r_shella recebem
     # assim o menu e os ícones do vitart por cima; ver tools/vitart_modkit.py)
     files_out = sys.argv[sys.argv.index('--files-out') + 1] if '--files-out' in sys.argv else None
@@ -1068,7 +1082,7 @@ def main():
         # carrega essas quando o idioma do sistema é o francês ou o espanhol; runtime/vitart/hle_sys.cpp)
         for name, rn in localized(names, 'pause', rname):
             w = WAD_OVERRIDE.get(name) or P.read_file(fh, ents[names.index(name) + 1], zs, block)
-            new_flp = mod_flp(wad_get(w, rn, rtag))
+            new_flp = mod_flp(rotular(wad_get(w, rn, rtag), rn) if rn == rname and '_VitaTV' in name else wad_get(w, rn, rtag))
             files[name] = wad_replace(w, rn, new_flp, rtag)
             if LAST_KBM:
                 kbm.append((name, new_flp, LAST_KBM))
@@ -1079,7 +1093,7 @@ def main():
         stag, sname = CFG['shell']
         for name, sn in localized(names, 'shell', sname):
             w = WAD_OVERRIDE.get(name) or P.read_file(fh, ents[names.index(name) + 1], zs, block)
-            f = flp.FLP(wad_get(w, sn, stag))
+            f = flp.FLP(rotular(wad_get(w, sn, stag), sn) if sn == sname and '_VitaTV' in name else wad_get(w, sn, stag))
             swaps = kbm_flp.add_kbm_icons(f, GAME, LO)
             new_flp = f.write()
             files[name] = wad_replace(w, sn, new_flp, stag)

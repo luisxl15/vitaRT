@@ -307,6 +307,9 @@ def rebuild(cfg, log=print):
     modlist = os.path.join(mods_dir(cfg), 'modlist.tsv')
     py = [cfg['python'], '-P', os.path.join(TOOLS, 'gow_menu_mod.py')]
     lang = ['--lang', get_language(cfg)] if get_language(cfg) else []  # o menu do vitart no idioma do jogo
+    rot = os.path.join(trad_dir(cfg), get_language(cfg), 'fontes', 'rotulos_gow1.tsv') if lang else ''
+    if rot and os.path.exists(rot):  # os rótulos fixos dos menus do GoW1 (tools/gow1_rotulos.py)
+        lang += ['--rotulos', rot]
     for game in ('gow1', 'gow2'):
         ps = psarc_path(cfg, game)
         if not os.path.exists(ps):
