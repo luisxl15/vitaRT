@@ -163,6 +163,9 @@ void load_ini() {
     }
     fclose(f);
     const bool flip_changed = c.normal_opengl != g_cfg.normal_opengl;
+    // Nesta versão nenhum efeito gráfico liga (nem o PBR, nem a iluminação de tela), mesmo com enabled=1 ou post=1 no
+    // pbr.ini de uma instalação anterior: o jogo fica com a imagem original.
+    c.enabled = false, c.post = false;
     g_cfg = c;
     if (flip_changed) drop_all(); // os normal maps já carregados foram convertidos com a convenção anterior
     logf("vitart: PBR %s (pbr.ini lido%s)", c.enabled ? "ligado" : "desligado", c.debug ? ", modo de depuração" : "");
