@@ -45,6 +45,10 @@ void toggle_fullscreen(HWND h) {
 
 LRESULT CALLBACK wndproc(HWND h, UINT m, WPARAM w, LPARAM l) {
     switch (m) {
+    case WM_SETCURSOR:
+        // o cursor do mouse não aparece sobre o jogo (a barra de título e as bordas continuam com a seta)
+        if (LOWORD(l) == HTCLIENT) return SetCursor(nullptr), TRUE;
+        break;
     case WM_CLOSE:
         g_closed = true;
         return 0;
