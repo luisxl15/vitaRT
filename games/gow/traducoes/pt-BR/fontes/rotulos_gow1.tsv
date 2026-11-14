@@ -111,3 +111,41 @@ FLP_Shell	94	(Habilidade: Magia)
 FLP_Shell	96	(Habilidade: Vida)
 FLP_Shell	98	(Habilidade: Experiência)
 FLP_Shell	101	Escolha uma Roupa
+# rótulos de várias linhas: as linhas separadas por |; @ = o lugar do ícone (o botão, o orbe)
+FLP_HUD	2	Colete @ mais para aumentar|sua vida total.
+FLP_HUD	4	Colete @ mais para aumentar|sua magia total.
+FLP_HUD	5	6 Olhos da Górgona obtidos.|Medidor de Vida aumentado.
+FLP_HUD	7	6 Penas da Fênix obtidas.|Medidor de Magia aumentado.
+FLP_HUD	23	Zeus lhe deu a oportunidade|de salvar seu progresso.
+FLP_HUD	24	Você completou God of War.|Os Tesouros do Olimpo foram|desbloqueados.|O Modo Deus foi desbloqueado.
+FLP_HUD	25	Você completou God of War|no Modo Deus.|Mensagem Secreta 1 Desbloqueada.|Parabéns.
+FLP_HUD	26	Você completou o|Desafio dos Deuses.|Todas as Roupas Desbloqueadas.|Comece um Novo Jogo para usá-las.
+FLP_HUD	27	Parabéns!|Você achou nosso Easter Egg|(será que vai saber o que fazer?)|Mensagem Secreta 2 desbloqueada.
+FLP_HUD	66	Tem certeza de que quer|voltar aos Tesouros?
+FLP_HUD	88	Ativar|"Fúria dos Deuses"
+FLP_HUD	100	Faltam @ para|subir 1 nível da|Barra de Vida.
+FLP_HUD	102	Ache 6 Olhos da|Górgona para|aumentar sua Vida.
+FLP_HUD	103	Sua Barra de Vida|chegou ao|nível máximo.
+FLP_HUD	104	Faltam @ para|subir 1 nível da|Barra de Magia.
+FLP_HUD	106	Ache 6 Penas da|Fênix para|aumentar sua Magia.
+FLP_HUD	107	Sua Barra de Magia|chegou ao|nível máximo.
+FLP_HUD	108	Com o Tridente de|Poseidon, Kratos nada|debaixo d'água.
+FLP_HUD	113	O Tridente do|Senhor Poseidon.|Ache-o para descobrir|seus poderes.
+FLP_HUD	114	Chaves em forma|de musas.|Só existem duas|no mundo.
+FLP_HUD	118	As Chaves das Musas|foram recuperadas.|Você descobrirá|para que servem?
+FLP_HUD	119	As Chaves das Musas|foram recuperadas|e usadas.
+FLP_HUD	122	Os itens desta tela|não são melhorados.
+FLP_HUD	135	- Ataque Mais Forte|- Ataque Carregado|- Raios Mais Rápidos
+FLP_HUD	137	- Ataque Mais Forte|- Super Carga|- Raios Mais Rápidos
+FLP_HUD	142	- Olhar Mais Forte|- Clarão da Górgona|(Petrifica na Hora)
+FLP_HUD	143	- Olhar Mais Forte|- Fúria da Górgona|(PETRIFICAÇÃO EM 360 GRAUS)
+FLP_HUD	147	- Área de Dano Maior|- Mais Poder|- Ataque Giratório
+FLP_HUD	148	- Área de Dano Maior|- Mais Poder
+FLP_HUD	152	- FÚRIA DOS DEUSES|- Dano Maior|- Novos Ataques
+FLP_HUD	153	- Dano Maior|- Novos Ataques
+FLP_HUD	159	Você ainda não|tem este ataque.
+FLP_HUD	160	Ares roubou|sua Magia.
+FLP_HUD	165	Aperte @ para|transferir os Orbes|de Poder para as|Lâminas e a Magia.
+FLP_Shell	33	Ativar|"Fúria dos Deuses"
+FLP_Shell	46	Os dados salvos têm Tesouros|mas nenhum jogo salvo.
+FLP_Shell	83	Complete God of War no modo|Mortal, Herói ou Espartano|para liberar o Modo Deus.

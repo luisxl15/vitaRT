@@ -97,3 +97,55 @@ FLP_Shell	44	No
 FLP_Shell	45	Sì
 FLP_Shell	51	= Annulla
 FLP_Shell	54	= Continua
+FLP_Shell	84	Spartano (difficile)
+FLP_Shell	85	Dio (molto difficile)
+FLP_Shell	86	Eroe (normale)
+FLP_Shell	87	Mortale (facile)
+FLP_Shell	88	Scegli la Difficoltà:
+FLP_Shell	89	Armatura di Ares
+FLP_Shell	90	(Abilità: Armatura)
+FLP_Shell	91	Bloccato
+FLP_Shell	92	Non disponibile in Modalità Dio.
+FLP_Shell	93	Chef della Guerra
+FLP_Shell	94	(Abilità: Magia)
+FLP_Shell	96	(Abilità: Salute)
+FLP_Shell	98	(Abilità: Esperienza)
+FLP_Shell	101	Scegli un Costume
+# rótulos de várias linhas: as linhas separadas por |; @ = o lugar do ícone (o botão, o orbe)
+FLP_HUD	2	Raccogli @ altri per aumentare|la tua salute totale.
+FLP_HUD	4	Raccogli @ altre per aumentare|la tua magia totale.
+FLP_HUD	5	6 Occhi di Gorgone ottenuti.|Barra della Salute aumentata.
+FLP_HUD	7	6 Piume di Fenice ottenute.|Barra della Magia aumentata.
+FLP_HUD	23	Zeus ti ha concesso l'occasione|di salvare i tuoi progressi.
+FLP_HUD	24	Hai completato God of War.|I Tesori dell'Olimpo sono|stati sbloccati.|La Modalità Dio è sbloccata.
+FLP_HUD	25	Hai completato God of War|in Modalità Dio.|Messaggio Segreto 1 Sbloccato.|Congratulazioni.
+FLP_HUD	26	Hai completato la|Sfida degli Dei.|Tutti i Costumi Sbloccati.|Inizia una Nuova Partita per usarli.
+FLP_HUD	27	Congratulazioni!|Hai trovato il nostro Easter Egg|(saprai cosa farne?)|Messaggio Segreto 2 sbloccato.
+FLP_HUD	66	Vuoi davvero|tornare ai Tesori?
+FLP_HUD	88	Attiva|"Ira degli Dei"
+FLP_HUD	100	Ne servono @|per un livello in più|della Barra Salute.
+FLP_HUD	102	Trova 6 Occhi di|Gorgone per espandere|la Barra Salute.
+FLP_HUD	103	La Barra Salute|ha raggiunto il|livello massimo.
+FLP_HUD	104	Ne servono @|per un livello in più|della Barra Magia.
+FLP_HUD	106	Trova 6 Piume di|Fenice per espandere|la Barra Magia.
+FLP_HUD	107	La Barra Magia|ha raggiunto il|livello massimo.
+FLP_HUD	108	Il Tridente consente|a Kratos di nuotare|sott'acqua.
+FLP_HUD	113	Il Tridente del|Signore Poseidone.|Trovalo per scoprire|i suoi poteri.
+FLP_HUD	114	Chiavi a forma|di muse.|Ne esistono solo|due al mondo.
+FLP_HUD	118	Entrambe le Chiavi|delle Muse sono tue.|Scoprirai a|cosa servono?
+FLP_HUD	119	Le Chiavi delle Muse|sono state trovate|e usate.
+FLP_HUD	122	Gli oggetti qui|non si potenziano.
+FLP_HUD	135	- Attacco Più Forte|- Attacco Caricato|- Fulmini Più Rapidi
+FLP_HUD	137	- Attacco Più Forte|- Super Carica|- Fulmini Più Rapidi
+FLP_HUD	142	- Sguardo Più Forte|- Lampo di Gorgone|(Pietrifica Subito)
+FLP_HUD	143	- Sguardo Più Forte|- Furia di Gorgone|(PIETRIFICAZIONE A 360 GRADI)
+FLP_HUD	147	- Area Danno Maggiore|- Più Potenza|- Attacco Rotante
+FLP_HUD	148	- Area Danno Maggiore|- Più Potenza
+FLP_HUD	152	- IRA DEGLI DEI|- Danno Maggiore|- Nuovi Attacchi
+FLP_HUD	153	- Danno Maggiore|- Nuovi Attacchi
+FLP_HUD	159	Non hai ancora|questo attacco.
+FLP_HUD	160	Ares ti ha rubato|la Magia.
+FLP_HUD	165	Premi @ per|trasferire le Sfere|del Potere nelle|Spade e nella Magia.
+FLP_Shell	33	Attiva|"Ira degli Dei"
+FLP_Shell	46	I dati contengono Tesori|ma nessuna partita salvata.
+FLP_Shell	83	Completa God of War in modalità|Mortale, Eroe o Spartano|per sbloccare la Modalità Dio.

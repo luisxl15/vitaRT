@@ -97,3 +97,55 @@ FLP_Shell	44	Nein
 FLP_Shell	45	Ja
 FLP_Shell	51	= Abbruch
 FLP_Shell	54	= Weiter
+FLP_Shell	84	Spartaner (schwer)
+FLP_Shell	85	Gott (sehr schwer)
+FLP_Shell	86	Held (normal)
+FLP_Shell	87	Sterblicher (leicht)
+FLP_Shell	88	Schwierigkeit wählen:
+FLP_Shell	89	Ares-Rüstung
+FLP_Shell	90	(Fähigkeit: Rüstung)
+FLP_Shell	91	Gesperrt
+FLP_Shell	92	Im Gott-Modus nicht verfügbar.
+FLP_Shell	93	Küchenchef des Krieges
+FLP_Shell	94	(Fähigkeit: Magie)
+FLP_Shell	96	(Fähigkeit: Gesundheit)
+FLP_Shell	98	(Fähigkeit: Erfahrung)
+FLP_Shell	101	Kostüm wählen
+# rótulos de várias linhas: as linhas separadas por |; @ = o lugar do ícone (o botão, o orbe)
+FLP_HUD	2	Sammle @ weitere, um deine|Gesundheit zu erhöhen.
+FLP_HUD	4	Sammle @ weitere, um deine|Magie zu erhöhen.
+FLP_HUD	5	6 Gorgonenaugen erhalten.|Gesundheitsleiste erweitert.
+FLP_HUD	7	6 Phönixfedern erhalten.|Magieleiste erweitert.
+FLP_HUD	23	Zeus gibt dir die Gelegenheit,|deinen Fortschritt zu speichern.
+FLP_HUD	24	Du hast God of War beendet.|Die Schätze des Olymp wurden|freigeschaltet.|Der Gott-Modus ist freigeschaltet.
+FLP_HUD	25	Du hast God of War im|Gott-Modus beendet.|Geheime Nachricht 1 freigeschaltet.|Glückwunsch.
+FLP_HUD	26	Du hast die Prüfung|der Götter bestanden.|Alle Kostüme freigeschaltet.|Neues Spiel für die Kostüme starten.
+FLP_HUD	27	Glückwunsch!|Du hast unser Easter Egg gefunden|(weißt du, was zu tun ist?)|Geheime Nachricht 2 freigeschaltet.
+FLP_HUD	66	Willst du wirklich zu|den Schätzen zurück?
+FLP_HUD	88	Aktiviere|"Zorn der Götter"
+FLP_HUD	100	Noch @ nötig|für 1 Stufe mehr|der Lebensleiste.
+FLP_HUD	102	Finde 6 Gorgonen-|augen für eine|längere Lebensleiste.
+FLP_HUD	103	Deine Lebensleiste|hat die höchste|Stufe erreicht.
+FLP_HUD	104	Noch @ nötig|für 1 Stufe mehr|der Magieleiste.
+FLP_HUD	106	Finde 6 Phönix-|federn für eine|längere Magieleiste.
+FLP_HUD	107	Deine Magieleiste|hat die höchste|Stufe erreicht.
+FLP_HUD	108	Mit Poseidons Dreizack|kann Kratos unter|Wasser schwimmen.
+FLP_HUD	113	Der Dreizack des|Herrn Poseidon.|Finde ihn, um seine|Kräfte zu entdecken.
+FLP_HUD	114	Schlüssel in Form|von Musen.|Es gibt nur zwei|auf der Welt.
+FLP_HUD	118	Beide Musenschlüssel|wurden gefunden.|Findest du heraus,|wozu sie dienen?
+FLP_HUD	119	Beide Musenschlüssel|wurden gefunden|und benutzt.
+FLP_HUD	122	Diese Objekte|sind nicht aufwertbar.
+FLP_HUD	135	- Stärkerer Angriff|- Aufladeangriff|- Schnellere Blitze
+FLP_HUD	137	- Stärkerer Angriff|- Super-Aufladeangriff|- Schnellere Blitze
+FLP_HUD	142	- Stärkerer Blick|- Gorgonenblitz|(Sofort versteinern)
+FLP_HUD	143	- Stärkerer Blick|- Gorgonenzorn|(VERSTEINERUNG IN 360 GRAD)
+FLP_HUD	147	- Größerer Bereich|- Mehr Kraft|- Drehangriff
+FLP_HUD	148	- Größerer Bereich|- Mehr Kraft
+FLP_HUD	152	- ZORN DER GÖTTER|- Mehr Schaden|- Neue Angriffe
+FLP_HUD	153	- Mehr Schaden|- Neue Angriffe
+FLP_HUD	159	Du hast diesen|Angriff noch nicht.
+FLP_HUD	160	Ares hat deine|Magie gestohlen.
+FLP_HUD	165	Drücke @, um|Machtkugeln in deine|Klingen und Magie|zu leiten.
+FLP_Shell	33	Aktiviere|"Zorn der Götter"
+FLP_Shell	46	Die Daten enthalten Schätze,|aber keinen Spielstand.
+FLP_Shell	83	Beende God of War als Sterblicher,|Held oder Spartaner, um den|Gott-Modus freizuschalten.
